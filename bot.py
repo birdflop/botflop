@@ -2,8 +2,6 @@ import os
 import discord
 import requests
 import json
-import asyncio
-import aiohttp
 import logging
 import sys
 from discord.ext import commands, tasks
@@ -22,6 +20,8 @@ verified_role_id = int(os.getenv('verified_role_id'))
 guild_id = int(os.getenv('guild_id'))
 verification_channel = int(os.getenv('verification_channel'))
 verification_message = int(os.getenv('verification_message'))
+application_api_key = os.getenv('application_api_key')
+
 logging.basicConfig(filename = 'console.log',
                     level = logging.INFO,
                     format = '[%(asctime)s %(levelname)s] %(message)s',
@@ -252,8 +252,8 @@ async def react(ctx, url, reaction):
     logging.info('reacted to ' + url + ' with ' + reaction)
 
 @tasks.loop(minutes=10)
-async def update_servers():
-    logging.info("synchronizing roles")
+async def updater():
+    logging.info("Synchronizing roles")
     file = open('users.json', 'r')
     data = json.load(file)
     file.close()
@@ -347,13 +347,71 @@ async def update_servers():
             file.write(json_dumps)
             file.close()
             logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(client['client_id']) + " and client_api_key " + client['client_api_key'])
+    
+    # Update backups
+    logging.info('Ensuring backups')
+    url = "https://panel.birdflop.com/api/application/servers"
+    cookies = {
+        'pterodactyl_session': 'eyJpdiI6InhIVXp5ZE43WlMxUU1NQ1pyNWRFa1E9PSIsInZhbHVlIjoiQTNpcE9JV3FlcmZ6Ym9vS0dBTmxXMGtST2xyTFJvVEM5NWVWbVFJSnV6S1dwcTVGWHBhZzdjMHpkN0RNdDVkQiIsIm1hYyI6IjAxYTI5NDY1OWMzNDJlZWU2OTc3ZDYxYzIyMzlhZTFiYWY1ZjgwMjAwZjY3MDU4ZDYwMzhjOTRmYjMzNDliN2YifQ%3D%3D',
+    }
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + application_api_key,
+    }
+    response = requests.get(url, headers=headers, cookies=cookies)
+    servers_json_response = response.json()
 
-@update_servers.before_loop
-async def before_update_servers():
+    file = open('modified_servers.json', 'r')
+    modified_servers = json.load(file)
+    file.close()
+
+    i = -1
+
+    for server in servers_json_response['data']:
+        i += 1
+        already_exists = False
+        for server2 in modified_servers['servers']:
+            if already_exists == False:
+                if server['attributes']['uuid'] == server2['uuid']:
+                    already_exists = True
+        if already_exists == False:
+            cookies = {
+                'pterodactyl_session': 'eyJpdiI6InhIVXp5ZE43WlMxUU1NQ1pyNWRFa1E9PSIsInZhbHVlIjoiQTNpcE9JV3FlcmZ6Ym9vS0dBTmxXMGtST2xyTFJvVEM5NWVWbVFJSnV6S1dwcTVGWHBhZzdjMHpkN0RNdDVkQiIsIm1hYyI6IjAxYTI5NDY1OWMzNDJlZWU2OTc3ZDYxYzIyMzlhZTFiYWY1ZjgwMjAwZjY3MDU4ZDYwMzhjOTRmYjMzNDliN2YifQ%3D%3D',
+            }
+
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + application_api_key,
+            }
+
+            data = '{ "allocation": ' + str(server['attributes']['allocation']) + ', "memory": ' + str(server['attributes']['limits']['memory']) + ', "swap": 0, "disk": ' + str(server['attributes']['limits']['disk']) + ', "io": ' + str(server['attributes']['limits']['io']) + ', "cpu": ' + str(server['attributes']['limits']['cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(server['attributes']['feature_limits']['databases']) + ', "allocations": ' + str(server['attributes']['feature_limits']['allocations']) + ', "backups": 3 } }'
+
+            response = requests.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, cookies=cookies, data=data)
+
+            if (str(response)) == "<Response [200]>":
+                modified_servers['servers'].append({
+                    'uuid': str(server['attributes']['uuid'])
+                })
+
+                file = open('modified_servers.json', 'w')
+                json_dumps = json.dumps(modified_servers, indent=2)
+                file.write(json_dumps)
+                file.close()
+
+                logging.info("modified " + str(server['attributes']['name']) + ' with data ' + data)
+            else:
+                logging.info("failed to modify " + str(server['attributes']['name']) + ' with data ' + data)
+    
+    
+
+@updater.before_loop
+async def before_updater():
     logging.info('waiting to enter loop')
     await bot.wait_until_ready()
 
-update_servers.start()
+updater.start()
 bot.run(token)
 
 # full name: message.author.name + "#" + str(message.author.discriminator) + " (" + str(message.author.id) + ")"
