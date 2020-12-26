@@ -14,6 +14,7 @@ load_dotenv()
 token = os.getenv('token')
 crabwings_role_id = int(os.getenv('crabwings_role_id'))
 duckfeet_role_id = int(os.getenv('duckfeet_role_id'))
+elktail_role_id = int(os.getenv('elktail_role_id'))
 client_role_id = int(os.getenv('client_role_id'))
 subuser_role_id = int(os.getenv('subuser_role_id'))
 verified_role_id = int(os.getenv('verified_role_id'))
@@ -115,6 +116,7 @@ async def on_message(message):
                             user_subuser = False
                             user_crabwings = False
                             user_duckfeet = False
+                            user_elktail = False
                             for server in servers_json_response['data']:
                                 server_owner = server['attributes']['server_owner']
                                 if server_owner == True:
@@ -126,6 +128,8 @@ async def on_message(message):
                                     user_crabwings = True
                                 elif server_node == "Duckfeet - EU":
                                     user_duckfeet = True
+                                elif server_node == "Elktail - EU":
+                                    user_elktail = True
                             if user_client == True:
                                 role = discord.utils.get(guild.roles, id=client_role_id)
                                 await member.add_roles(role)
@@ -138,6 +142,9 @@ async def on_message(message):
                             if user_duckfeet == True:
                                 role = discord.utils.get(guild.roles, id=duckfeet_role_id)
                                 await member.add_roles(role)
+                            if user_elktail == True:
+                                role = discord.utils.get(guild.roles, id=elktail_role_id)
+                                await member.add_roles(role)
                             role = discord.utils.get(guild.roles, id=verified_role_id)
                             await member.add_roles(role)
                     
@@ -149,6 +156,26 @@ async def on_message(message):
                 elif discord_id_already_exists:
                     await channel.send('Sorry, your Discord account is already linked to a panel account. If you would like to link your Discord account to a different panel account, please unlink your Discord account first by reacting in the #verification channel.')
                     logging.info("Duplicate Discord message sent to " + message.author.name + "#" + str(message.author.discriminator) + " (" + str(message.author.id) + ")" + " for using API key " + message.content + " linked to client_id " + str(json_response['attributes']['id']))
+
+            # Makes json pretty with indentations and stuff, then writes to file
+#                json_dumps = json.dumps(json_response, indent = 2)
+#                file = open("data.json", "w")
+#                file.write(json_dumps)
+#                file.close()
+
+#               linked_servers = {}
+#               linked_servers['server'] = []
+#               for server in json_response['data']:
+#                   server_owner = server['attributes']['server_owner']
+#                   server_uuid = server['attributes']['uuid']
+#                   server_name = server['attributes']['name']
+#                   server_node = server['attributes']['node']
+#                   message_sender = message.author.id
+#                   info = str(server_owner) + server_uuid + server_name + server_node + str(message_sender)
+#                   logging.info(info)
+#                   file = open('/home/container/data/' + str(message.author.id) + '.json', "a")
+#                   file.write(info + '\n')
+#                   file.close()
             else: 
                 #Says if API key is the corect # of characters but invalid
                 await channel.send("Sorry, that appears to be an invalid API key.")
@@ -263,6 +290,7 @@ async def updater():
                 user_subuser = False
                 user_crabwings = False
                 user_duckfeet = False
+                user_elktail = False
                 for server in servers_json_response['data']:
                     server_owner = server['attributes']['server_owner']
                     if server_owner == True:
@@ -274,6 +302,8 @@ async def updater():
                         user_crabwings = True
                     elif server_node == "Duckfeet - EU":
                         user_duckfeet = True
+                    elif server_node == "Elktail - EU":
+                        user_elktail = True
                 role = discord.utils.get(guild.roles, id=client_role_id)
                 if user_client == True:
                     await member.add_roles(role)
@@ -294,6 +324,11 @@ async def updater():
                     await member.add_roles(role)
                 else:
                     await member.remove_roles(role)
+                role = discord.utils.get(guild.roles, id=elktail_role_id)
+                if user_elktail == True:
+                    await member.add_roles(role)
+                else:
+                    await member.remove_roles(role)
             else:
                 data['users'].pop(i)
                 json_dumps = json.dumps(data, indent = 2)
@@ -303,6 +338,24 @@ async def updater():
                 await member.edit(roles=[])
                 logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(client['client_id']) + " and INVALID client_api_key " + client['client_api_key'])
         else:
+ #           file = open('oldusers.json', 'r')
+ #           olddata = json.load(file)
+ #           file.close()
+            # Checks if user exists. If so, skips adding them to users.json
+#            already_exists = False
+#            for olduser in olddata['users']:
+#                if olduser['discord_id'] == json_response['attributes']['id']:
+#                    
+#            if already_exists == False:
+#                olddata['users'].append({
+#                    'discord_id': message.author.id,
+#                    'client_id': json_response['attributes']['id'],
+#                    'client_api_key': message.content
+#                })
+#                json_dumps = json.dumps(olddata, indent = 2)
+#                file = open('oldusers.json', 'w')
+#                file.write(json_dumps)
+#                file.close()
             data['users'].pop(i)
             json_dumps = json.dumps(data, indent = 2)
             file = open('users.json', 'w')
