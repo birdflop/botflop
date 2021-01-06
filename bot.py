@@ -142,18 +142,27 @@ async def analyze_timings(message):
     armor_stands_tick = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
     per_player_mob_spawns = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["per-player-mob-spawns"]
     alt_item_despawn_rate_enabled = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
+    no_tick_view_distance = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["viewdistances"]["no-tick-view-distance"])
+    phantoms_only_insomniacs = bool(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["phantoms-only-attack-insomniacs"])
+
 
     embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
     if "Yatopia" in version:
         embed_var.add_field(name="⚠ Yatopia",
-                            value="[Use Purpur](https://ci.pl3x.net/job/Purpur/).",
+                            value="Yatopia may be more optimized but it is prone to bugs. "
+                                  "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).",
+                            inline=True)
+    elif "Paper" in version:
+        embed_var.add_field(name="⚠ Paper",
+                            value="Purpur has more optimizations but is generally less supported. "
+                                  "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).",
                             inline=True)
     if "1.16.4" not in version:
         embed_var.add_field(name="⚠ Legacy Build",
                             value="Update to 1.16.4.",
                             inline=True)
-    if "-Daikars.new.flags=true" not in flags:
-        embed_var.add_field(name="⚠ Flags",
+    if "-Daikars.new.flags=true" not in flags and "-XX:+UseZGC" not in flags:
+        embed_var.add_field(name="⚠ Aikar's Flags",
                             value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).",
                             inline=True)
     else:
@@ -161,9 +170,15 @@ async def analyze_timings(message):
             embed_var.add_field(name="⚠ Outdated Flags",
                             value="Add `-XX:+PerfDisableSharedMem` to flags",
                             inline=True)
-        if "XX:G1MixedGCCountTarget=" in flags and "XX:G1MixedGCCountTarget=4" not in flags:
+        if "XX:G1MixedGCCountTarget=4" not in flags:
             embed_var.add_field(name="⚠ Outdated Flags",
                             value="Add `-XX:G1MixedGCCountTarget=4` to flags",
+                            inline=True)
+    if "-XX:+UseZGC" in flags:
+        j_version = int(jvm_version.split(".")[0])
+        if j_version < 14:
+            embed_var.add_field(name="⚠ ZGC",
+                            value="If you are going to use ZGC, you should also use Java 14+.",
                             inline=True)
     if "-Xmx" in flags:
         max_mem = 0
@@ -238,7 +253,7 @@ async def analyze_timings(message):
                             inline=True)
     if save_user_cache_on_stop_only == "false":
         embed_var.add_field(name="⚠ save-user-cache-on-stop-only",
-                            value="Enable this in spigot.yml",
+                            value="Enable this in spigot.yml.",
                             inline=True)
     if mob_spawn_range == 8 and type(view_distance) == "int" and view_distance < 7 and type(spigot_view_distance) == "int" and spigot_view_distance < 7:
         if spigot_view_distance == -1:
@@ -377,7 +392,7 @@ async def analyze_timings(message):
         embed_var.add_field(name="⚠ use-faster-eigencraft-redstone",
                             value="Enable this in paper.yml.",
                             inline=True)
-    if armor_stands_tick == "true":
+    if armor_stands_tick == "true" and "PetBlocks" not in plugins and "BlockBalls" not in plugins and "ArmorStandTools" not in plugins:
         embed_var.add_field(name="⚠ armor-stands-tick",
                             value="Disable this in paper.yml.",
                             inline=True)
@@ -390,7 +405,6 @@ async def analyze_timings(message):
                             value="Enable this in paper.yml.",
                             inline=True)
     if "Purpur" in version:
-        print("using purpur")
         use_alternate_keepalive = r["timingsMaster"]["config"]["purpur"]["settings"]["use-alternate-keepalive"]
         dont_send_useless_entity_packets = r["timingsMaster"]["config"]["purpur"]["settings"]["dont-send-useless-entity-packets"]
         disable_treasure_searching = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["dolphin"]["disable-treasure-searching"]
@@ -400,6 +414,16 @@ async def analyze_timings(message):
         aggressive_towards_villager_when_lagging = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["zombie"]["aggressive-towards-villager-when-lagging"]
         entities_can_use_portals = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["entities-can-use-portals"]
 
+        if no_tick_view_distance == -1:
+            if spigot_view_distance != "default" or view_distance != 10:
+                if spigot_view_distance == "default" and view_distance > 3:
+                    embed_var.add_field(name="⚠ no-tick-view-distance",
+                                        value="Set a value in paper.yml.\nRecommended: " + str(view_distance) + ". And reduce view-distance in server.properties.\nRecommended: 3.",
+                                        inline=True)
+                elif spigot_view_distance > 3:
+                    embed_var.add_field(name="⚠ no-tick-view-distance",
+                                        value="Set a value in paper.yml.\nRecommended: " + str(spigot_view_distance) + ". And reduce view-distance in spigot.yml.\nRecommended: 3.",
+                                        inline=True)
         if use_alternate_keepalive == "false" and "TCPShield" not in plugins:
             embed_var.add_field(name="⚠ use-alternate-keepalive",
                                 value="Enable this in purpur.yml.",
@@ -421,11 +445,11 @@ async def analyze_timings(message):
                                 value="Increase this in purpur.yml.\nRecommended: 4.",
                                 inline=True)
         if iron_golem_radius == 0:
-            embed_var.add_field(name="⚠ iron-golem.radius",
+            embed_var.add_field(name="⚠ spawn-iron-golem.radius",
                                 value="Set a value in purpur.yml.\nRecommended: 32.",
                                 inline=True)
         if iron_golem_limit == 0:
-            embed_var.add_field(name="⚠ iron-golem.limit",
+            embed_var.add_field(name="⚠ spawn-iron-golem.limit",
                                 value="Set a value in purpur.yml.\nRecommended: 5.",
                                 inline=True)
         if aggressive_towards_villager_when_lagging == "true":
@@ -434,7 +458,7 @@ async def analyze_timings(message):
                                 inline=True)
         if entities_can_use_portals == "true":
             embed_var.add_field(name="⚠ entities-can-use-portals",
-                                value="Disable this in purpur.yml.",
+                                value="Disable this in purpur.yml to prevent players from creating chunk anchors.",
                                 inline=True)
 
     # Plugins
@@ -453,15 +477,25 @@ async def analyze_timings(message):
                             value="Plugins that claim to remove lag actually cause more lag. "
                                   "Remove NoChunkLag.",
                             inline=True)
+    if "StackMob" in plugins:
+        embed_var.add_field(name="⚠ StackMob",
+                            value="Stacking plugins actually cause more lag. "
+                                  "Remove StackMob.",
+                            inline=True)
+    if "MobStacker" in plugins:
+        embed_var.add_field(name="⚠ MobStacker",
+                            value="Stacking plugins actually cause more lag. "
+                                  "Remove MobStacker.",
+                            inline=True)
+    if "WildStacker" in plugins:
+        embed_var.add_field(name="⚠ WildStacker",
+                            value="Stacking plugins actually cause more lag. "
+                                  "Remove WildStacker.",
+                            inline=True)
     if "SuggestionBlocker" in plugins:
         embed_var.add_field(name="⚠ SuggestionBlocker",
                             value="There is a good chance that you don't need SuggestionBlocker as Spigot already adds its features. "
                                   "Set tab-complete to -1 in spigot.yml.",
-                            inline=True)
-    if "AsyncWorldEdit" in plugins:
-        embed_var.add_field(name="⚠ AsyncWorldEdit",
-                            value="AWE can corrupt your world. "
-                                  "Consider replacing AWE with [Worldedit](https://enginehub.org/worldedit/#downloads).",
                             inline=True)
     if "FastAsyncWorldEdit" in plugins:
         embed_var.add_field(name="⚠ FastAsyncWorldEdit",
@@ -469,13 +503,13 @@ async def analyze_timings(message):
                                   "Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).",
                             inline=True)
     if "CMI" in plugins:
-        embed_var.add_field(name="⚠ FastAsyncWorldEdit",
-                            value="CMI is a very buggy plugin. "
+        embed_var.add_field(name="⚠ CMI",
+                            value="CMI is a buggy plugin. "
                                   "Consider Replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html) and [HologrpahicDisplays](https://dev.bukkit.org/projects/holographic-displays).",
                             inline=True)
     if "Spartan" in plugins:
         embed_var.add_field(name="⚠ Spartan",
-                            value="Spartan is a very laggy anticheat. "
+                            value="Spartan is a laggy anticheat. "
                                   "Consider replacing it with [Matrix](https://matrix.rip/).",
                             inline=True)
     if "IllegalStack" in plugins:
@@ -486,6 +520,20 @@ async def analyze_timings(message):
         embed_var.add_field(name="⚠ ExploitFixer",
                             value="There is a good chance that you don't need ExploitFixer as Paper already has its features.",
                             inline=True)
+    if "EntityTrackerFixer" in plugins:
+        embed_var.add_field(name="⚠ EntityTrackerFixer",
+                            value="There is a good chance that you don't need EntityTrackerFixer as Paper already has its features.",
+                            inline=True)
+    if "PhantomSMP" in plugins:
+        if phantoms_only_insomniacs:
+            embed_var.add_field(name="⚠ PhantomSMP",
+                                value="There is a good chance that you don't need PhantomSMP as Paper already has its features.",
+                                inline=True)
+        else:
+            embed_var.add_field(name="⚠ PhantomSMP",
+                                value="There is a good chance that you don't need PhantomSMP as Paper already has its features. "
+                                      "Enable phantoms-only-attack-insomniacs in paper.yml",
+                                inline=True)
     if "SilkSpawners" in plugins and "Purpur" in version:
         embed_var.add_field(name="⚠ SilkSpawners",
                             value="There is a good chance that you don't need SilkSpawners as Purpur already has its features.",
@@ -521,7 +569,11 @@ async def analyze_timings(message):
                             value="Analyzed with no issues")
         await message.channel.send(embed=embed_var)
         return
-    embed_var.description = str(len(embed_var.fields)) + " issues found."
+    issue_count = len(embed_var.fields)
+    if issue_count > 25:
+        embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations."
+    else:
+        embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
     await message.channel.send(embed=embed_var)
 
 
