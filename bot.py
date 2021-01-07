@@ -514,7 +514,7 @@ async def analyze_timings(message):
                                       "Recommended: 2.",
                                 inline=True)
         if disable_chest_cat_detection == "false":
-            embed_var.add_field(name="⚠ disable_chest_cat_detection",
+            embed_var.add_field(name="⚠ disable-chest-cat-detection",
                                 value="Enable this in paper.yml.",
                                 inline=True)
         if container_update_tick_rate == "false":
