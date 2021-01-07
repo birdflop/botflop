@@ -1,4 +1,4 @@
-# botflop
+# Botflop
 Discord bot focused on server administration. Botflop:
 * Analyzes timings reports
 * Links Pterodactyl panel and Discord accounts
