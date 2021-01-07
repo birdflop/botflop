@@ -7,5 +7,5 @@ Discord bot focused on Minecraft server administration. Botflop:
 * Communicates with Pterodactyl API to update servers
 
 ## In Progress
-* .update command to update either all available plugins to the latest version or just one plugin
-* ability to fix all timings recommendations with one click or one click per vulnerability
+* `.update` command to update either all available plugins to the latest version or just one plugin
+* ability to fix all timings recommendations with one click or one click per recommendation
