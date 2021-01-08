@@ -396,7 +396,7 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ network-compression-threshold",
                                     value="Increase this in server.properties. Recommended: 512.",
                                     inline=True)
-            if network_compression_threshold != -1 and bungeecord == "true":
+            if network_compression_threshold != None and network_compression_threshold != -1 and bungeecord == "true":
                 embed_var.add_field(name="⚠ network-compression-threshold",
                                     value="Set this to -1 in server.properties for a bungee server like yours.",
                                     inline=True)
