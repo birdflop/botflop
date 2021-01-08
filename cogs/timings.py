@@ -431,7 +431,7 @@ class Timings(commands.Cog):
                                     value="Decrease this from default (10) in spigot.yml. "
                                           "Recommended: 3.",
                                     inline=True)
-            if mob_spawn_range == 8 and view_distance < 7 and spigot_view_distance != "default" and spigot_view_distance < 7:
+            if mob_spawn_range is not None and view_distance is not None and mob_spawn_range >= 8 and view_distance < 7 and spigot_view_distance != "default" and spigot_view_distance is not None and int(spigot_view_distance) < 7:
                 if spigot_view_distance == -1:
                     embed_var.add_field(name="⚠ mob-spawn-range",
                                         value="Decrease this in spigot.yml. "
@@ -511,12 +511,12 @@ class Timings(commands.Cog):
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 60.",
                                     inline=True)
-            if item_merge_radius == "true":
+            if item_merge_radius == 1.5:
                 embed_var.add_field(name="⚠ merge-radius.item",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 4.0.",
                                     inline=True)
-            if exp_merge_radius == "true":
+            if exp_merge_radius == 3.0:
                 embed_var.add_field(name="⚠ merge-radius.exp",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 6.0.",
