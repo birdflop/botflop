@@ -62,122 +62,126 @@ async def on_message(message):
                 'Authorization': 'Bearer ' + message.content,
             }
 
-            response = requests.get(url, headers=headers, cookies=cookies)
+            # response = requests.get(url, headers=headers, cookies=cookies)
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, cookies=cookies) as response:
+            
+                    # If API token is verified to be correct:
+                    if response.status == 200:
 
-            # If API token is verified to be correct:
-            if str(response) == "<Response [200]>":
+                        # Formats response of account in JSON format
+                        json_response = await response.json()
 
-                # Formats response of account in JSON format
-                json_response = response.json()
+                        # Loads contents of users.json
+                        file = open('users.json', 'r')
+                        data = json.load(file)
+                        file.close()
 
-                # Loads contents of users.json
-                file = open('users.json', 'r')
-                data = json.load(file)
-                file.close()
+                        # Checks if user exists. If so, skips adding them to users.json
+                        client_id_already_exists = False
+                        discord_id_already_exists = False
+                        for user in data['users']:
+                            if user['client_id'] == json_response['attributes']['id']:
+                                client_id_already_exists = True
+                                logging.info("Client ID already exists")
+                            if user['discord_id'] == message.author.id:
+                                discord_id_already_exists = True
+                                logging.info("Discord ID already exists")
+                        if client_id_already_exists == False and discord_id_already_exists == False:
+                            data['users'].append({
+                                'discord_id': message.author.id,
+                                'client_id': json_response['attributes']['id'],
+                                'client_api_key': message.content
+                            })
+                            json_dumps = json.dumps(data, indent=2)
+                            # Adds user to users.json
+                            file = open('users.json', 'w')
+                            file.write(json_dumps)
+                            file.close()
 
-                # Checks if user exists. If so, skips adding them to users.json
-                client_id_already_exists = False
-                discord_id_already_exists = False
-                for user in data['users']:
-                    if user['client_id'] == json_response['attributes']['id']:
-                        client_id_already_exists = True
-                        logging.info("Client ID already exists")
-                    if user['discord_id'] == message.author.id:
-                        discord_id_already_exists = True
-                        logging.info("Discord ID already exists")
-                if client_id_already_exists == False and discord_id_already_exists == False:
-                    data['users'].append({
-                        'discord_id': message.author.id,
-                        'client_id': json_response['attributes']['id'],
-                        'client_api_key': message.content
-                    })
-                    json_dumps = json.dumps(data, indent=2)
-                    # Adds user to users.json
-                    file = open('users.json', 'w')
-                    file.write(json_dumps)
-                    file.close()
+                            guild = bot.get_guild(guild_id)
+                            member = guild.get_member(message.author.id)
+                            if member:
 
-                    guild = bot.get_guild(guild_id)
-                    member = guild.get_member(message.author.id)
-                    if member:
+                                url = "https://panel.birdflop.com/api/client"
 
-                        url = "https://panel.birdflop.com/api/client"
+                                headers = {
+                                    'Accept': 'application/json',
+                                    'Authorization': 'Bearer ' + message.content,
+                                }
 
-                        headers = {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + message.content,
-                        }
+                                async with aiohttp.ClientSession() as session:
+                                    async with session.get(url, headers=headers, cookies=cookies) as response:
 
-                        response = requests.get(url, headers=headers, cookies=cookies)
+                                        # If API token is verified to be correct, continues
+                                        if response.status == 200:
 
-                        # If API token is verified to be correct, continues
-                        if str(response) == "<Response [200]>":
+                                            # Formats response for servers in JSON format
+                                            servers_json_response = await response.json()
 
-                            # Formats response for servers in JSON format
-                            servers_json_response = response.json()
+                                            user_client = False
+                                            user_subuser = False
+                                            user_crabwings = False
+                                            user_duckfeet = False
+                                            user_elktail = False
+                                            for server in servers_json_response['data']:
+                                                server_owner = server['attributes']['server_owner']
+                                                if server_owner == True:
+                                                    user_client = True
+                                                elif server_owner == False:
+                                                    user_subuser = True
+                                                server_node = server['attributes']['node']
+                                                if server_node == "Crabwings - NYC":
+                                                    user_crabwings = True
+                                                elif server_node == "Duckfeet - EU":
+                                                    user_duckfeet = True
+                                                elif server_node == "Elktail - EU":
+                                                    user_elktail = True
+                                            if user_client == True:
+                                                role = discord.utils.get(guild.roles, id=client_role_id)
+                                                await member.add_roles(role)
+                                            if user_subuser == True:
+                                                role = discord.utils.get(guild.roles, id=subuser_role_id)
+                                                await member.add_roles(role)
+                                            if user_crabwings == True:
+                                                role = discord.utils.get(guild.roles, id=crabwings_role_id)
+                                                await member.add_roles(role)
+                                            if user_duckfeet == True:
+                                                role = discord.utils.get(guild.roles, id=duckfeet_role_id)
+                                                await member.add_roles(role)
+                                            if user_elktail == True:
+                                                role = discord.utils.get(guild.roles, id=elktail_role_id)
+                                                await member.add_roles(role)
+                                            role = discord.utils.get(guild.roles, id=verified_role_id)
+                                            await member.add_roles(role)
 
-                            user_client = False
-                            user_subuser = False
-                            user_crabwings = False
-                            user_duckfeet = False
-                            user_elktail = False
-                            for server in servers_json_response['data']:
-                                server_owner = server['attributes']['server_owner']
-                                if server_owner == True:
-                                    user_client = True
-                                elif server_owner == False:
-                                    user_subuser = True
-                                server_node = server['attributes']['node']
-                                if server_node == "Crabwings - NYC":
-                                    user_crabwings = True
-                                elif server_node == "Duckfeet - EU":
-                                    user_duckfeet = True
-                                elif server_node == "Elktail - EU":
-                                    user_elktail = True
-                            if user_client == True:
-                                role = discord.utils.get(guild.roles, id=client_role_id)
-                                await member.add_roles(role)
-                            if user_subuser == True:
-                                role = discord.utils.get(guild.roles, id=subuser_role_id)
-                                await member.add_roles(role)
-                            if user_crabwings == True:
-                                role = discord.utils.get(guild.roles, id=crabwings_role_id)
-                                await member.add_roles(role)
-                            if user_duckfeet == True:
-                                role = discord.utils.get(guild.roles, id=duckfeet_role_id)
-                                await member.add_roles(role)
-                            if user_elktail == True:
-                                role = discord.utils.get(guild.roles, id=elktail_role_id)
-                                await member.add_roles(role)
-                            role = discord.utils.get(guild.roles, id=verified_role_id)
-                            await member.add_roles(role)
-
-                    await channel.send(
-                        'Your Discord account has been linked to your panel account! You may unlink your Discord and panel accounts by reacting in the #verification channel or by deleting your Verification API key.')
-                    logging.info("Success message sent to " + message.author.name + "#" + str(
-                        message.author.discriminator) + " (" + str(
-                        message.author.id) + ")" + ". User linked to API key " + message.content + " and client_id " + str(
-                        json_response['attributes']['id']))
-                elif discord_id_already_exists:
-                    await channel.send(
-                        'Sorry, your Discord account is already linked to a panel account. If you would like to link your Discord account to a different panel account, please unlink your Discord account first by reacting in the #verification channel.')
-                    logging.info("Duplicate Discord message sent to " + message.author.name + "#" + str(
-                        message.author.discriminator) + " (" + str(
-                        message.author.id) + ")" + " for using API key " + message.content + " linked to client_id " + str(
-                        json_response['attributes']['id']))
-                elif client_id_already_exists:
-                    await channel.send(
-                        'Sorry, your panel account is already linked to a Discord account. If you would like to link your panel account to a different Discord account, please unlink your panel account first by deleting its Verification API key and waiting up to 10 minutes.')
-                    logging.info("Duplicate panel message sent to " + message.author.name + "#" + str(
-                        message.author.discriminator) + " (" + str(
-                        message.author.id) + ")" + " for using API key " + message.content + " linked to client_id " + str(
-                        json_response['attributes']['id']))
-            else:
-                # Says if API key is the corect # of characters but invalid
-                await channel.send("Sorry, that appears to be an invalid API key.")
-                logging.info(
-                    'invalid sent to ' + message.author.name + "#" + str(message.author.discriminator) + " (" + str(
-                        message.author.id) + ")")
+                            await channel.send(
+                                'Your Discord account has been linked to your panel account! You may unlink your Discord and panel accounts by reacting in the #verification channel or by deleting your Verification API key.')
+                            logging.info("Success message sent to " + message.author.name + "#" + str(
+                                message.author.discriminator) + " (" + str(
+                                message.author.id) + ")" + ". User linked to API key " + message.content + " and client_id " + str(
+                                json_response['attributes']['id']))
+                        elif discord_id_already_exists:
+                            await channel.send(
+                                'Sorry, your Discord account is already linked to a panel account. If you would like to link your Discord account to a different panel account, please unlink your Discord account first by reacting in the #verification channel.')
+                            logging.info("Duplicate Discord message sent to " + message.author.name + "#" + str(
+                                message.author.discriminator) + " (" + str(
+                                message.author.id) + ")" + " for using API key " + message.content + " linked to client_id " + str(
+                                json_response['attributes']['id']))
+                        elif client_id_already_exists:
+                            await channel.send(
+                                'Sorry, your panel account is already linked to a Discord account. If you would like to link your panel account to a different Discord account, please unlink your panel account first by deleting its Verification API key and waiting up to 10 minutes.')
+                            logging.info("Duplicate panel message sent to " + message.author.name + "#" + str(
+                                message.author.discriminator) + " (" + str(
+                                message.author.id) + ")" + " for using API key " + message.content + " linked to client_id " + str(
+                                json_response['attributes']['id']))
+                    else:
+                        # Says if API key is the corect # of characters but invalid
+                        await channel.send("Sorry, that appears to be an invalid API key.")
+                        logging.info(
+                            'invalid sent to ' + message.author.name + "#" + str(message.author.discriminator) + " (" + str(
+                                message.author.id) + ")")
         else:
             # Says this if API key is incorrect # of characters
             await channel.send(
@@ -190,24 +194,27 @@ async def on_message(message):
         if message.attachments[0].url.endswith(
                 ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')) == False:
             download = message.attachments[0].url
-            r = requests.get(download, allow_redirects=True)
-            text = r.text
-            text = "\n".join(text.splitlines())
-            if '�' not in text:  # If it's not an image/gif
-                truncated = False
-                if len(text) > 100000:
-                    text = text[:99999]
-                    truncated = True
-                req = requests.post('https://bin.birdflop.com/documents', data=text)
-                key = json.loads(req.content)['key']
-                response = ""
-                response = response + "https://bin.birdflop.com/" + key
-                response = response + "\nRequested by " + message.author.mention
-                if truncated:
-                    response = response + "\n(file was truncated because it was too long.)"
-                embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
-                embed_var.description = response
-                await message.channel.send(embed=embed_var)
+            async with aiohttp.ClientSession() as session:
+                async with session.get(download, allow_redirects=True) as r:
+                        
+#            r = requests.get(download, allow_redirects=True)
+                    text = await r.text()
+                    text = "\n".join(text.splitlines())
+                    if '�' not in text:  # If it's not an image/gif
+                        truncated = False
+                        if len(text) > 100000:
+                            text = text[:99999]
+                            truncated = True
+                        req = requests.post('https://bin.birdflop.com/documents', data=text)
+                        key = json.loads(req.content)['key']
+                        response = ""
+                        response = response + "https://bin.birdflop.com/" + key
+                        response = response + "\nRequested by " + message.author.mention
+                        if truncated:
+                            response = response + "\n(file was truncated because it was too long.)"
+                        embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
+                        embed_var.description = response
+                        await message.channel.send(embed=embed_var)
 
     timings = bot.get_cog('Timings')
     try:
@@ -294,65 +301,64 @@ async def updater():
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + api_key,
             }
-            response = requests.get(url, headers=headers, cookies=cookies)
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, cookies=cookies) as response:
+                    if response.status == 200:
+                        # Formats response for servers in JSON format
+                        servers_json_response = await response.json()
 
-            # If API token is verified to be correct, continues
-            if str(response) == "<Response [200]>":
-                # Formats response for servers in JSON format
-                servers_json_response = response.json()
-
-                user_client = False
-                user_subuser = False
-                user_crabwings = False
-                user_duckfeet = False
-                user_elktail = False
-                for server in servers_json_response['data']:
-                    server_owner = server['attributes']['server_owner']
-                    if server_owner == True:
-                        user_client = True
-                    elif server_owner == False:
-                        user_subuser = True
-                    server_node = server['attributes']['node']
-                    if server_node == "Crabwings - NYC":
-                        user_crabwings = True
-                    elif server_node == "Duckfeet - EU":
-                        user_duckfeet = True
-                    elif server_node == "Elktail - EU":
-                        user_elktail = True
-                role = discord.utils.get(guild.roles, id=client_role_id)
-                if user_client == True:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-                role = discord.utils.get(guild.roles, id=subuser_role_id)
-                if user_subuser == True:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-                role = discord.utils.get(guild.roles, id=crabwings_role_id)
-                if user_crabwings == True:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-                role = discord.utils.get(guild.roles, id=duckfeet_role_id)
-                if user_duckfeet == True:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-                role = discord.utils.get(guild.roles, id=elktail_role_id)
-                if user_elktail == True:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-            else:
-                data['users'].pop(i)
-                json_dumps = json.dumps(data, indent=2)
-                file = open('users.json', 'w')
-                file.write(json_dumps)
-                file.close()
-                await member.edit(roles=[])
-                logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(
-                    client['client_id']) + " and INVALID client_api_key " + client['client_api_key'])
+                        user_client = False
+                        user_subuser = False
+                        user_crabwings = False
+                        user_duckfeet = False
+                        user_elktail = False
+                        for server in servers_json_response['data']:
+                            server_owner = server['attributes']['server_owner']
+                            if server_owner == True:
+                                user_client = True
+                            elif server_owner == False:
+                                user_subuser = True
+                            server_node = server['attributes']['node']
+                            if server_node == "Crabwings - NYC":
+                                user_crabwings = True
+                            elif server_node == "Duckfeet - EU":
+                                user_duckfeet = True
+                            elif server_node == "Elktail - EU":
+                                user_elktail = True
+                        role = discord.utils.get(guild.roles, id=client_role_id)
+                        if user_client == True:
+                            await member.add_roles(role)
+                        else:
+                            await member.remove_roles(role)
+                        role = discord.utils.get(guild.roles, id=subuser_role_id)
+                        if user_subuser == True:
+                            await member.add_roles(role)
+                        else:
+                            await member.remove_roles(role)
+                        role = discord.utils.get(guild.roles, id=crabwings_role_id)
+                        if user_crabwings == True:
+                            await member.add_roles(role)
+                        else:
+                            await member.remove_roles(role)
+                        role = discord.utils.get(guild.roles, id=duckfeet_role_id)
+                        if user_duckfeet == True:
+                            await member.add_roles(role)
+                        else:
+                            await member.remove_roles(role)
+                        role = discord.utils.get(guild.roles, id=elktail_role_id)
+                        if user_elktail == True:
+                            await member.add_roles(role)
+                        else:
+                            await member.remove_roles(role)
+                    else:
+                        data['users'].pop(i)
+                        json_dumps = json.dumps(data, indent=2)
+                        file = open('users.json', 'w')
+                        file.write(json_dumps)
+                        file.close()
+                        await member.edit(roles=[])
+                        logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(
+                            client['client_id']) + " and INVALID client_api_key " + client['client_api_key'])
         else:
             data['users'].pop(i)
             json_dumps = json.dumps(data, indent=2)
@@ -371,54 +377,55 @@ async def updater():
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + application_api_key,
     }
-    response = requests.get(url, headers=headers, cookies=cookies)
-    servers_json_response = response.json()
+    #response = requests.get(url, headers=headers, cookies=cookies)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers = headers, cookies = cookies) as response:
+            servers_json_response = await response.json()
 
-    file = open('modified_servers.json', 'r')
-    modified_servers = json.load(file)
-    file.close()
-    
-    i = -1
+            file = open('modified_servers.json', 'r')
+            modified_servers = json.load(file)
+            file.close()
 
-    for server in servers_json_response['data']:
-        i += 1
-        already_exists = False
-        for server2 in modified_servers['servers']:
-            if already_exists == False:
-                if server['attributes']['uuid'] == server2['uuid']:
-                    already_exists = True
-        if already_exists == False:
-            headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + application_api_key,
-            }
+            i = -1
 
-            data = '{ "allocation": ' + str(server['attributes']['allocation']) + ', "memory": ' + str(
-                server['attributes']['limits']['memory']) + ', "swap": 0, "disk": ' + str(
-                server['attributes']['limits']['disk']) + ', "io": ' + str(
-                server['attributes']['limits']['io']) + ', "cpu": ' + str(
-                server['attributes']['limits']['cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(
-                server['attributes']['feature_limits']['databases']) + ', "allocations": ' + str(
-                server['attributes']['feature_limits']['allocations']) + ', "backups": 3 } }'
+            for server in servers_json_response['data']:
+                i += 1
+                already_exists = False
+                for server2 in modified_servers['servers']:
+                    if already_exists == False:
+                        if server['attributes']['uuid'] == server2['uuid']:
+                            already_exists = True
+                if already_exists == False:
+                    headers = {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + application_api_key,
+                    }
 
-            response = requests.patch(
-                'https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build',
-                headers=headers, cookies=cookies, data=data)
+                    data = '{ "allocation": ' + str(server['attributes']['allocation']) + ', "memory": ' + str(
+                        server['attributes']['limits']['memory']) + ', "swap": 0, "disk": ' + str(
+                        server['attributes']['limits']['disk']) + ', "io": ' + str(
+                        server['attributes']['limits']['io']) + ', "cpu": ' + str(
+                        server['attributes']['limits']['cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(
+                        server['attributes']['feature_limits']['databases']) + ', "allocations": ' + str(
+                        server['attributes']['feature_limits']['allocations']) + ', "backups": 3 } }'
 
-            if (str(response)) == "<Response [200]>":
-                modified_servers['servers'].append({
-                    'uuid': str(server['attributes']['uuid'])
-                })
 
-                file = open('modified_servers.json', 'w')
-                json_dumps = json.dumps(modified_servers, indent=2)
-                file.write(json_dumps)
-                file.close()
+                    async with aiohttp.ClientSession() as session:
+                        async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, cookies=cookies, data=data) as response:
+                            if response.status == 200:
+                                modified_servers['servers'].append({
+                                    'uuid': str(server['attributes']['uuid'])
+                                })
 
-                logging.info("modified " + str(server['attributes']['name']) + ' with data ' + data)
-            else:
-                logging.info("failed to modify " + str(server['attributes']['name']) + ' with data ' + data)
+                                file = open('modified_servers.json', 'w')
+                                json_dumps = json.dumps(modified_servers, indent=2)
+                                file.write(json_dumps)
+                                file.close()
+
+                                logging.info("modified " + str(server['attributes']['name']) + ' with data ' + data)
+                            else:
+                                logging.info("failed to modify " + str(server['attributes']['name']) + ' with data ' + data)
 
 
 # Plugin Updater
