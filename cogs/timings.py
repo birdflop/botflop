@@ -296,8 +296,8 @@ class Timings(commands.Cog):
                                     inline=True)
             if "SuggestionBlocker" in plugins:
                 embed_var.add_field(name="⚠ SuggestionBlocker",
-                                    value="You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                                          "Set tab-complete to -1 in spigot.yml.",
+                                    value="Players can still execute the commands."
+                                          "Use [CommandWhitelist](https://github.com/YouHaveTrouble/CommandWhitelist/releases) to control which commands players can complete and execute.",
                                     inline=True)
             if "FastAsyncWorldEdit" in plugins:
                 embed_var.add_field(name="⚠ FastAsyncWorldEdit",
@@ -398,35 +398,36 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ network-compression-threshold",
                                     value="Set this to -1 in server.properties for a bungee server like yours.",
                                     inline=True)
-            if monsters_spawn_limit == 70:
+            # TODO monster spawn limit should have an equasion based on mob spawn range
+            if monsters_spawn_limit > 20:
                 embed_var.add_field(name="⚠ spawn-limits.monsters",
                                     value="Decrease this in bukkit.yml.\nRecommended: 15.",
                                     inline=True)
-            if animals_spawn_limit == 10:
+            if animals_spawn_limit > 5:
                 embed_var.add_field(name="⚠ spawn-limits.animals",
                                     value="Decrease this in bukkit.yml.\nRecommended: 3.",
                                     inline=True)
-            if water_animals_spawn_limit == 15:
+            if water_animals_spawn_limit > 5:
                 embed_var.add_field(name="⚠ spawn-limits.water-animals",
                                     value="Decrease this in bukkit.yml.\nRecommended: 2.",
                                     inline=True)
-            if water_ambient_spawn_limit == 20:
+            if water_ambient_spawn_limit > 5:
                 embed_var.add_field(name="⚠ spawn-limits.water-ambient",
                                     value="Decrease this in bukkit.yml.\nRecommended: 2.",
                                     inline=True)
-            if ambient_spawn_limit == 15:
+            if ambient_spawn_limit > 3:
                 embed_var.add_field(name="⚠ spawn-limits.ambient",
                                     value="Decrease this in bukkit.yml.\nRecommended: 1.",
                                     inline=True)
-            if chunk_gc_period == 600:
+            if chunk_gc_period >= 600:
                 embed_var.add_field(name="⚠ chunk-gc.period-in-ticks",
                                     value="Decrease this in bukkit.yml.\nRecommended: 400.",
                                     inline=True)
-            if ticks_per_monster_spawns == 1:
+            if ticks_per_monster_spawns < 4:
                 embed_var.add_field(name="⚠ ticks-per.monster-spawns",
                                     value="Increase this in bukkit.yml.\nRecommended: 4.",
                                     inline=True)
-            if view_distance == 10 and spigot_view_distance == "default":
+            if view_distance > 4 and spigot_view_distance == "default":
                 embed_var.add_field(name="⚠ view-distance",
                                     value="Decrease this from default (10) in spigot.yml. "
                                           "Recommended: 3.",
@@ -442,27 +443,27 @@ class Timings(commands.Cog):
                                         value="Decrease this in spigot.yml. "
                                               "Recommended: " + str(spigot_view_distance - 1) + ".",
                                         inline=True)
-            if animals_entity_activation_range == 32:
+            if animals_entity_activation_range > 8:
                 embed_var.add_field(name="⚠ entity-activation-range.animals",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 6.",
                                     inline=True)
-            if monsters_entity_activation_range == 32:
+            if monsters_entity_activation_range > 20:
                 embed_var.add_field(name="⚠ entity-activation-range.monsters",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 16.",
                                     inline=True)
-            if misc_entity_activation_range == 16:
+            if misc_entity_activation_range > 8:
                 embed_var.add_field(name="⚠ entity-activation-range.misc",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 4.",
                                     inline=True)
-            if water_entity_activation_range == 16:
+            if water_entity_activation_range > 12:
                 embed_var.add_field(name="⚠ entity-activation-range.water",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 12.",
                                     inline=True)
-            if villagers_entity_activation_range == 32:
+            if villagers_entity_activation_range > 16:
                 embed_var.add_field(name="⚠ entity-activation-range.villagers",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 16.",
@@ -471,52 +472,52 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ tick-inactive-villagers",
                                     value="Disable this in spigot.yml.",
                                     inline=True)
-            if wake_up_inactive_animals_max_per_tick == 4:
+            if wake_up_inactive_animals_max_per_tick > 2:
                 embed_var.add_field(name="⚠ wake-up-inactive.animals-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 2.",
                                     inline=True)
-            if wake_up_inactive_animals_for == 100:
+            if wake_up_inactive_animals_for > 40:
                 embed_var.add_field(name="⚠ wake-up-inactive.animals-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 40.",
                                     inline=True)
-            if wake_up_inactive_monsters_max_per_tick == 8:
+            if wake_up_inactive_monsters_max_per_tick > 4:
                 embed_var.add_field(name="⚠ wake-up-inactive.monsters-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 4.",
                                     inline=True)
-            if wake_up_inactive_monsters_for == 100:
+            if wake_up_inactive_monsters_for > 60:
                 embed_var.add_field(name="⚠ wake-up-inactive.monsters-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 60.",
                                     inline=True)
-            if wake_up_inactive_villagers_max_per_tick == 4:
+            if wake_up_inactive_villagers_max_per_tick > 1:
                 embed_var.add_field(name="⚠ wake-up-inactive.villagers-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 1.",
                                     inline=True)
-            if wake_up_inactive_villagers_for == 100:
+            if wake_up_inactive_villagers_for > 20:
                 embed_var.add_field(name="⚠ wake-up-inactive.villagers-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 20.",
                                     inline=True)
-            if wake_up_inactive_flying_monsters_max_per_tick == 8:
+            if wake_up_inactive_flying_monsters_max_per_tick > 1:
                 embed_var.add_field(name="⚠ wake-up-inactive.flying-monsters-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 1.",
                                     inline=True)
-            if wake_up_inactive_flying_monsters_for == 100:
+            if wake_up_inactive_flying_monsters_for > 60:
                 embed_var.add_field(name="⚠ wake-up-inactive.flying-monsters-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 60.",
                                     inline=True)
-            if item_merge_radius == "true":
+            if item_merge_radius < 3.5:
                 embed_var.add_field(name="⚠ merge-radius.item",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 4.0.",
                                     inline=True)
-            if exp_merge_radius == "true":
+            if exp_merge_radius < 5.0:
                 embed_var.add_field(name="⚠ merge-radius.exp",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 6.0.",
@@ -525,20 +526,20 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ nerf-spawner-mobs",
                                     value="Enable this in spigot.yml.",
                                     inline=True)
-            if arrow_despawn_rate == 1200:
+            if arrow_despawn_rate > 300:
                 embed_var.add_field(name="⚠ arrow-despawn-rate",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 300.",
                                     inline=True)
-            if max_entity_collisions == 8:
+            if max_entity_collisions > 2:
                 embed_var.add_field(name="⚠ max-entity-collisions",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 2.",
                                     inline=True)
-            if max_auto_save_chunks_per_tick == 24:
+            if max_auto_save_chunks_per_tick > 8:
                 embed_var.add_field(name="⚠ max-auto-save-chunks-per-tick",
                                     value="Decrease this in paper.yml. "
-                                          "Recommended: 6.",
+                                          "Recommended: 8.",
                                     inline=True)
             if optimize_explosions == "false":
                 embed_var.add_field(name="⚠ optimize-explosions",
@@ -553,21 +554,22 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ disable-chest-cat-detection",
                                     value="Enable this in paper.yml.",
                                     inline=True)
-            if container_update_tick_rate == "false":
+            if container_update_tick_rate < 3:
                 embed_var.add_field(name="⚠ container-update-tick-rate",
                                     value="Increase this in paper.yml. "
                                           "Recommended: 3.",
                                     inline=True)
-            if grass_spread_tick_rate == 1:
+            if grass_spread_tick_rate < 4:
                 embed_var.add_field(name="⚠ grass-spread-tick-rate",
                                     value="Increase this in paper.yml. "
                                           "Recommended: 4",
                                     inline=True)
-            if soft_despawn_range == 32:
+            if soft_despawn_range > 28:
                 embed_var.add_field(name="⚠ despawn-ranges.soft",
                                     value="Decrease this in paper.yml. "
                                           "Recommended: 28",
                                     inline=True)
+            # TODO despawn ranges should have math done based on view-distance
             if hard_despawn_range == 128:
                 embed_var.add_field(name="⚠ despawn-ranges.hard",
                                     value="Decrease this in paper.yml. "
@@ -609,7 +611,7 @@ class Timings(commands.Cog):
                                     inline=True)
             if enable_treasure_maps == "true":
                 embed_var.add_field(name="⚠ enable-treasure-maps",
-                                    value="Disable this in paper.yml. Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away.",
+                                    value="Disable this in paper.yml. Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away.",
                                     inline=True)
 
             if "Purpur" in version:
@@ -670,17 +672,17 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="⚠ dolphin.disable-treasure-searching",
                                         value="Enable this in purpur.yml.",
                                         inline=True)
-                if brain_ticks == 1:
+                if brain_ticks < 4:
                     embed_var.add_field(name="⚠ villager.brain-ticks",
                                         value="Increase this in purpur.yml. "
                                               "Recommended: 4.",
                                         inline=True)
-                if iron_golem_radius == 0:
+                if iron_golem_radius < 32:
                     embed_var.add_field(name="⚠ spawn-iron-golem.radius",
                                         value="Set a value in purpur.yml. "
                                               "Recommended: 32.",
                                         inline=True)
-                if iron_golem_limit == 0:
+                if iron_golem_limit < 5:
                     embed_var.add_field(name="⚠ spawn-iron-golem.limit",
                                         value="Set a value in purpur.yml. "
                                               "Recommended: 5.",
