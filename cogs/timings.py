@@ -996,7 +996,7 @@ class Timings(commands.Cog):
             teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
             if teleport_if_outside_border == "false":
                 embed_var.add_field(name="⚠ player.teleport-if-outside-border",
-                                    value="Disable this in purpur.yml.",
+                                    value="Enable this in purpur.yml.",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
