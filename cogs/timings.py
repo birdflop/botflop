@@ -59,7 +59,7 @@ class Timings(commands.Cog):
             # server.properties
             view_distance = None
             network_compression_threshold = None
-            if "Purpur" in version:
+            if "Purpur" in version or "Yatopia" in version:
                 view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
                 network_compression_threshold = int(
                     r["timingsMaster"]["config"]["server.properties"]["network-compression-threshold"])
@@ -71,8 +71,10 @@ class Timings(commands.Cog):
             ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
             animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
             water_animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
-            chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
-
+            try:
+                chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
+            except TypeError:
+                chunk_gc_period = 0
             # spigot.yml
             bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
             save_user_cache_on_stop_only = r["timingsMaster"]["config"]["spigot"]["settings"][
