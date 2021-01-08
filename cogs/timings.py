@@ -715,7 +715,7 @@ class Timings(commands.Cog):
                 embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations."
             else:
                 embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
-        except TypeError:
+        except KeyError:
             embed_var.add_field(name="⚠ Outdated Server",
                                 value="Please update your server jar.",
                                 inline=True)
