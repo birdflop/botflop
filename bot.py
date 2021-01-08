@@ -7,6 +7,8 @@ import sys
 from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, MissingPermissions
 from dotenv import load_dotenv
+import aiohttp
+import asyncio
 
 # import subprocess
 
@@ -284,6 +286,7 @@ async def updater():
     for client in data['users']:
         i += 1
         member = guild.get_member(client['discord_id'])
+        print(client['discord_id'])
         if member:
             api_key = client['client_api_key']
             url = "https://panel.birdflop.com/api/client"
@@ -374,7 +377,7 @@ async def updater():
     file = open('modified_servers.json', 'r')
     modified_servers = json.load(file)
     file.close()
-
+    
     i = -1
 
     for server in servers_json_response['data']:
