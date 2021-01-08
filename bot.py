@@ -36,6 +36,7 @@ logging.basicConfig(filename='console.log',
                     )
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
+
 @bot.event
 async def on_ready():
     # Marks bot as running
@@ -205,9 +206,13 @@ async def on_message(message):
                 embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
                 embed_var.description = response
                 await message.channel.send(embed=embed_var)
-                
+
     timings = bot.get_cog('Timings')
-    await timings.analyze_timings(message)
+    try:
+        await timings.analyze_timings(message)
+    except TypeError:
+        await message.channel.send("Uhh I seem to be broken. Please wait one moment as I get a dev to fix me..."
+                                   "\n<@322764955516665856> YOU GOT A BUG COME FIX IT.")
 
     await bot.process_commands(message)
 
@@ -477,6 +482,7 @@ async def updater():
 async def before_updater():
     logging.info('waiting to enter loop')
     await bot.wait_until_ready()
+
 
 for file_name in os.listdir('./cogs'):
     if file_name.endswith('.py'):
