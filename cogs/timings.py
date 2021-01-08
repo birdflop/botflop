@@ -167,7 +167,7 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="⚠ Low Memory",
                                         value="Allocate at least 6-10GB of ram to your server if you can afford it.",
                                         inline=True)
-            if "1.8.0_" in jvm_version:
+            if "1.8.0_" in jvm_version or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                 embed_var.add_field(name="⚠ Java Version",
                                     value="Use Java 11.",
                                     inline=True)
@@ -183,15 +183,14 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="⚠ online-mode",
                                     value="Enable this in server.properties for security.",
                                     inline=True)
-            if network_compression_threshold == 256:
-                if bungeecord == "false":
-                    embed_var.add_field(name="⚠ network-compression-threshold",
-                                        value="Increase this in server.properties. Recommended: 512.",
-                                        inline=True)
-                else:
-                    embed_var.add_field(name="⚠ network-compression-threshold",
-                                        value="Set this to -1 in server.properties for a bungee server like yours.",
-                                        inline=True)
+            if network_compression_threshold == 256 and bungeecord == "false":
+                embed_var.add_field(name="⚠ network-compression-threshold",
+                                    value="Increase this in server.properties. Recommended: 512.",
+                                    inline=True)
+            if network_compression_threshold != -1 and bungeecord == "true":
+                embed_var.add_field(name="⚠ network-compression-threshold",
+                                    value="Set this to -1 in server.properties for a bungee server like yours.",
+                                    inline=True)
 
             # Plugins
             if "ClearLag" in plugins:
@@ -214,9 +213,9 @@ class Timings(commands.Cog):
                                     value="You probably don't need LimitPillagers as Paper already adds its features. "
                                           "Remove LimitPillagers.",
                                     inline=True)
-            if "VillagerOptimizer" in plugins:
-                embed_var.add_field(name="⚠ VillagerOptimizer",
-                                    value="You probably don't need VillagerOptimizer as Paper already adds its features. "
+            if "VillagerOptimiser" in plugins:
+                embed_var.add_field(name="⚠ VillagerOptimiser",
+                                    value="You probably don't need VillagerOptimiser as Paper already adds its features. "
                                           "See entity-activation-range in spigot.yml.",
                                     inline=True)
             if "VillagerLobotomizatornator" in plugins and "Purpur" in version:
@@ -364,11 +363,7 @@ class Timings(commands.Cog):
                                     value="Decrease this from default (10) in spigot.yml. "
                                           "Recommended: 3.",
                                     inline=True)
-            if save_user_cache_on_stop_only == "false":
-                embed_var.add_field(name="⚠ save-user-cache-on-stop-only",
-                                    value="Enable this in spigot.yml.",
-                                    inline=True)
-            if mob_spawn_range == 8 and type(view_distance) == "int" and view_distance < 7 and type(spigot_view_distance) == "int" and spigot_view_distance < 7:
+            if mob_spawn_range == 8 and view_distance < 7 and spigot_view_distance != "default" and spigot_view_distance < 7:
                 if spigot_view_distance == -1:
                     embed_var.add_field(name="⚠ mob-spawn-range",
                                         value="Decrease this in spigot.yml. "
@@ -487,7 +482,7 @@ class Timings(commands.Cog):
                                           "Recommended: 2.",
                                     inline=True)
             if disable_chest_cat_detection == "false":
-                embed_var.add_field(name="⚠ disable-chest-cat-detection",
+                embed_var.add_field(name="⚠ disable_chest_cat_detection",
                                     value="Enable this in paper.yml.",
                                     inline=True)
             if container_update_tick_rate == "false":
@@ -556,24 +551,24 @@ class Timings(commands.Cog):
                 lobotomize_enabled = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["lobotomize"]["enabled"]
 
                 if no_tick_view_distance == -1:
-                    if spigot_view_distance != "default" or view_distance != 10:
-                        if spigot_view_distance == "default" and view_distance > 3:
+                    if spigot_view_distance == "default":
+                        if type(view_distance) == "int" and view_distance >= 4:
                             embed_var.add_field(name="⚠ no-tick-view-distance",
                                                 value="Set a value in paper.yml. "
                                                       "Recommended: " + str(view_distance) + ". And reduce view-distance in server.properties. Recommended: 3.",
                                                 inline=True)
-                        elif type(spigot_view_distance) == "int" and int(spigot_view_distance) > 3:
-                            embed_var.add_field(name="⚠ no-tick-view-distance",
-                                                value="Set a value in paper.yml. "
-                                                      "Recommended: " + str(spigot_view_distance) + ". And reduce view-distance in spigot.yml. Recommended: 3.",
-                                                inline=True)
+                    elif spigot_view_distance >= 4:
+                        embed_var.add_field(name="⚠ no-tick-view-distance",
+                                            value="Set a value in paper.yml. "
+                                                  "Recommended: " + str(spigot_view_distance) + ". And reduce view-distance in spigot.yml. Recommended: 3.",
+                                            inline=True)
                 if use_alternate_keepalive == "false" and "TCPShield" not in plugins:
                     embed_var.add_field(name="⚠ use-alternate-keepalive",
                                         value="Enable this in purpur.yml.",
                                         inline=True)
                 if use_alternate_keepalive == "true" and "TCPShield" in plugins:
                     embed_var.add_field(name="⚠ use-alternate-keepalive",
-                                        value="Disable this in purpur.yml.",
+                                        value="Disable this in purpur.yml. It causes issues with TCPShield.",
                                         inline=True)
                 if dont_send_useless_entity_packets == "false":
                     embed_var.add_field(name="⚠ dont-send-useless-entity-packets",
@@ -626,8 +621,7 @@ class Timings(commands.Cog):
                             value="Please update.",
                             inline=True)
 
-        await message.channel.send(embed=embed_var)
-        
+        await message.channel.send(embed=embed_var)        
     
 def setup(bot):
     bot.add_cog(Timings(bot))
