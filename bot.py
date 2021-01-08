@@ -217,12 +217,8 @@ async def on_message(message):
                         await message.channel.send(embed=embed_var)
 
     timings = bot.get_cog('Timings')
-    try:
-        await timings.analyze_timings(message)
-    except TypeError:
-        await message.channel.send("Uhh I seem to be broken. Please wait one moment as I get a dev to fix me..."
-                                   "\n<@322764955516665856> YOU GOT A BUG COME FIX IT.")
 
+    await timings.analyze_timings(message)
     await bot.process_commands(message)
 
 
