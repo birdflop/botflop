@@ -186,8 +186,7 @@ class Timings(commands.Cog):
                     "no-tick-view-distance"])
             phantoms_only_insomniacs = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["phantoms-only-attack-insomniacs"]
             enable_treasure_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["enable-treasure-maps"]
-            projectile_load_save = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                                           "projectile-load-save-per-chunk-limit"])
+
 
             if "Yatopia" in version:
                 embed_var.add_field(name="⚠ Yatopia",
@@ -387,7 +386,7 @@ class Timings(commands.Cog):
                                         value="This plugin was made by Songoda. You should remove it.",
                                         inline=True)
 
-            if online_mode == "false" and bungeecord == "false":
+            if not online_mode and bungeecord == "false":
                 embed_var.add_field(name="⚠ online-mode",
                                     value="Enable this in server.properties for security.",
                                     inline=True)
@@ -610,11 +609,7 @@ class Timings(commands.Cog):
                                     inline=True)
             if enable_treasure_maps == "true":
                 embed_var.add_field(name="⚠ enable-treasure-maps",
-                                    value="Enable this in paper.yml.",
-                                    inline=True)
-            if projectile_load_save == -1:
-                embed_var.add_field(name="⚠ projectile-load-save-per-chunk-limit",
-                                    value="Set a value in paper.yml. Recommended: 8.",
+                                    value="Disable this in paper.yml. Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away.",
                                     inline=True)
 
             if "Purpur" in version:
@@ -642,7 +637,8 @@ class Timings(commands.Cog):
                 lobotomize_enabled = \
                     r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
                         "lobotomize"]["enabled"]
-                teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["game-mechanics"]["player"]["teleport-if-outside-border"]
+                teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
+                projectile_load_save = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["projectile-load-save-per-chunk-limit"])
 
                 if no_tick_view_distance == -1:
                     if spigot_view_distance == "default":
@@ -705,6 +701,10 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="⚠ player.teleport-if-outside-border",
                                         value="Disable this in purpur.yml.",
                                         inline=True)
+                if projectile_load_save == -1:
+                    embed_var.add_field(name="⚠ projectile-load-save-per-chunk-limit",
+                                        value="Set a value in paper.yml. Recommended: 8.",
+                                        inline=True)
             if len(embed_var.fields) == 0:
                 embed_var.add_field(name="✅ All good",
                                     value="Analyzed with no issues")
@@ -715,9 +715,9 @@ class Timings(commands.Cog):
                 embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations."
             else:
                 embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
-        except KeyError:
-            embed_var.add_field(name="⚠ Outdated",
-                                value="Please update.",
+        except TypeError:
+            embed_var.add_field(name="⚠ Outdated Server",
+                                value="Please update your server jar.",
                                 inline=True)
 
         await message.channel.send(embed=embed_var)
