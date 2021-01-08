@@ -44,7 +44,7 @@ class Timings(commands.Cog):
             await message.channel.send(embed=embed_var)
             return
 
-        embed_var = discord.Embed(title="Timings Analysis for ", color=0x55ffff)
+        embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
         embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
         embed_var.description = timings_url
         unchecked = 0
