@@ -7,187 +7,140 @@ class Timings(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.TIMINGS_TITLE = "Timings Analysis"
+        self.TIMINGS_TITLE_COLOR = 0x55ffff
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
     async def analyze_timings(self, message):
-        enterless_message = message.content.replace("\n", " ")
-        words = enterless_message.split(" ")
+        words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
+        embed_var = discord.Embed(title=self.TIMINGS_TITLE, color=self.TIMINGS_TITLE_COLOR)
+
         for word in words:
             if word.startswith("https://timings.") and "/?id=" in word:
                 timings_url = word
                 break
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
-                embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
                                     value="Upgrade to [Purpur](https://ci.pl3x.net/job/Purpur/).",
                                     inline=True)
                 await message.channel.send(embed=embed_var)
                 return
+
         if timings_url == "":
             return
         if "#" in timings_url:
             timings_url = timings_url.split("#")[0]
         if "?id=" not in timings_url:
             return
+
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
-        r = requests.get(timings_json).json()
 
+        r = requests.get(timings_json).json()
         if r is None:
-            embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.",
                                 inline=True)
             await message.channel.send(embed=embed_var)
             return
 
-        embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
         embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
 
         try:
-            version = r["timingsMaster"]["version"]
-            online_mode = r["timingsMaster"]["onlinemode"]
-            timing_cost = int(r["timingsMaster"]["system"]["timingcost"])
-            jvm_version = r["timingsMaster"]["system"]["jvmversion"]
-            cpu = int(r["timingsMaster"]["system"]["cpu"])
-            flags = r["timingsMaster"]["system"]["flags"]
-            plugins = r["timingsMaster"]["plugins"]
+            TIMINGS_MASTER = r["timingsMaster"]
+            version = TIMINGS_MASTER["version"]
+            online_mode = TIMINGS_MASTER["onlinemode"]
+            timing_cost = int(TIMINGS_MASTER["system"]["timingcost"])
+            jvm_version = TIMINGS_MASTER["system"]["jvmversion"]
+            cpu = int(TIMINGS_MASTER["system"]["cpu"])
+            flags = TIMINGS_MASTER["system"]["flags"]
+            plugins = TIMINGS_MASTER["plugins"]
+
+
+            CONFIG_SERVER = TIMINGS_MASTER["config"]["server.properties"]
+            CONFIG_BUKKIT = TIMINGS_MASTER["config"]["bukkit"]
+            CONFIG_SPIGOT = TIMINGS_MASTER["config"]["spigot"]
+            CONFIG_PAPER = TIMINGS_MASTER["config"]["paper"]
+
+            CONFIG_PURPUR = None
+            if "purpur" in TIMINGS_MASTER["config"]:
+                CONFIG_PURPUR = TIMINGS_MASTER["config"]["purpur"]
 
             # server.properties
             view_distance = None
             network_compression_threshold = None
             if "Purpur" in version or "Yatopia" in version:
-                view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
-                network_compression_threshold = int(
-                    r["timingsMaster"]["config"]["server.properties"]["network-compression-threshold"])
+                view_distance = int(CONFIG_SERVER["view-distance"])
+                network_compression_threshold = int(CONFIG_SERVER["network-compression-threshold"])
 
             # bukkit.yml
-            ticks_per_monster_spawns = int(r["timingsMaster"]["config"]["bukkit"]["ticks-per"]["monster-spawns"])
-            monsters_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["monsters"])
-            water_ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-ambient"])
-            ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
-            animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
-            water_animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
+            ticks_per_monster_spawns = int(CONFIG_BUKKIT["ticks-per"]["monster-spawns"])
+            monsters_spawn_limit = int(CONFIG_BUKKIT["spawn-limits"]["monsters"])
+            water_ambient_spawn_limit = int(CONFIG_BUKKIT["spawn-limits"]["water-ambient"])
+            ambient_spawn_limit = int(CONFIG_BUKKIT["spawn-limits"]["ambient"])
+            animals_spawn_limit = int(CONFIG_BUKKIT["spawn-limits"]["animals"])
+            water_animals_spawn_limit = int(CONFIG_BUKKIT["spawn-limits"]["water-animals"])
             try:
-                chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
+                chunk_gc_period = int(CONFIG_BUKKIT["chunk-gc"]["period-in-ticks"])
             except TypeError:
                 chunk_gc_period = 0
+
             # spigot.yml
-            bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            save_user_cache_on_stop_only = r["timingsMaster"]["config"]["spigot"]["settings"][
-                "save-user-cache-on-stop-only"]
-            mob_spawn_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["mob-spawn-range"])
-            spigot_view_distance = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
-            animals_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "animals"])
-            monsters_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "monsters"])
-            raiders_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "raiders"])
-            misc_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["misc"])
-            water_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["water"])
-            villagers_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "villagers"])
-            flying_monsters_entity_activation_range = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "flying-monsters"])
-            tick_inactive_villagers = \
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "tick-inactive-villagers"]
-            nerf_spawner_mobs = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["nerf-spawner-mobs"]
-            wake_up_inactive_villagers_every = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_villagers_for = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_flying_monsters_for = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_animals_every = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_villagers_max_per_tick = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_animals_for = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_monsters_max_per_tick = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_flying_monsters_max_per_tick = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_flying_monsters_every = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_monsters_every = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_animals_max_per_tick = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            wake_up_inactive_monsters_for = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-            arrow_despawn_rate = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["arrow-despawn-rate"])
-            item_merge_radius = float(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["item"])
-            exp_merge_radius = float(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["exp"])
-            max_entity_collisions = int(
-                r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["max-entity-collisions"])
+            bungeecord = CONFIG_SPIGOT["settings"]["bungeecord"]
+            save_user_cache_on_stop_only = CONFIG_SPIGOT["settings"]["save-user-cache-on-stop-only"]
+
+            CONFIG_SPIGOT_DEFAULT_WORLD = CONFIG_SPIGOT["world-settings"]["default"]
+            mob_spawn_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["mob-spawn-range"])
+            spigot_view_distance = CONFIG_SPIGOT_DEFAULT_WORLD["view-distance"]
+            nerf_spawner_mobs = CONFIG_SPIGOT_DEFAULT_WORLD["nerf-spawner-mobs"]
+            animals_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["animals"])
+            monsters_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["monsters"])
+            raiders_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["raiders"])
+            misc_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["misc"])
+            water_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["water"])
+            villagers_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["villagers"])
+            flying_monsters_entity_activation_range = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["flying-monsters"])
+            tick_inactive_villagers = CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["tick-inactive-villagers"]
+            wake_up_inactive_villagers_every = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_villagers_for = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_flying_monsters_for = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_animals_every = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_villagers_max_per_tick = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_animals_for = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_monsters_max_per_tick = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_flying_monsters_max_per_tick = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_flying_monsters_every = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_monsters_every = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_animals_max_per_tick = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            wake_up_inactive_monsters_for = int(CONFIG_SPIGOT_DEFAULT_WORLD["entity-activation-range"]["wake-up-inactive"]["villagers-every"])
+            arrow_despawn_rate = int(CONFIG_SPIGOT_DEFAULT_WORLD["arrow-despawn-rate"])
+            item_merge_radius = float(CONFIG_SPIGOT_DEFAULT_WORLD["merge-radius"]["item"])
+            exp_merge_radius = float(CONFIG_SPIGOT_DEFAULT_WORLD["merge-radius"]["exp"])
+            max_entity_collisions = int(CONFIG_SPIGOT_DEFAULT_WORLD["max-entity-collisions"])
 
             # paper.yml
-            max_auto_save_chunks_per_tick = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
-            optimize_explosions = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "optimize-explosions"]
-            mob_spawner_tick_rate = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["mob-spawner-tick-rate"])
-            disable_chest_cat_detection = \
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["game-mechanics"][
-                    "disable-chest-cat-detection"]
-            container_update_tick_rate = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["container-update-tick-rate"])
-            grass_spread_tick_rate = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["grass-spread-tick-rate"])
-            soft_despawn_range = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            hard_despawn_range = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            hopper_disable_move_event = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["hopper"][
-                "disable-move-event"]
-            non_player_arrow_despawn_rate = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["non-player-arrow-despawn-rate"])
-            creative_arrow_despawn_rate = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["creative-arrow-despawn-rate"])
-            prevent_moving_into_unloaded_chunks = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "prevent-moving-into-unloaded-chunks"]
-            eigencraft_redstone = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "use-faster-eigencraft-redstone"]
-            armor_stands_tick = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
-            per_player_mob_spawns = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "per-player-mob-spawns"]
-            alt_item_despawn_rate_enabled = \
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
-            no_tick_view_distance = int(
-                r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["viewdistances"][
-                    "no-tick-view-distance"])
-            phantoms_only_insomniacs = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["phantoms-only-attack-insomniacs"]
-            enable_treasure_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["enable-treasure-maps"]
+            max_auto_save_chunks_per_tick = int(CONFIG_PAPER["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
+            optimize_explosions = CONFIG_PAPER["world-settings"]["default"]["optimize-explosions"]
+            mob_spawner_tick_rate = int(CONFIG_PAPER["world-settings"]["default"]["mob-spawner-tick-rate"])
+            disable_chest_cat_detection = CONFIG_PAPER["world-settings"]["default"]["game-mechanics"]["disable-chest-cat-detection"]
+            container_update_tick_rate = int(CONFIG_PAPER["world-settings"]["default"]["container-update-tick-rate"])
+            grass_spread_tick_rate = int(CONFIG_PAPER["world-settings"]["default"]["grass-spread-tick-rate"])
+            soft_despawn_range = int(CONFIG_PAPER["world-settings"]["default"]["despawn-ranges"]["soft"])
+            hard_despawn_range = int(CONFIG_PAPER["world-settings"]["default"]["despawn-ranges"]["soft"])
+            hopper_disable_move_event = CONFIG_PAPER["world-settings"]["default"]["hopper"]["disable-move-event"]
+            non_player_arrow_despawn_rate = int(CONFIG_PAPER["world-settings"]["default"]["non-player-arrow-despawn-rate"])
+            creative_arrow_despawn_rate = int(CONFIG_PAPER["world-settings"]["default"]["creative-arrow-despawn-rate"])
+            prevent_moving_into_unloaded_chunks = CONFIG_PAPER["world-settings"]["default"]["prevent-moving-into-unloaded-chunks"]
+            eigencraft_redstone = CONFIG_PAPER["world-settings"]["default"]["use-faster-eigencraft-redstone"]
+            armor_stands_tick = CONFIG_PAPER["world-settings"]["default"]["armor-stands-tick"]
+            per_player_mob_spawns = CONFIG_PAPER["world-settings"]["default"]["per-player-mob-spawns"]
+            alt_item_despawn_rate_enabled = CONFIG_PAPER["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
+            no_tick_view_distance = int(CONFIG_PAPER["world-settings"]["default"]["viewdistances"]["no-tick-view-distance"])
+            phantoms_only_insomniacs = CONFIG_PAPER["world-settings"]["default"]["phantoms-only-attack-insomniacs"]
+            enable_treasure_maps = CONFIG_PAPER["world-settings"]["default"]["enable-treasure-maps"]
 
 
             if "Yatopia" in version:
@@ -383,7 +336,7 @@ class Timings(commands.Cog):
                                           "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).",
                                     inline=True)
             for plugin in plugins:
-                if "Songoda" in r["timingsMaster"]["plugins"][plugin]["authors"]:
+                if "Songoda" in TIMINGS_MASTER["plugins"][plugin]["authors"]:
                     embed_var.add_field(name="⚠ " + plugin,
                                         value="This plugin was made by Songoda. You should remove it.",
                                         inline=True)
@@ -433,7 +386,9 @@ class Timings(commands.Cog):
                                     value="Decrease this from default (10) in spigot.yml. "
                                           "Recommended: 3.",
                                     inline=True)
-            if mob_spawn_range is not None and view_distance is not None and mob_spawn_range >= 8 and view_distance < 7 and spigot_view_distance != "default" and spigot_view_distance is not None and int(spigot_view_distance) < 7:
+            if (mob_spawn_range is not None
+                and view_distance is not None and mob_spawn_range >= 8 and view_distance < 7
+                and spigot_view_distance != "default" and spigot_view_distance is not None and int(spigot_view_distance) < 7):
                 if spigot_view_distance == -1:
                     embed_var.add_field(name="⚠ mob-spawn-range",
                                         value="Decrease this in spigot.yml. "
@@ -615,32 +570,17 @@ class Timings(commands.Cog):
                                     inline=True)
 
             if "Purpur" in version:
-                use_alternate_keepalive = r["timingsMaster"]["config"]["purpur"]["settings"]["use-alternate-keepalive"]
-                dont_send_useless_entity_packets = r["timingsMaster"]["config"]["purpur"]["settings"][
-                    "dont-send-useless-entity-packets"]
-                disable_treasure_searching = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["dolphin"][
-                        "disable-treasure-searching"]
-                brain_ticks = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "brain-ticks"])
-                iron_golem_radius = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["radius"])
-                iron_golem_limit = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["limit"])
-                aggressive_towards_villager_when_lagging = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["zombie"][
-                        "aggressive-towards-villager-when-lagging"]
-                entities_can_use_portals = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"][
-                        "entities-can-use-portals"]
-                lobotomize_enabled = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "lobotomize"]["enabled"]
-                teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
-                projectile_load_save = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["projectile-load-save-per-chunk-limit"])
+                use_alternate_keepalive = CONFIG_PURPUR["settings"]["use-alternate-keepalive"]
+                dont_send_useless_entity_packets = CONFIG_PURPUR["settings"]["dont-send-useless-entity-packets"]
+                disable_treasure_searching = CONFIG_PURPUR["world-settings"]["default"]["mobs"]["dolphin"]["disable-treasure-searching"]
+                brain_ticks = int(CONFIG_PURPUR["world-settings"]["default"]["mobs"]["villager"]["brain-ticks"])
+                iron_golem_radius = int(CONFIG_PURPUR["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["radius"])
+                iron_golem_limit = int(CONFIG_PURPUR["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["limit"])
+                aggressive_towards_villager_when_lagging = CONFIG_PURPUR["world-settings"]["default"]["mobs"]["zombie"]["aggressive-towards-villager-when-lagging"]
+                entities_can_use_portals = CONFIG_PURPUR["world-settings"]["default"]["gameplay-mechanics"]["entities-can-use-portals"]
+                lobotomize_enabled = CONFIG_PURPUR["world-settings"]["default"]["mobs"]["villager"]["lobotomize"]["enabled"]
+                teleport_if_outside_border = CONFIG_PURPUR["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
+                projectile_load_save = int(CONFIG_PAPER["world-settings"]["default"]["projectile-load-save-per-chunk-limit"])
 
                 if no_tick_view_distance == -1:
                     if spigot_view_distance == "default":
