@@ -230,7 +230,7 @@ class Timings(commands.Cog):
             if "Spartan" in plugins:
                 embed_var.add_field(name="⚠ Spartan",
                                     value="Spartan is a laggy anticheat. "
-                                          "Consider replacing it with [Matrix](https://matrix.rip/).",
+                                          "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/).",
                                     inline=True)
             if "IllegalStack" in plugins:
                 embed_var.add_field(name="⚠ IllegalStack",
