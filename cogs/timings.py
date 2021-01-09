@@ -169,6 +169,11 @@ class Timings(commands.Cog):
                                     value="Plugins that claim to remove lag actually cause more lag. "
                                           "Remove NoChunkLag.",
                                     inline=True)
+            if "ServerBooster" in plugins:
+                embed_var.add_field(name="⚠ ServerBooster",
+                                    value="Plugins that claim to remove lag actually cause more lag. "
+                                          "Remove ServerBooster.",
+                                    inline=True)
             if "LimitPillagers" in plugins:
                 embed_var.add_field(name="⚠ LimitPillagers",
                                     value="You probably don't need LimitPillagers as Paper already adds its features. "
