@@ -145,6 +145,10 @@ class Timings(commands.Cog):
                             embed_var.add_field(name="⚠ Aikar's Flags",
                                                 value="Your Xmx and Xms values must be equal with Aikar's flags.",
                                                 inline=True)
+            elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
+                embed_var.add_field(name="⚠ Outdated Flags",
+                                    value="Update [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).",
+                                    inline=True)
             else:
                 embed_var.add_field(name="⚠ Aikar's Flags",
                                     value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).",
