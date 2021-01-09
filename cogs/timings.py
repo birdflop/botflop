@@ -259,7 +259,7 @@ class Timings(commands.Cog):
             if "ImageOnMap" in plugins:
                 embed_var.add_field(name="❌ ImageOnMap",
                                     value="This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
-                                          "Consider replacing it with [DrMap](https://www.spigotmc.org/resources/drmap.87368/).",
+                                          "Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).",
                                     inline=True)
             if "CrazyActions" in plugins:
                 embed_var.add_field(name="❌ CrazyAuctions",
