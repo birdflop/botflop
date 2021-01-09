@@ -46,7 +46,7 @@ class Timings(commands.Cog):
 
         embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
         embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
-        embed_var.description = timings_url
+        embed_var.url = timings_url
         unchecked = 0
 
         try:
