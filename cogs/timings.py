@@ -135,8 +135,8 @@ class Timings(commands.Cog):
                         min_mem = 0
                         flaglist = flags.split(" ")
                         for flag in flaglist:
-                            if flag.startswith("-Xmx"):
-                                min_mem = flag.split("-Xmx")[1]
+                            if flag.startswith("-Xms"):
+                                min_mem = flag.split("-Xms")[1]
                                 min_mem = min_mem.replace("G", "000")
                                 min_mem = min_mem.replace("M", "")
                                 min_mem = min_mem.replace("g", "000")
