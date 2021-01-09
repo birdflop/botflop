@@ -117,32 +117,40 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="⚠ Outdated Flags",
                                         value="Add `-XX:G1MixedGCCountTarget=4` to flags",
                                         inline=True)
+                if "-Xmx" in flags:
+                    max_mem = 0
+                    flaglist = flags.split(" ")
+                    for flag in flaglist:
+                        if flag.startswith("-Xmx"):
+                            max_mem = flag.split("-Xmx")[1]
+                            max_mem = max_mem.replace("G", "000")
+                            max_mem = max_mem.replace("M", "")
+                            max_mem = max_mem.replace("g", "000")
+                            max_mem = max_mem.replace("m", "")
+                    if int(max_mem) < 5400:
+                        embed_var.add_field(name="⚠ Low Memory",
+                                            value="Allocate at least 6-10GB of ram to your server if you can afford it.",
+                                            inline=True)
+                    if "-Xms" in flags:
+                        min_mem = 0
+                        flaglist = flags.split(" ")
+                        for flag in flaglist:
+                            if flag.startswith("-Xmx"):
+                                min_mem = flag.split("-Xmx")[1]
+                                min_mem = min_mem.replace("G", "000")
+                                min_mem = min_mem.replace("M", "")
+                                min_mem = min_mem.replace("g", "000")
+                                min_mem = min_mem.replace("m", "")
+                        if min_mem != max_mem:
+                            embed_var.add_field(name="⚠ Aikar's Flags",
+                                                value="Your Xmx and Xms values must be equal with Aikar's flags.",
+                                                inline=True)
             else:
                 embed_var.add_field(name="⚠ Aikar's Flags",
                                     value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
-
-        try:
-            flags = r["timingsMaster"]["system"]["flags"]
-            if "-Xmx" in flags:
-                max_mem = 0
-                flaglist = flags.split(" ")
-                for flag in flaglist:
-                    if flag.startswith("-Xmx"):
-                        max_mem = flag.split("-Xmx")[1]
-                        max_mem = max_mem.replace("G", "000")
-                        max_mem = max_mem.replace("M", "")
-                        max_mem = max_mem.replace("g", "000")
-                        max_mem = max_mem.replace("m", "")
-                if int(max_mem) < 5400:
-                    embed_var.add_field(name="⚠ Low Memory",
-                                        value="Allocate at least 6-10GB of ram to your server if you can afford it.",
-                                        inline=True)
-        except KeyError:
-            unchecked = unchecked + 1
-
         try:
             cpu = int(r["timingsMaster"]["system"]["cpu"])
             if cpu <= 2:
