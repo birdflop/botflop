@@ -27,9 +27,6 @@ guild_id = int(os.getenv('guild_id'))
 verification_channel = int(os.getenv('verification_channel'))
 verification_message = int(os.getenv('verification_message'))
 application_api_key = os.getenv('application_api_key')
-cookies = {
-    'pterodactyl_session': 'eyJpdiI6InhIVXp5ZE43WlMxUU1NQ1pyNWRFa1E9PSIsInZhbHVlIjoiQTNpcE9JV3FlcmZ6Ym9vS0dBTmxXMGtST2xyTFJvVEM5NWVWbVFJSnV6S1dwcTVGWHBhZzdjMHpkN0RNdDVkQiIsIm1hYyI6IjAxYTI5NDY1OWMzNDJlZWU2OTc3ZDYxYzIyMzlhZTFiYWY1ZjgwMjAwZjY3MDU4ZDYwMzhjOTRmYjMzNDliN2YifQ%3D%3D',
-}
 
 logging.basicConfig(filename='console.log',
                     level=logging.INFO,
@@ -50,7 +47,6 @@ async def on_message(message):
     # Account link
     if message.author != bot.user and message.guild == None:
         channel = message.channel
-        global cookies
         await channel.send("Processing, please wait...")
         # Potential API key, so tries it out
         if len(message.content) == 48:
@@ -62,10 +58,10 @@ async def on_message(message):
                 'Authorization': 'Bearer ' + message.content,
             }
 
-            # response = requests.get(url, headers=headers, cookies=cookies)
+            # response = requests.get(url, headers=headers)
             
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, cookies=cookies) as response:
+                async with session.get(url, headers=headers) as response:
             
                     # If API token is verified to be correct:
                     if response.status == 200:
@@ -112,7 +108,7 @@ async def on_message(message):
                                 }
 
                                 async with aiohttp.ClientSession() as session:
-                                    async with session.get(url, headers=headers, cookies=cookies) as response:
+                                    async with session.get(url, headers=headers) as response:
 
                                         # If API token is verified to be correct, continues
                                         if response.status == 200:
@@ -279,7 +275,6 @@ async def react(ctx, url, reaction):
 
 @tasks.loop(minutes=10)
 async def updater():
-    global cookies
     logging.info("Synchronizing roles")
     file = open('users.json', 'r')
     data = json.load(file)
@@ -297,7 +292,7 @@ async def updater():
                 'Authorization': 'Bearer ' + api_key,
             }
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, cookies=cookies) as response:
+                async with session.get(url, headers=headers) as response:
                     if response.status == 200:
                         # Formats response for servers in JSON format
                         servers_json_response = await response.json()
@@ -372,9 +367,9 @@ async def updater():
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + application_api_key,
     }
-    #response = requests.get(url, headers=headers, cookies=cookies)
+    #response = requests.get(url, headers=headers)
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers = headers, cookies = cookies) as response:
+        async with session.get(url, headers = headers) as response:
             servers_json_response = await response.json()
 
             file = open('modified_servers.json', 'r')
@@ -407,7 +402,7 @@ async def updater():
 
 
                     async with aiohttp.ClientSession() as session:
-                        async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, cookies=cookies, data=data) as response:
+                        async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, data=data) as response:
                             if response.status == 200:
                                 modified_servers['servers'].append({
                                     'uuid': str(server['attributes']['uuid'])
@@ -466,7 +461,6 @@ async def updater():
 #            #urllib.request.urlretrieve("https://www.spigotmc.org/resources/votingplugin.15358/download?version=373388",'/home/container/zzzcache/VotingPlugin2.jar')
 #
 #
-#            global cookies
 #
 #            headers = {
 #                'Accept': 'application/json',
@@ -474,7 +468,7 @@ async def updater():
 #                'Authorization': 'Bearer ' + command_client_api_key,
 #            }
 #
-#            response = requests.get(f'https://panel.birdflop.com/api/client/servers/{server}/files/upload', headers=headers, cookies=cookies)
+#            response = requests.get(f'https://panel.birdflop.com/api/client/servers/{server}/files/upload', headers=headers)
 #            print(str(response))
 #            update_json = response.json()
 #            transfer_url = update_json["attributes"]["url"]
