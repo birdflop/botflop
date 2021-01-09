@@ -86,7 +86,7 @@ class Timings(commands.Cog):
             timing_cost = int(r["timingsMaster"]["system"]["timingcost"])
             if timing_cost > 400:
                 embed_var.add_field(name="❌ Timingcost",
-                                    value="Your timingcost is " + str(timing_cost) + ". Find a Find a [better host](https://www.birdflop.com).",
+                                    value="Your timingcost is " + str(timing_cost) + ". Find a [better host](https://www.birdflop.com).",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
