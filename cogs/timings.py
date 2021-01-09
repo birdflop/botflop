@@ -51,14 +51,14 @@ class Timings(commands.Cog):
 
         try:
             version = r["timingsMaster"]["version"]
-            using_yatopia = "yatopia" in r["timingsMaster"]["config"]
             if "1.16.4" not in version:
                 embed_var.add_field(name="⚠ Legacy Build",
                                     value="Update to 1.16.4.",
                                     inline=True)
+            using_yatopia = "yatopia" in r["timingsMaster"]["config"]
             if using_yatopia:
                 embed_var.add_field(name="⚠ Yatopia",
-                                    value="Yatopia may be is prone to bugs. "
+                                    value="Yatopia is prone to bugs. "
                                           "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).",
                                     inline=True)
             elif "Paper" in version:
