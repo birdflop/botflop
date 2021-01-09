@@ -145,9 +145,9 @@ class Timings(commands.Cog):
 
         try:
             cpu = int(r["timingsMaster"]["system"]["cpu"])
-            if cpu < 4:
-                embed_var.add_field(name="⚠ Cores",
-                                    value="You have only " + str(cpu) + " core(s). Find a better host.",
+            if cpu <= 2:
+                embed_var.add_field(name="⚠ Threads",
+                                    value="You have only " + str(cpu) + " thread(s). Find a [better host](https://www.birdflop.com).",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
