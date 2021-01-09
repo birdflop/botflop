@@ -1009,9 +1009,9 @@ class Timings(commands.Cog):
 
         issue_count = len(embed_var.fields)
         if issue_count > 25:
-            embed_var.description = embed_var.description + "\nShowing 25 of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
+            embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
         else:
-            embed_var.description = embed_var.description + "\nShowing " + str(issue_count) + " of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
+            embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
 
         await message.channel.send(embed=embed_var)
 
