@@ -86,18 +86,17 @@ class Timings(commands.Cog):
             timing_cost = int(r["timingsMaster"]["system"]["timingcost"])
             if timing_cost > 400:
                 embed_var.add_field(name="❌ Timingcost",
-                                    value="Your cpu is overloaded. Find a better host.",
+                                    value="Your timingcost is " + str(timing_cost) + ". Find a Find a [better host](https://www.birdflop.com).",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
 
         try:
             jvm_version = r["timingsMaster"]["system"]["jvmversion"]
-            if "1.8.0_" in jvm_version or jvm_version.startswith("9.") or jvm_version.startswith("10."):
+            if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                 embed_var.add_field(name="❌ Java Version",
                                     value="Use Java 11.",
                                     inline=True)
-
         except KeyError:
             unchecked = unchecked + 1
 
@@ -1050,7 +1049,7 @@ class Timings(commands.Cog):
         else:
             embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
         if issue_count > 0:
-            embed_var.description = embed_var.description + "\n||" + str(unchecked) + " missing optimizations due to server version.||"
+            embed_var.description = embed_var.description + "\n||" + str(unchecked) + " missing configuration optimizations due to server version.||"
         await message.channel.send(embed=embed_var)
 
 
