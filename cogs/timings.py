@@ -58,7 +58,7 @@ class Timings(commands.Cog):
                                     inline=True)
             if using_yatopia:
                 embed_var.add_field(name="⚠ Yatopia",
-                                    value="Yatopia may be more optimized but it is prone to bugs. "
+                                    value="Yatopia may be is prone to bugs. "
                                           "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).",
                                     inline=True)
             elif "Paper" in version:
@@ -1027,10 +1027,11 @@ class Timings(commands.Cog):
 
         issue_count = len(embed_var.fields)
         if issue_count > 25:
-            embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
+            embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations."
         else:
-            embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations.\n||" + str(unchecked) + " missing optimizations due to server version.||"
-
+            embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
+        if issue_count > 0:
+            embed_var.description = embed_var.description + "\n||" + str(unchecked) + " missing optimizations due to server version.||"
         await message.channel.send(embed=embed_var)
 
 
