@@ -218,8 +218,8 @@ class Timings(commands.Cog):
                                     inline=True)
             if "SuggestionBlocker" in plugins:
                 embed_var.add_field(name="❌ SuggestionBlocker",
-                                    value="You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                                          "Set tab-complete to -1 in spigot.yml.",
+                                     value="Players can still execute the commands."
+                                          "Use [CommandWhitelist](https://github.com/YouHaveTrouble/CommandWhitelist/releases) to control which commands players can complete and execute.",
                                     inline=True)
             if "FastAsyncWorldEdit" in plugins:
                 embed_var.add_field(name="❌ FastAsyncWorldEdit",
@@ -333,7 +333,7 @@ class Timings(commands.Cog):
             network_compression_threshold = int(
                 r["timingsMaster"]["config"]["server.properties"]["network-compression-threshold"])
             bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            if network_compression_threshold == 256 and bungeecord == "false":
+            if network_compression_threshold < 512 and bungeecord == "false":
                 embed_var.add_field(name="❌ network-compression-threshold",
                                     value="Increase this in server.properties. Recommended: 512.",
                                     inline=True)
@@ -347,7 +347,7 @@ class Timings(commands.Cog):
         try:
             spigot_view_distance = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
             view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
-            if view_distance == 10 and spigot_view_distance == "default":
+            if view_distance > 4 and spigot_view_distance == "default":
                 embed_var.add_field(name="❌ view-distance",
                                     value="Decrease this from default (10) in spigot.yml. "
                                           "Recommended: 3.",
@@ -357,7 +357,7 @@ class Timings(commands.Cog):
 
         try:
             chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
-            if chunk_gc_period == 600:
+            if chunk_gc_period > 400:
                 embed_var.add_field(name="❌ chunk-gc.period-in-ticks",
                                     value="Decrease this in bukkit.yml.\nRecommended: 400.",
                                     inline=True)
@@ -366,7 +366,7 @@ class Timings(commands.Cog):
 
         try:
             ticks_per_monster_spawns = int(r["timingsMaster"]["config"]["bukkit"]["ticks-per"]["monster-spawns"])
-            if ticks_per_monster_spawns == 1:
+            if ticks_per_monster_spawns < 4:
                 embed_var.add_field(name="❌ ticks-per.monster-spawns",
                                     value="Increase this in bukkit.yml.\nRecommended: 4.",
                                     inline=True)
@@ -375,7 +375,7 @@ class Timings(commands.Cog):
 
         try:
             monsters_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["monsters"])
-            if monsters_spawn_limit == 70:
+            if monsters_spawn_limit > 15:
                 embed_var.add_field(name="❌ spawn-limits.monsters",
                                     value="Decrease this in bukkit.yml.\nRecommended: 15.",
                                     inline=True)
@@ -384,7 +384,7 @@ class Timings(commands.Cog):
 
         try:
             water_ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-ambient"])
-            if water_ambient_spawn_limit == 20:
+            if water_ambient_spawn_limit > 3:
                 embed_var.add_field(name="❌ spawn-limits.water-ambient",
                                     value="Decrease this in bukkit.yml.\nRecommended: 2.",
                                     inline=True)
@@ -393,7 +393,7 @@ class Timings(commands.Cog):
 
         try:
             ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
-            if ambient_spawn_limit == 15:
+            if ambient_spawn_limit > 2:
                 embed_var.add_field(name="❌ spawn-limits.ambient",
                                     value="Decrease this in bukkit.yml.\nRecommended: 1.",
                                     inline=True)
@@ -402,7 +402,7 @@ class Timings(commands.Cog):
 
         try:
             animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
-            if animals_spawn_limit == 10:
+            if animals_spawn_limit > 5:
                 embed_var.add_field(name="❌ spawn-limits.animals",
                                     value="Decrease this in bukkit.yml.\nRecommended: 3.",
                                     inline=True)
@@ -411,7 +411,7 @@ class Timings(commands.Cog):
 
         try:
             water_animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
-            if water_animals_spawn_limit == 15:
+            if water_animals_spawn_limit > 2:
                 embed_var.add_field(name="❌ spawn-limits.water-animals",
                                     value="Decrease this in bukkit.yml.\nRecommended: 2.",
                                     inline=True)
@@ -440,7 +440,7 @@ class Timings(commands.Cog):
             animals_entity_activation_range = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "animals"])
-            if animals_entity_activation_range == 32:
+            if animals_entity_activation_range > 8:
                 embed_var.add_field(name="❌ entity-activation-range.animals",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 6.",
@@ -452,7 +452,7 @@ class Timings(commands.Cog):
             monsters_entity_activation_range = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "monsters"])
-            if monsters_entity_activation_range == 32:
+            if monsters_entity_activation_range > 18:
                 embed_var.add_field(name="❌ entity-activation-range.monsters",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 16.",
@@ -470,7 +470,7 @@ class Timings(commands.Cog):
         try:
             misc_entity_activation_range = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["misc"])
-            if misc_entity_activation_range == 16:
+            if misc_entity_activation_range > 5:
                 embed_var.add_field(name="❌ entity-activation-range.misc",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 4.",
@@ -481,7 +481,7 @@ class Timings(commands.Cog):
         try:
             water_entity_activation_range = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["water"])
-            if water_entity_activation_range == 16:
+            if water_entity_activation_range > 12:
                 embed_var.add_field(name="❌ entity-activation-range.water",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 12.",
@@ -493,7 +493,7 @@ class Timings(commands.Cog):
             villagers_entity_activation_range = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "villagers"])
-            if villagers_entity_activation_range == 32:
+            if villagers_entity_activation_range > 16:
                 embed_var.add_field(name="❌ entity-activation-range.villagers",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 16.",
@@ -538,7 +538,7 @@ class Timings(commands.Cog):
             wake_up_inactive_villagers_for = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_villagers_for == 100:
+            if wake_up_inactive_villagers_for > 20:
                 embed_var.add_field(name="❌ wake-up-inactive.villagers-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 20.",
@@ -550,7 +550,7 @@ class Timings(commands.Cog):
             wake_up_inactive_flying_monsters_for = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_flying_monsters_for == 100:
+            if wake_up_inactive_flying_monsters_for > 60:
                 embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 60.",
@@ -570,7 +570,7 @@ class Timings(commands.Cog):
             wake_up_inactive_villagers_max_per_tick = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_villagers_max_per_tick == 4:
+            if wake_up_inactive_villagers_max_per_tick > 1:
                 embed_var.add_field(name="❌ wake-up-inactive.villagers-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 1.",
@@ -582,7 +582,7 @@ class Timings(commands.Cog):
             wake_up_inactive_animals_for = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_animals_for == 100:
+            if wake_up_inactive_animals_for > 40:
                 embed_var.add_field(name="❌ wake-up-inactive.animals-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 40.",
@@ -594,7 +594,7 @@ class Timings(commands.Cog):
             wake_up_inactive_monsters_max_per_tick = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_monsters_max_per_tick == 8:
+            if wake_up_inactive_monsters_max_per_tick > 4:
                 embed_var.add_field(name="❌ wake-up-inactive.monsters-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 4.",
@@ -606,7 +606,7 @@ class Timings(commands.Cog):
             wake_up_inactive_flying_monsters_max_per_tick = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_flying_monsters_max_per_tick == 8:
+            if wake_up_inactive_flying_monsters_max_per_tick > 2:
                 embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 1.",
@@ -632,7 +632,7 @@ class Timings(commands.Cog):
             wake_up_inactive_animals_max_per_tick = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_animals_max_per_tick == 4:
+            if wake_up_inactive_animals_max_per_tick > 2:
                 embed_var.add_field(name="❌ wake-up-inactive.animals-max-per-tick",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 2.",
@@ -644,7 +644,7 @@ class Timings(commands.Cog):
             wake_up_inactive_monsters_for = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                     "wake-up-inactive"]["villagers-every"])
-            if wake_up_inactive_monsters_for == 100:
+            if wake_up_inactive_monsters_for > 60:
                 embed_var.add_field(name="❌ wake-up-inactive.monsters-for",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 60.",
@@ -655,7 +655,7 @@ class Timings(commands.Cog):
         try:
             arrow_despawn_rate = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["arrow-despawn-rate"])
-            if arrow_despawn_rate == 1200:
+            if arrow_despawn_rate > 300:
                 embed_var.add_field(name="❌ arrow-despawn-rate",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 300.",
@@ -666,7 +666,7 @@ class Timings(commands.Cog):
         try:
             item_merge_radius = float(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["item"])
-            if item_merge_radius == 2.5:
+            if item_merge_radius < 3.5:
                 embed_var.add_field(name="❌ merge-radius.item",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 4.0.",
@@ -677,7 +677,7 @@ class Timings(commands.Cog):
         try:
             exp_merge_radius = float(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["exp"])
-            if exp_merge_radius == 3.0:
+            if exp_merge_radius < 4.5:
                 embed_var.add_field(name="❌ merge-radius.exp",
                                     value="Increase this in spigot.yml. "
                                           "Recommended: 6.0.",
@@ -688,7 +688,7 @@ class Timings(commands.Cog):
         try:
             max_entity_collisions = int(
                 r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["max-entity-collisions"])
-            if max_entity_collisions == 8:
+            if max_entity_collisions > 2:
                 embed_var.add_field(name="❌ max-entity-collisions",
                                     value="Decrease this in spigot.yml. "
                                           "Recommended: 2.",
@@ -699,10 +699,10 @@ class Timings(commands.Cog):
         try:
             max_auto_save_chunks_per_tick = int(
                 r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
-            if max_auto_save_chunks_per_tick == 24:
+            if max_auto_save_chunks_per_tick > 10:
                 embed_var.add_field(name="❌ max-auto-save-chunks-per-tick",
                                     value="Decrease this in paper.yml. "
-                                          "Recommended: 6.",
+                                          "Recommended: 8.",
                                     inline=True)
         except KeyError:
             unchecked = unchecked + 1
@@ -742,7 +742,7 @@ class Timings(commands.Cog):
         try:
             container_update_tick_rate = int(
                 r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["container-update-tick-rate"])
-            if container_update_tick_rate == "false":
+            if container_update_tick_rate < 2:
                 embed_var.add_field(name="❌ container-update-tick-rate",
                                     value="Increase this in paper.yml. "
                                           "Recommended: 3.",
@@ -753,7 +753,7 @@ class Timings(commands.Cog):
         try:
             grass_spread_tick_rate = int(
                 r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["grass-spread-tick-rate"])
-            if grass_spread_tick_rate == 1:
+            if grass_spread_tick_rate < 4:
                 embed_var.add_field(name="❌ grass-spread-tick-rate",
                                     value="Increase this in paper.yml. "
                                           "Recommended: 4",
@@ -764,7 +764,7 @@ class Timings(commands.Cog):
         try:
             soft_despawn_range = int(
                 r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            if soft_despawn_range == 32:
+            if soft_despawn_range > 28:
                 embed_var.add_field(name="❌ despawn-ranges.soft",
                                     value="Decrease this in paper.yml. "
                                           "Recommended: 28",
@@ -774,7 +774,7 @@ class Timings(commands.Cog):
 
         try:
             hard_despawn_range = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            if hard_despawn_range == 128:
+            if hard_despawn_range > 48:
                 embed_var.add_field(name="❌ despawn-ranges.hard",
                                     value="Decrease this in paper.yml. "
                                           "Recommended: 48",
@@ -891,13 +891,13 @@ class Timings(commands.Cog):
                     "view-distance"]
                 if spigot_view_distance == "default":
                     view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
-                    if view_distance >= 4:
+                    if view_distance > 4:
                         embed_var.add_field(name="❌ no-tick-view-distance",
                                             value="Set a value in paper.yml. "
                                                   "Recommended: " + str(
                                                 view_distance) + ". And reduce view-distance in server.properties. Recommended: 3.",
                                             inline=True)
-                elif int(spigot_view_distance) >= 4:
+                elif int(spigot_view_distance) > 4:
                     embed_var.add_field(name="❌ no-tick-view-distance",
                                         value="Set a value in paper.yml. "
                                               "Recommended: " + spigot_view_distance + ". And reduce view-distance in spigot.yml. Recommended: 3.",
@@ -963,7 +963,7 @@ class Timings(commands.Cog):
             brain_ticks = int(
                 r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
                     "brain-ticks"])
-            if brain_ticks == 1:
+            if brain_ticks < 4:
                 embed_var.add_field(name="❌ villager.brain-ticks",
                                     value="Increase this in purpur.yml. "
                                           "Recommended: 4.",
