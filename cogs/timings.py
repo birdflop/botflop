@@ -818,6 +818,24 @@ class Timings(commands.Cog):
             unchecked = unchecked + 1
 
         try:
+            fix_climbing_bypass_gamerule = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["fix-climbing-bypassing-cramming-rule"]
+            if fix_climbing_bypass_gamerule == "false":
+                embed_var.add_field(name="⚠ fix-climbing-bypassing-cramming-rule",
+                                    value="Enable this in paper.yml.",
+                                    inline=True)
+        except KeyError:
+            unchecked = unchecked + 1
+
+        try:
+            armor_stands_do_collision_entity_lookups = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-do-collision-entity-lookups"]
+            if armor_stands_do_collision_entity_lookups == "true":
+                embed_var.add_field(name="⚠ armor-stands-do-collision-entity-lookups",
+                                    value="Disable this in paper.yml.",
+                                    inline=True)
+        except KeyError:
+            unchecked = unchecked + 1
+
+        try:
             plugins = r["timingsMaster"]["plugins"]
             armor_stands_tick = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
             if armor_stands_tick == "true" and "PetBlocks" not in plugins and "BlockBalls" not in plugins and "ArmorStandTools" not in plugins:
