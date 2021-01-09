@@ -72,11 +72,13 @@ class Timings(commands.Cog):
         try:
             online_mode = r["timingsMaster"]["onlinemode"]
             bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            if not online_mode and bungeecord == "false":
-                if not online_mode and bungeecord == "false":
-                    embed_var.add_field(name="❌ online-mode",
-                                        value="Enable this in server.properties for security.",
-                                        inline=True)
+            velocity_online_mode = r["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["online-mode"]
+            velocity_enabled = r["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["enabled"]
+
+            if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
+                embed_var.add_field(name="❌ online-mode",
+                                    value="Enable this in server.properties for security.",
+                                    inline=True)
         except KeyError:
             unchecked = unchecked + 1
 
