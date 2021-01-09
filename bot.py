@@ -265,7 +265,7 @@ async def on_raw_reaction_add(payload):
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Your ping is {round(bot.latency * 1000)}ms')
+    await ctx.send(f'Bot ping is {round(bot.latency * 1000)}ms')
 
 
 @bot.command(name="react", pass_context=True)
@@ -289,7 +289,6 @@ async def updater():
     for client in data['users']:
         i += 1
         member = guild.get_member(client['discord_id'])
-        print(client['discord_id'])
         if member:
             api_key = client['client_api_key']
             url = "https://panel.birdflop.com/api/client"
