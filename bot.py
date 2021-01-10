@@ -264,7 +264,7 @@ for file_name in os.listdir('./cogs'):
 
 updater.start()
 linking_updater = bot.get_cog('Linking_updater')
-linking_updater.linking_updater.start()
+linking_updater.linking_updater.linking_updater.start()
 bot.run(token)
 
 # full name: message.author.name + "#" + str(message.author.discriminator) + " (" + str(message.author.id) + ")"
