@@ -1,4 +1,14 @@
-
+import os
+import discord
+import requests
+import json
+import logging
+import sys
+from discord.ext import commands, tasks
+from discord.ext.commands import has_permissions, MissingPermissions
+from dotenv import load_dotenv
+import aiohttp
+import asyncio
 
 class Linking(commands.Cog):
 
