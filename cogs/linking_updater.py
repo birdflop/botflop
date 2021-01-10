@@ -42,6 +42,7 @@ class Linking_updater(commands.Cog):
                     async with aiohttp.ClientSession() as session:
                         async with session.get(url, headers=headers) as response:
                             if response.status == 200:
+                                logging.info("200")
                                 # Formats response for servers in JSON format
                                 servers_json_response = await response.json()
 
