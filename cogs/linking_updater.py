@@ -20,7 +20,6 @@ class Linking_updater(commands.Cog):
         self.client_role_id = int(os.getenv('client_role_id'))
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
-        linking_updater.start()
 
     @tasks.loop(seconds=10)
     async def linking_updater(self):
