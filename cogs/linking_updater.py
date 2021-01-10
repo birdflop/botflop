@@ -115,3 +115,6 @@ class Linking_updater(commands.Cog):
     async def before_linking_updater(self):
         logging.info('waiting to enter loop')
         await bot.wait_until_ready()
+        
+def setup(bot):
+    bot.add_cog(Linking_updater(bot))
