@@ -175,7 +175,7 @@ class Timings(commands.Cog):
                 if "LagAssist" in plugins:
                     embed_var.add_field(name="❌ LagAssist",
                                         value="Plugins that claim to remove lag actually cause more lag. "
-                                              "Remove LagAssist.",
+                                              "LagAssist should only be used for analytics and preventative measures. All other features should be disabled.",
                                         inline=True)
                 if "NoChunkLag" in plugins:
                     embed_var.add_field(name="❌ NoChunkLag",
