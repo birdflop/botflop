@@ -17,12 +17,6 @@ class Linking(commands.Cog):
         self.guild_id = int(os.getenv('guild_id'))
     
     @commands.Cog.listener()
-    async def on_message(self, message):
-        try:
-            print(str(self.guild_id) + "exists")
-        except NameError:
-            guild_id=int(os.getenv('guild_id'))
-            print(str(guild_id) + " created")
         if message.author != self.bot.user and message.guild == None:
             channel = message.channel
             await channel.send("Processing, please wait...")
@@ -74,7 +68,7 @@ class Linking(commands.Cog):
                                 file.write(json_dumps)
                                 file.close()
 
-                                guild = self.bot.get_guild(guild_id)
+                                guild = self.bot.get_guild(self.guild_id)
                                 member = guild.get_member(message.author.id)
                                 if member:
 
