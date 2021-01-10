@@ -432,7 +432,7 @@ class Timings(commands.Cog):
             elif mob_spawn_range == 8 and int(spigot_view_distance) <= 6:
                         embed_var.add_field(name="❌ mob-spawn-range",
                                             value="Decrease this in spigot.yml. "
-                                                  "Recommended: " + str(spigot_view_distance - 1) + ".",
+                                                  "Recommended: " + str(int(spigot_view_distance) - 1) + ".",
                                             inline=True)
         except KeyError:
             unchecked = unchecked + 1
