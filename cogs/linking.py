@@ -17,6 +17,7 @@ class Linking(commands.Cog):
         self.guild_id = int(os.getenv('guild_id'))
     
     @commands.Cog.listener()
+    await link_account(self, message):
         if message.author != self.bot.user and message.guild == None:
             channel = message.channel
             await channel.send("Processing, please wait...")
