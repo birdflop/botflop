@@ -16,7 +16,7 @@ class Linking(commands.Cog):
         self.bot = bot
     
     async def link_account(self, message):
-        if message.author != bot.user and message.guild == None:
+        if message.author != self.user and message.guild == None:
                 channel = message.channel
                 await channel.send("Processing, please wait...")
                 # Potential API key, so tries it out
