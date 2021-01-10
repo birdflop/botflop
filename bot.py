@@ -72,9 +72,9 @@ async def on_message(message):
                         embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
                         embed_var.description = response
                         await message.channel.send(embed=embed_var)
-
+    linking = bot.get_cog('Linking')
+    await linking.link_account(message)                    
     timings = bot.get_cog('Timings')
-
     await timings.analyze_timings(message)
     await bot.process_commands(message)
 
