@@ -14,7 +14,7 @@ class Linking(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        guild_id = int(os.getenv('guild_id'))
+        self.guild_id = int(os.getenv('guild_id'))
     
     @commands.Cog.listener()
     async def on_message(self, message):
