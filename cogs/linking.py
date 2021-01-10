@@ -15,6 +15,12 @@ class Linking(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.guild_id = int(os.getenv('guild_id'))
+        self.crabwings_role_id = int(os.getenv('crabwings_role_id'))
+        self.duckfeet_role_id = int(os.getenv('duckfeet_role_id'))
+        self.elktail_role_id = int(os.getenv('elktail_role_id'))
+        self.client_role_id = int(os.getenv('client_role_id'))
+        self.subuser_role_id = int(os.getenv('subuser_role_id'))
+        self.verified_role_id = int(os.getenv('verified_role_id'))
     
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -108,21 +114,21 @@ class Linking(commands.Cog):
                                                     elif server_node == "Elktail - EU":
                                                         user_elktail = True
                                                 if user_client == True:
-                                                    role = discord.utils.get(guild.roles, id=client_role_id)
+                                                    role = discord.utils.get(guild.roles, id=self.client_role_id)
                                                     await member.add_roles(role)
                                                 if user_subuser == True:
-                                                    role = discord.utils.get(guild.roles, id=subuser_role_id)
+                                                    role = discord.utils.get(guild.roles, id=self.subuser_role_id)
                                                     await member.add_roles(role)
                                                 if user_crabwings == True:
-                                                    role = discord.utils.get(guild.roles, id=crabwings_role_id)
+                                                    role = discord.utils.get(guild.roles, id=self.crabwings_role_id)
                                                     await member.add_roles(role)
                                                 if user_duckfeet == True:
-                                                    role = discord.utils.get(guild.roles, id=duckfeet_role_id)
+                                                    role = discord.utils.get(guild.roles, id=self.duckfeet_role_id)
                                                     await member.add_roles(role)
                                                 if user_elktail == True:
-                                                    role = discord.utils.get(guild.roles, id=elktail_role_id)
+                                                    role = discord.utils.get(guild.roles, id=self.elktail_role_id)
                                                     await member.add_roles(role)
-                                                role = discord.utils.get(guild.roles, id=verified_role_id)
+                                                role = discord.utils.get(guild.roles, id=self.verified_role_id)
                                                 await member.add_roles(role)
 
                                 await channel.send(
