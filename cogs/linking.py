@@ -14,8 +14,10 @@ class Linking(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        guild_id = int(os.getenv('guild_id'))
     
-    async def link_account(self, message):
+    @commands.Cog.listener()
+    async def on_message(self, message):
         try:
             guild_id
             print(str(guild_id) + "exists")
