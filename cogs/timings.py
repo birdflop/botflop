@@ -24,7 +24,7 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="❌ Spigot",
                                     value="Upgrade to [Purpur](https://ci.pl3x.net/job/Purpur/).",
                                     inline=True)
-                await message.channel.send(embed=embed_var)
+                await message.reply(embed=embed_var)
                 return
         if timings_url == "":
             return
@@ -41,7 +41,7 @@ class Timings(commands.Cog):
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.",
                                 inline=True)
-            await message.channel.send(embed=embed_var)
+            await message.reply(embed=embed_var)
             return
 
         embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
@@ -1050,13 +1050,13 @@ class Timings(commands.Cog):
             embed_var.add_field(name="❌ Invalid Configuration",
                                 value="At least one of your configuration files had an invalid data type.",
                                 inline=True)
-            await message.channel.send(embed=embed_var)
+            await message.reply(embed=embed_var)
             return
 
         if len(embed_var.fields) == 0:
             embed_var.add_field(name="✅ All good",
                                 value="Analyzed with no issues")
-            await message.channel.send(embed=embed_var)
+            await message.reply(embed=embed_var)
             return
 
         issue_count = len(embed_var.fields)
@@ -1066,7 +1066,7 @@ class Timings(commands.Cog):
             embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
         if issue_count > 0:
             embed_var.description = embed_var.description + "\n||" + str(unchecked) + " missing configuration optimizations due to server version.||"
-        await message.channel.send(embed=embed_var)
+        await message.reply(embed=embed_var)
 
 
 def setup(bot):
