@@ -27,7 +27,7 @@ class Linking_updater(commands.Cog):
         file = open('users.json', 'r')
         data = json.load(file)
         file.close()
-        guild = bot.get_guild(self.guild_id)
+        guild = self.bot.get_guild(self.guild_id)
         i = -1
         print("1")
         for client in data['users']:
