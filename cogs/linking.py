@@ -20,8 +20,8 @@ class Linking(commands.Cog):
             guild_id
             print(str(guild_id) + "exists")
         except NameError:
-            guild_id=int(os.getenv('guild_id')
-            print(str(guild_id) + "created")
+            guild_id=int(os.getenv('guild_id'))
+            print(str(guild_id) + " created")
         if message.author != self.bot.user and message.guild == None:
             channel = message.channel
             await channel.send("Processing, please wait...")
