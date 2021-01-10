@@ -67,7 +67,7 @@ class Linking(commands.Cog):
                                     file.write(json_dumps)
                                     file.close()
 
-                                    guild = bot.get_guild(guild_id)
+                                    guild = self.bot.get_guild(guild_id)
                                     member = guild.get_member(message.author.id)
                                     if member:
 
