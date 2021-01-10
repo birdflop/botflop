@@ -14,9 +14,9 @@ class Linking(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        guild_id = int(os.getenv('guild_id'))
     
     async def link_account(self, message):
+        guild_id = int(os.getenv('guild_id'))
         print(str(guild_id))
         if message.author != self.bot.user and message.guild == None:
             channel = message.channel
