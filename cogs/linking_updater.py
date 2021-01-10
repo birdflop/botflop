@@ -21,7 +21,7 @@ class Linking_updater(commands.Cog):
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(minutes=10)
     async def linking_updater(self):
         logging.info("Synchronizing roles")
         file = open('users.json', 'r')
@@ -29,13 +29,10 @@ class Linking_updater(commands.Cog):
         file.close()
         guild = self.bot.get_guild(self.guild_id)
         i = -1
-        print("1")
         for client in data['users']:
-            print("2")
             i += 1
             member = guild.get_member(client['discord_id'])
             if member:
-                print("3")
                 api_key = client['client_api_key']
                 url = "https://panel.birdflop.com/api/client"
                 headers = {
@@ -44,9 +41,7 @@ class Linking_updater(commands.Cog):
                 }
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, headers=headers) as response:
-                        print("4")
                         if response.status == 200:
-                            print("5")
                             # Formats response for servers in JSON format
                             servers_json_response = await response.json()
 
