@@ -21,7 +21,7 @@ class Linking_updater(commands.Cog):
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(seconds=10)
     async def linking_updater(self):
         logging.info("Synchronizing roles")
         file = open('users.json', 'r')
