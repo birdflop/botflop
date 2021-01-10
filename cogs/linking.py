@@ -19,7 +19,7 @@ class Linking(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
-            print(str(guild_id) + "exists")
+            print(str(self.guild_id) + "exists")
         except NameError:
             guild_id=int(os.getenv('guild_id'))
             print(str(guild_id) + " created")
