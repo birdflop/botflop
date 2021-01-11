@@ -21,7 +21,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
+                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/).")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
