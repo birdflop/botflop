@@ -21,7 +21,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://ci.pl3x.net/job/Purpur/).")
+                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -580,7 +580,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_monsters_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["inactive-monsters-every"])
+                        "wake-up-inactive"]["monsters-every"])
             except KeyError:
                 unchecked = unchecked + 1
 
