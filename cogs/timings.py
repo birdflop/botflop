@@ -21,7 +21,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://ci.pl3x.net/job/Purpur/).")
+                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -499,7 +499,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_villagers_for = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["villagers-for"])
                 if wake_up_inactive_villagers_for >= 100:
                     embed_var.add_field(name="❌ wake-up-inactive.villagers-for",
                                         value="Decrease this in spigot.yml. "
@@ -510,7 +510,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_flying_monsters_for = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["flying-monsters-for"])
                 if wake_up_inactive_flying_monsters_for >= 100:
                     embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-for",
                                         value="Decrease this in spigot.yml. "
@@ -521,7 +521,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_animals_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["animals-every"])
 
             except KeyError:
                 unchecked = unchecked + 1
@@ -529,7 +529,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_villagers_max_per_tick = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["villagers-max-per-tick"])
                 if wake_up_inactive_villagers_max_per_tick >= 4:
                     embed_var.add_field(name="❌ wake-up-inactive.villagers-max-per-tick",
                                         value="Decrease this in spigot.yml. "
@@ -540,7 +540,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_animals_for = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["animals-for"])
                 if wake_up_inactive_animals_for >= 100:
                     embed_var.add_field(name="❌ wake-up-inactive.animals-for",
                                         value="Decrease this in spigot.yml. "
@@ -551,7 +551,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_monsters_max_per_tick = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["monsters-max-per-tick"])
                 if wake_up_inactive_monsters_max_per_tick >= 8:
                     embed_var.add_field(name="❌ wake-up-inactive.monsters-max-per-tick",
                                         value="Decrease this in spigot.yml. "
@@ -562,7 +562,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_flying_monsters_max_per_tick = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["flying-monsters-max-per-tick"])
                 if wake_up_inactive_flying_monsters_max_per_tick >= 8:
                     embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-max-per-tick",
                                         value="Decrease this in spigot.yml. "
@@ -573,21 +573,21 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_flying_monsters_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["flying-monsters-every"])
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
                 wake_up_inactive_monsters_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["monsters-every"])
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
                 wake_up_inactive_animals_max_per_tick = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["animals-max-per-tick"])
                 if wake_up_inactive_animals_max_per_tick >= 4:
                     embed_var.add_field(name="❌ wake-up-inactive.animals-max-per-tick",
                                         value="Decrease this in spigot.yml. "
@@ -598,7 +598,7 @@ class Timings(commands.Cog):
             try:
                 wake_up_inactive_monsters_for = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-every"])
+                        "wake-up-inactive"]["monsters-for"])
                 if wake_up_inactive_monsters_for >= 100:
                     embed_var.add_field(name="❌ wake-up-inactive.monsters-for",
                                         value="Decrease this in spigot.yml. "
