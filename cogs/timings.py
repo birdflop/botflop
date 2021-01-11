@@ -143,7 +143,7 @@ class Timings(commands.Cog):
                                     min_mem = min_mem.replace("m", "")
                             if min_mem != max_mem:
                                 embed_var.add_field(name="❌ Aikar's Flags",
-                                                    value="Your Xmx and Xms values must be equal with Aikar's flags.",
+                                                    value="Your Xmx and Xms values should be equivalent when using Aikar's flags.",
                                                     inline=True)
                 elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
                     embed_var.add_field(name="❌ Outdated Flags",
@@ -1079,7 +1079,7 @@ class Timings(commands.Cog):
         issue_count = len(embed_var.fields)
         if issue_count >= 25:
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more,", inline=True)
-        if issue_count > 0:
+        if unchecked > 0:
             embed_var.description = "||" + str(unchecked) + " missing configuration optimizations due to your server version.||"
         await message.reply(embed=embed_var)
 
