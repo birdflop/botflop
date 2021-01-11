@@ -217,10 +217,6 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ CMI",
                                         value="CMI is a buggy plugin. "
                                               "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).")
-                if "Spartan" in plugins:
-                    embed_var.add_field(name="❌ Spartan",
-                                        value="Spartan is a laggy anticheat. "
-                                              "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/).")
                 if "IllegalStack" in plugins:
                     embed_var.add_field(name="❌ IllegalStack",
                                         value="You probably don't need IllegalStack as Paper already has its features. "
