@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import requests
 
-
 class Timings(commands.Cog):
 
     def __init__(self, bot):
@@ -292,11 +291,29 @@ class Timings(commands.Cog):
                                         value="bPermissions is an outdated permission plugin. "
                                               "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).",
                                         inline=True)
+                if "DisableJoinMessage" in plugins and "Essentials" in plugins:
+                    embed_var.add_field(name="❌ DisableJoinMessage",
+                                        value="You probably don't need DisableJoinMessage because Essentials already has its features. ",
+                                        inline=True)
                 for plugin in plugins:
-                    if "Songoda" in r["timingsMaster"]["plugins"][plugin]["authors"]:
-                        embed_var.add_field(name="❌ " + plugin,
-                                            value="This plugin was made by Songoda. You should find an alternative.",
-                                            inline=True)
+                    if "songoda" in r["timingsMaster"]["plugins"][plugin]["authors"].casefold():
+                        if plugin == "EpicHeads":
+                            embed_var.add_field(name="❌ EpicHeads",
+                                                value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).",
+                                                inline=True)
+                        if plugin == "EpicHeads":
+                            embed_var.add_field(name="❌ EpicHeads",
+                                                value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).",
+                                                inline=True)
+                        elif plugin == "UltimateStacker":
+                            embed_var.add_field(name="❌ UltimateStacker",
+                                                value="Stacking plugins actually cause more lag. "
+                                                      "Remove UltimateStacker.",
+                                                inline=True)
+                        else:
+                            embed_var.add_field(name="❌ " + plugin,
+                                                value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.",
+                                                inline=True)
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -1060,12 +1077,10 @@ class Timings(commands.Cog):
             return
 
         issue_count = len(embed_var.fields)
-        if issue_count > 25:
-            embed_var.description = "Showing 25 of " + str(issue_count) + " recommendations."
-        else:
-            embed_var.description = "Showing " + str(issue_count) + " of " + str(issue_count) + " recommendations."
+        if issue_count >= 25:
+            embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more,", inline=True)
         if issue_count > 0:
-            embed_var.description = embed_var.description + "\n||" + str(unchecked) + " missing configuration optimizations due to server version.||"
+            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations due to your server version.||"
         await message.reply(embed=embed_var)
 
 
