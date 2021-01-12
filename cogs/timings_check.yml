@@ -155,3 +155,297 @@ plugins:
             value: |-
                 "You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
                 "Enable villager.lobotomize.enabled in purpur.yml."
+config:
+  server.properties:
+    online-mode:
+    - expressions:
+      - not server_properties["online-mode"]
+      - spigot["settings"]["bungeecord"] == "false"
+      - paper["settings"]["velocity-support"]["online-mode"] == "false" or paper["settings"]["velocity-support"]["enabled"] == "false"
+      prefix: "❌ "
+      value: "Enable this in server.properties for security."
+  bukkit:
+    chunk-gc.period-in-ticks:
+    - expressions:
+      - int(bukkit["chunk-gc"]["period-in-ticks"]) >= 600
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 400."
+    ticks-per.monster-spawns:
+    - expressions:
+      - int(bukkit["ticks-per"]["monster-spawns"]) == 1
+      prefix: "❌ "
+      value: "Increase this in bukkit.yml.\nRecommended: 4."
+    spawn-limits.monsters:
+    - expressions:
+      - int(bukkit["spawn-limits"]["monsters"]) >= 70
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 15."
+    spawn-limits.water-ambient:
+    - expressions:
+      - int(bukkit["spawn-limits"]["water-ambient"]) >= 20
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 2."
+    spawn-limits.ambient:
+    - expressions:
+      - int(bukkit["spawn-limits"]["ambient"]) >= 15
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 1."
+    spawn-limits.animals:
+    - expressions:
+      - int(bukkit["spawn-limits"]["animals"]) >= 10
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 3."
+    spawn-limits.water-animals:
+    - expressions:
+      - int(bukkit["spawn-limits"]["water-animals"]) >= 15
+      prefix: "❌ "
+      value: "Decrease this in bukkit.yml.\nRecommended: 2."
+  spigot:
+    view-distance:
+    - expressions:
+      - server_properties["view-distance"] >= 10
+      - spigot["world-settings"]["default"]["view-distance"] == "default"
+      prefix: "❌ "
+      value: |-
+        "Decrease this from default (10) in spigot.yml. "
+        "Recommended: 3."
+    entity-activation-range.animals:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["animals"]) >= 32
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 6."
+    entity-activation-range.monsters:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["monsters"]) >= 32
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 16."
+    entity-activation-range.misc:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["misc"]) >= 16
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 4."
+    entity-activation-range.water:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["water"]) >= 16
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 12."
+    entity-activation-range.villagers:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["villagers"]) >= 32
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 16."
+    entity-activation-range.tick-inactive-villagers:
+    - expressions:
+      - spigot["world-settings"]["default"]["entity-activation-range"]["tick-inactive-villagers"] == "true"
+      prefix: "❌ "
+      value: "Disable this in spigot.yml."
+    nerf-spawner-mobs:
+    - expressions:
+      - spigot["world-settings"]["default"]["nerf-spawner-mobs"] == "false"
+      prefix: "❌ "
+      value: "Enable this in spigot.yml."
+    entity-activation-range.wake-up-inactive.villagers-for:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["villagers-for"]) >= 100
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 20."
+    entity-activation-range.wake-up-inactive.flying-monsters-for:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["flying-monsters-for"]) >= 100
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 60."
+    entity-activation-range.wake-up-inactive.villagers-max-per-tick:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["villagers-max-per-tick"]) >= 4
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 1."
+    entity-activation-range.wake-up-inactive.animals-for:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["animals-for"]) >= 4
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 1."
+    entity-activation-range.wake-up-inactive.monsters-max-per-tick:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-max-per-tick"]) >= 8
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 4."
+    entity-activation-range.wake-up-inactive.flying-monsters-max-per-tick:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["flying-monsters-max-per-tick"]) >= 8
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 1."
+    entity-activation-range.wake-up-inactive.animals-max-per-tick:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["animals-max-per-tick"]) >= 4
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 2."
+    entity-activation-range.wake-up-inactive.monsters-for:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-for"]) >= 100
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 60."
+    arrow-despawn-rate:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["arrow-despawn-rate"]) >= 1200
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 300."
+    merge-radius.item:
+    - expressions:
+      - float(spigot["world-settings"]["default"]["merge-radius"]["item"]) <= 2.5
+      prefix: "❌ "
+      value: "Increase this in spigot.yml.\nRecommended: 4.0."
+    merge-radius.exp:
+    - expressions:
+      - float(spigot["world-settings"]["default"]["merge-radius"]["exp"]) <= 3.0
+      prefix: "❌ "
+      value: "Increase this in spigot.yml.\nRecommended: 6.0."
+    max-entity-collisions:
+    - expressions:
+      - int(spigot["world-settings"]["default"]["merge-radius"]["exp"]) >= 8
+      prefix: "❌ "
+      value: "Decrease this in spigot.yml.\nRecommended: 2."
+  paper:
+    max-auto-save-chunks-per-tick:
+    - expressions:
+      - int(paper["world-settings"]["default"]["max-auto-save-chunks-per-tick"]) >= 24
+      prefix: "❌ "
+      value: "Decrease this in paper.yml.\nRecommended: 6."
+    optimize-explosions:
+    - expressions:
+      - paper["world-settings"]["default"]["optimize-explosions"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    mob-spawner-tick-rate:
+    - expressions:
+      - int(paper["world-settings"]["default"]["mob-spawner-tick-rate"]) == 1
+      prefix: "❌ "
+      value: "Increase this in paper.yml.\nRecommended: 2."
+    game-mechanics.disable-chest-cat-detection:
+    - expressions:
+      - paper["world-settings"]["default"]["game-mechanics"]["disable-chest-cat-detection"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml"
+    container-update-tick-rate:
+    - expressions:
+      - paper["world-settings"]["default"]["game-mechanics"]["container-update-tick-rate"] == "false"
+      prefix: "❌ "
+      value: "Increase this in paper.yml.\nRecommended: 3."
+    grass-spread-tick-rate:
+    - expressions:
+      - int(paper["world-settings"]["default"]["game-mechanics"]["grass-spread-tick-rate"]) == 1
+      prefix: "❌ "
+      value: "Increase this in paper.yml.\nRecommended: 4."
+    despawn-ranges.soft:
+    - expressions:
+      - int(paper["world-settings"]["default"]["despawn-ranges"]["soft"]) >= 32
+      prefix: "❌ "
+      value: "Decrease this in paper.yml.\nRecommended: 28."
+    despawn-ranges.hard:
+    - expressions:
+      - int(paper["world-settings"]["default"]["despawn-ranges"]["hard"]) >= 32
+      prefix: "❌ "
+      value: "Decrease this in paper.yml.\nRecommended: 48."
+    hopper.disable-move-event:
+    - expressions:
+      - paper["world-settings"]["default"]["hopper"]["disable-move-event"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml"
+    non-player-arrow-despawn-rate:
+    - expressions:
+      - int(paper["world-settings"]["default"]["non-player-arrow-despawn-rate"]) == -1
+      prefix: "❌ "
+      value: "Set a value in paper.yml.\nRecommended: 60"
+    creative-arrow-despawn-rate:
+    - expressions:
+      - int(paper["world-settings"]["default"]["creative-arrow-despawn-rate"]) == -1
+      prefix: "❌ "
+      value: "Set a value in paper.yml.\nRecommended: 60"
+    non-player-arrow-despawn-rate:
+    - expressions:
+      - paper["world-settings"]["default"]["prevent-moving-into-unloaded-chunks"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    use-faster-eigencraft-redstone:
+    - expressions:
+      - paper["world-settings"]["default"]["use-faster-eigencraft-redstone"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    fix-climbing-bypassing-cramming-rule:
+    - expressions:
+      - paper["world-settings"]["default"]["fix-climbing-bypassing-cramming-rule"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    armor-stands-do-collision-entity-lookups:
+    - expressions:
+      - paper["world-settings"]["default"]["armor-stands-do-collision-entity-lookups"] == "true"
+      prefix: "❌ "
+      value: "Disable this in paper.yml."
+    armor-stands-tick:
+    - expressions:
+      - paper["world-settings"]["default"]["armor-stands-tick"] == "true"
+      - '"PetBlocks" not in plugins'
+      - '"BlockBalls" not in plugins'
+      - '"ArmorStandTools" not in plugins'
+      prefix: "❌ "
+      value: "Disable this in paper.yml."
+    per-player-mob-spawns:
+    - expressions:
+      - paper["world-settings"]["default"]["per-player-mob-spawns"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    alt-item-despawn-rate.enabled:
+    - expressions:
+      - paper["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"] == "false"
+      prefix: "❌ "
+      value: "Enable this in paper.yml."
+    enable-treasure-maps:
+    - expressions:
+      - paper["world-settings"]["default"]["enable-treasure-maps"] == "true"
+      prefix: "❌ "
+      value: "Disable this in paper.yml. Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away."
+    projectile-load-save-per-chunk-limit:
+    - expressions:
+      - int(paper["world-settings"]["default"]["projectile-load-save-per-chunk-limit"]) == -1
+      prefix: "❌ "
+      value: "Set a value in paper.yml. Recommended: 8."
+  purpur:
+    settings.dont-send-useless-entity-packets:
+    - expressions:
+      - purpur["settings"]["dont-send-useless-entity-packets"] == "false"
+      prefix: "❌ "
+      value: "Enable this in purpur.yml."
+    mobs.dolphin.disable-treasure-searching:
+    - expressions:
+      - purpur["world-settings"]["default"]["mobs"]["dolphin"]["disable-treasure-searching"] == "false"
+      prefix: "❌ "
+      value: "Enable this in purpur.yml."
+    mobs.villager.brain-ticks:
+    - expressions:
+      - int(purpur["world-settings"]["default"]["mobs"]["villager"]["brain-ticks"]) == 1
+      prefix: "❌ "
+      value: "Increase this in purpur.yml.\nRecommended: 4."
+    mobs.villager.spawn-iron-golem.radius:
+    - expressions:
+      - int(purpur["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["radius"]) == 0
+      prefix: "❌ "
+      value: "Increase this in purpur.yml.\nRecommended: 5."
+    mobs.zombie.aggressive-towards-villager-when-lagging:
+    - expressions:
+      - purpur["world-settings"]["default"]["mobs"]["zombie"]["aggressive-towards-villager-when-lagging"] == "true"
+      prefix: "❌ "
+      value: "Disable this in purpur.yml."
+    gameplay-mechanics.entities-can-use-portals:
+    - expressions:
+      - purpur["world-settings"]["default"]["gameplay-mechanics"]["entities-can-use-portals"] == "true"
+      prefix: "❌ "
+      value: "Disable this in purpur.yml to prevent players from creating chunk anchors."
+    mobs.villager.lobotomize.enabled:
+    - expressions:
+      - purpur["world-settings"]["default"]["mobs"]["villager"]["lobotomize"]["enabled"] == "false"
+      prefix: "❌ "
+      value: "Enable this in purpur.yml."
+    gameplay-mechanics.player.teleport-if-outside-border:
+    - expressions:
+      - purpur["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"] == "false"
+      prefix: "❌ "
+      value: "Enable this in purpur.yml."

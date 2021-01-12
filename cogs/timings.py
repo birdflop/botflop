@@ -77,14 +77,32 @@ class Timings(commands.Cog):
                 unchecked = unchecked + 1
 
             try:
-                online_mode = r["timingsMaster"]["onlinemode"]
-                bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-                velocity_online_mode = r["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["online-mode"]
-                velocity_enabled = r["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["enabled"]
+                if "config" in TIMINGS_CHECK:
+                    server_properties = None
+                    bukkit = None
+                    spigot = None
+                    paper = None
+                    purpur = None
+                    if "server.properties" in r["timingsMaster"]["config"]:
+                        server_properties = r["timingsMaster"]["config"]["server.properties"]
+                    if "bukkit" in r["timingsMaster"]["config"]:
+                        bukkit = r["timingsMaster"]["config"]["bukkit"]
+                    if "spigot" in r["timingsMaster"]["config"]:
+                        spigot = r["timingsMaster"]["config"]["spigot"]
+                    if "paper" in r["timingsMaster"]["config"]:
+                        paper = r["timingsMaster"]["config"]["paper"]
+                    if "purpur" in r["timingsMaster"]["config"]:
+                        purpur = r["timingsMaster"]["config"]["purpur"]
 
-                if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
-                    embed_var.add_field(name="❌ online-mode",
-                                        value="Enable this in server.properties for security.")
+                    for config_name in TIMINGS_CHECK["config"]:
+                        config = TIMINGS_CHECK["config"][config_name]
+                        for option_name in config:
+                            option = config[option_name]
+                            for expression in option["expressions"]:
+                                if not eval(expression):
+                                    continue
+                                embed_var.add_field(**create_field({**{"name": option_name}, **option}))
+
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -223,72 +241,6 @@ class Timings(commands.Cog):
                 unchecked = unchecked + 1
 
             try:
-                spigot_view_distance = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
-                view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
-                if view_distance >= 10 and spigot_view_distance == "default":
-                    embed_var.add_field(name="❌ view-distance",
-                                        value="Decrease this from default (10) in spigot.yml. "
-                                              "Recommended: 3.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
-                if chunk_gc_period >= 600:
-                    embed_var.add_field(name="❌ chunk-gc.period-in-ticks",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 400.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                ticks_per_monster_spawns = int(r["timingsMaster"]["config"]["bukkit"]["ticks-per"]["monster-spawns"])
-                if ticks_per_monster_spawns == 1:
-                    embed_var.add_field(name="❌ ticks-per.monster-spawns",
-                                        value="Increase this in bukkit.yml.\nRecommended: 4.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                monsters_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["monsters"])
-                if monsters_spawn_limit >= 70:
-                    embed_var.add_field(name="❌ spawn-limits.monsters",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 15.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                water_ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-ambient"])
-                if water_ambient_spawn_limit >= 20:
-                    embed_var.add_field(name="❌ spawn-limits.water-ambient",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 2.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
-                if ambient_spawn_limit >= 15:
-                    embed_var.add_field(name="❌ spawn-limits.ambient",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 1.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
-                if animals_spawn_limit >= 10:
-                    embed_var.add_field(name="❌ spawn-limits.animals",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 3.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                water_animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
-                if water_animals_spawn_limit >= 15:
-                    embed_var.add_field(name="❌ spawn-limits.water-animals",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 2.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
                 mob_spawn_range = int(r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["mob-spawn-range"])
                 spigot_view_distance = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
                 if spigot_view_distance == "default":
@@ -305,62 +257,9 @@ class Timings(commands.Cog):
                 unchecked = unchecked + 1
 
             try:
-                animals_entity_activation_range = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "animals"])
-                if animals_entity_activation_range >= 32:
-                    embed_var.add_field(name="❌ entity-activation-range.animals",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 6.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                monsters_entity_activation_range = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "monsters"])
-                if monsters_entity_activation_range >= 32:
-                    embed_var.add_field(name="❌ entity-activation-range.monsters",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 16.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
                 raiders_entity_activation_range = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                         "raiders"])
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                misc_entity_activation_range = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["misc"])
-                if misc_entity_activation_range >= 16:
-                    embed_var.add_field(name="❌ entity-activation-range.misc",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 4.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                water_entity_activation_range = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["water"])
-                if water_entity_activation_range >= 16:
-                    embed_var.add_field(name="❌ entity-activation-range.water",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 12.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                villagers_entity_activation_range = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "villagers"])
-                if villagers_entity_activation_range >= 32:
-                    embed_var.add_field(name="❌ entity-activation-range.villagers",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 16.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -372,50 +271,12 @@ class Timings(commands.Cog):
                 unchecked = unchecked + 1
 
             try:
-                tick_inactive_villagers = \
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "tick-inactive-villagers"]
-                if tick_inactive_villagers == "true":
-                    embed_var.add_field(name="❌ tick-inactive-villagers",
-                                        value="Disable this in spigot.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                nerf_spawner_mobs = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["nerf-spawner-mobs"]
-                if nerf_spawner_mobs == "false":
-                    embed_var.add_field(name="❌ nerf-spawner-mobs",
-                                        value="Enable this in spigot.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
                 wake_up_inactive_villagers_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                         "wake-up-inactive"]["villagers-every"])
             except KeyError:
                 unchecked = unchecked + 1
-            try:
-                wake_up_inactive_villagers_for = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-for"])
-                if wake_up_inactive_villagers_for >= 100:
-                    embed_var.add_field(name="❌ wake-up-inactive.villagers-for",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 20.")
-            except KeyError:
-                unchecked = unchecked + 1
 
-            try:
-                wake_up_inactive_flying_monsters_for = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["flying-monsters-for"])
-                if wake_up_inactive_flying_monsters_for >= 100:
-                    embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-for",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 60.")
-            except KeyError:
-                unchecked = unchecked + 1
 
             try:
                 wake_up_inactive_animals_every = int(
@@ -425,49 +286,7 @@ class Timings(commands.Cog):
             except KeyError:
                 unchecked = unchecked + 1
 
-            try:
-                wake_up_inactive_villagers_max_per_tick = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["villagers-max-per-tick"])
-                if wake_up_inactive_villagers_max_per_tick >= 4:
-                    embed_var.add_field(name="❌ wake-up-inactive.villagers-max-per-tick",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 1.")
-            except KeyError:
-                unchecked = unchecked + 1
 
-            try:
-                wake_up_inactive_animals_for = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["animals-for"])
-                if wake_up_inactive_animals_for >= 100:
-                    embed_var.add_field(name="❌ wake-up-inactive.animals-for",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 40.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                wake_up_inactive_monsters_max_per_tick = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["monsters-max-per-tick"])
-                if wake_up_inactive_monsters_max_per_tick >= 8:
-                    embed_var.add_field(name="❌ wake-up-inactive.monsters-max-per-tick",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 4.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                wake_up_inactive_flying_monsters_max_per_tick = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["flying-monsters-max-per-tick"])
-                if wake_up_inactive_flying_monsters_max_per_tick >= 8:
-                    embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-max-per-tick",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 1.")
-            except KeyError:
-                unchecked = unchecked + 1
 
             try:
                 wake_up_inactive_flying_monsters_every = int(
@@ -480,236 +299,6 @@ class Timings(commands.Cog):
                 wake_up_inactive_monsters_every = int(
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
                         "wake-up-inactive"]["monsters-every"])
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                wake_up_inactive_animals_max_per_tick = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["animals-max-per-tick"])
-                if wake_up_inactive_animals_max_per_tick >= 4:
-                    embed_var.add_field(name="❌ wake-up-inactive.animals-max-per-tick",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 2.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                wake_up_inactive_monsters_for = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                        "wake-up-inactive"]["monsters-for"])
-                if wake_up_inactive_monsters_for >= 100:
-                    embed_var.add_field(name="❌ wake-up-inactive.monsters-for",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 60.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                arrow_despawn_rate = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["arrow-despawn-rate"])
-                if arrow_despawn_rate >= 1200:
-                    embed_var.add_field(name="❌ arrow-despawn-rate",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 300.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                item_merge_radius = float(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["item"])
-                if item_merge_radius <= 2.5:
-                    embed_var.add_field(name="❌ merge-radius.item",
-                                        value="Increase this in spigot.yml. "
-                                              "Recommended: 4.0.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                exp_merge_radius = float(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["exp"])
-                if exp_merge_radius <= 3.0:
-                    embed_var.add_field(name="❌ merge-radius.exp",
-                                        value="Increase this in spigot.yml. "
-                                              "Recommended: 6.0.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                max_entity_collisions = int(
-                    r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["max-entity-collisions"])
-                if max_entity_collisions >= 8:
-                    embed_var.add_field(name="❌ max-entity-collisions",
-                                        value="Decrease this in spigot.yml. "
-                                              "Recommended: 2.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                max_auto_save_chunks_per_tick = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
-                if max_auto_save_chunks_per_tick >= 24:
-                    embed_var.add_field(name="❌ max-auto-save-chunks-per-tick",
-                                        value="Decrease this in paper.yml. "
-                                              "Recommended: 6.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                optimize_explosions = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "optimize-explosions"]
-                if optimize_explosions == "false":
-                    embed_var.add_field(name="❌ optimize-explosions",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                mob_spawner_tick_rate = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["mob-spawner-tick-rate"])
-                if mob_spawner_tick_rate == 1:
-                    embed_var.add_field(name="❌ mob-spawner-tick-rate",
-                                        value="Increase this in paper.yml. "
-                                              "Recommended: 2.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                disable_chest_cat_detection = \
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["game-mechanics"][
-                        "disable-chest-cat-detection"]
-                if disable_chest_cat_detection == "false":
-                    embed_var.add_field(name="❌ disable-chest-cat-detection",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                container_update_tick_rate = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["container-update-tick-rate"])
-                if container_update_tick_rate == "false":
-                    embed_var.add_field(name="❌ container-update-tick-rate",
-                                        value="Increase this in paper.yml. "
-                                              "Recommended: 3.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                grass_spread_tick_rate = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["grass-spread-tick-rate"])
-                if grass_spread_tick_rate == 1:
-                    embed_var.add_field(name="❌ grass-spread-tick-rate",
-                                        value="Increase this in paper.yml. "
-                                              "Recommended: 4")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                soft_despawn_range = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-                if soft_despawn_range >= 32:
-                    embed_var.add_field(name="❌ despawn-ranges.soft",
-                                        value="Decrease this in paper.yml. "
-                                              "Recommended: 28")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                hard_despawn_range = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-                if hard_despawn_range >= 128:
-                    embed_var.add_field(name="❌ despawn-ranges.hard",
-                                        value="Decrease this in paper.yml. "
-                                              "Recommended: 48")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                hopper_disable_move_event = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["hopper"][
-                    "disable-move-event"]
-                if hopper_disable_move_event == "false":
-                    embed_var.add_field(name="❌ hopper.disable-move-event",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                non_player_arrow_despawn_rate = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["non-player-arrow-despawn-rate"])
-                if non_player_arrow_despawn_rate == -1:
-                    embed_var.add_field(name="❌ non-player-arrow-despawn-rate",
-                                        value="Set a value in paper.yml. "
-                                              "Recommended: 60")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                creative_arrow_despawn_rate = int(
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["creative-arrow-despawn-rate"])
-                if creative_arrow_despawn_rate == -1:
-                    embed_var.add_field(name="❌ creative-arrow-despawn-rate",
-                                        value="Set a value in paper.yml. "
-                                              "Recommended: 60")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                prevent_moving_into_unloaded_chunks = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "prevent-moving-into-unloaded-chunks"]
-                if prevent_moving_into_unloaded_chunks == "false":
-                    embed_var.add_field(name="❌ prevent-moving-into-unloaded-chunks",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                eigencraft_redstone = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "use-faster-eigencraft-redstone"]
-                if eigencraft_redstone == "false":
-                    embed_var.add_field(name="❌ use-faster-eigencraft-redstone",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                fix_climbing_bypass_gamerule = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["fix-climbing-bypassing-cramming-rule"]
-                if fix_climbing_bypass_gamerule == "false":
-                    embed_var.add_field(name="❌ fix-climbing-bypassing-cramming-rule",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                armor_stands_do_collision_entity_lookups = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-do-collision-entity-lookups"]
-                if armor_stands_do_collision_entity_lookups == "true":
-                    embed_var.add_field(name="❌ armor-stands-do-collision-entity-lookups",
-                                        value="Disable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                plugins = r["timingsMaster"]["plugins"]
-                armor_stands_tick = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
-                if armor_stands_tick == "true" and "PetBlocks" not in plugins and "BlockBalls" not in plugins and "ArmorStandTools" not in plugins:
-                    embed_var.add_field(name="❌ armor-stands-tick",
-                                        value="Disable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                per_player_mob_spawns = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "per-player-mob-spawns"]
-                if per_player_mob_spawns == "false":
-                    embed_var.add_field(name="❌ per-player-mob-spawns",
-                                        value="Enable this in paper.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                alt_item_despawn_rate_enabled = \
-                    r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
-                if alt_item_despawn_rate_enabled == "false":
-                    embed_var.add_field(name="❌ alt-item-despawn-rate.enabled",
-                                        value="Enable this in paper.yml.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -734,24 +323,6 @@ class Timings(commands.Cog):
                 unchecked = unchecked + 1
 
             try:
-                enable_treasure_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "enable-treasure-maps"]
-                if enable_treasure_maps == "true":
-                    embed_var.add_field(name="❌ enable-treasure-maps",
-                                        value="Disable this in paper.yml. Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                projectile_load_save = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                                               "projectile-load-save-per-chunk-limit"])
-                if projectile_load_save == -1:
-                    embed_var.add_field(name="❌ projectile-load-save-per-chunk-limit",
-                                        value="Set a value in paper.yml. Recommended: 8.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
                 use_alternate_keepalive = r["timingsMaster"]["config"]["purpur"]["settings"]["use-alternate-keepalive"]
                 plugins = r["timingsMaster"]["plugins"]
                 if use_alternate_keepalive == "false" and "TCPShield" not in plugins:
@@ -763,94 +334,6 @@ class Timings(commands.Cog):
             except KeyError:
                 unchecked = unchecked + 1
 
-            try:
-                dont_send_useless_entity_packets = r["timingsMaster"]["config"]["purpur"]["settings"][
-                    "dont-send-useless-entity-packets"]
-                if dont_send_useless_entity_packets == "false":
-                    embed_var.add_field(name="❌ dont-send-useless-entity-packets",
-                                        value="Enable this in purpur.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                disable_treasure_searching = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["dolphin"][
-                        "disable-treasure-searching"]
-                if disable_treasure_searching == "false":
-                    embed_var.add_field(name="❌ dolphin.disable-treasure-searching",
-                                        value="Enable this in purpur.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                brain_ticks = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "brain-ticks"])
-                if brain_ticks == 1:
-                    embed_var.add_field(name="❌ villager.brain-ticks",
-                                        value="Increase this in purpur.yml. "
-                                              "Recommended: 4.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                iron_golem_radius = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["radius"])
-                if iron_golem_radius == 0:
-                    embed_var.add_field(name="❌ spawn-iron-golem.radius",
-                                        value="Set a value in purpur.yml. "
-                                              "Recommended: 32.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                iron_golem_limit = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["limit"])
-                if iron_golem_limit == 0:
-                    embed_var.add_field(name="❌ spawn-iron-golem.limit",
-                                        value="Set a value in purpur.yml. "
-                                              "Recommended: 5.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                aggressive_towards_villager_when_lagging = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["zombie"][
-                        "aggressive-towards-villager-when-lagging"]
-                if aggressive_towards_villager_when_lagging == "true":
-                    embed_var.add_field(name="❌ zombie.aggresive-towards-villager-when-lagging",
-                                        value="Disable this in purpur.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                entities_can_use_portals = \
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"][
-                        "entities-can-use-portals"]
-                if entities_can_use_portals == "true":
-                    embed_var.add_field(name="❌ entities-can-use-portals",
-                                        value="Disable this in purpur.yml to prevent players from creating chunk anchors.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                lobotomize_enabled = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "lobotomize"]["enabled"]
-                if lobotomize_enabled == "false":
-                    embed_var.add_field(name="❌ villager.lobotomize.enabled",
-                                        value="Enable this in purpur.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
-                if teleport_if_outside_border == "false":
-                    embed_var.add_field(name="❌ player.teleport-if-outside-border",
-                                        value="Enable this in purpur.yml.")
-            except KeyError:
-                unchecked = unchecked + 1
         except ValueError:
             embed_var.add_field(name="❌ Invalid Configuration",
                                 value="At least one of your configuration files had an invalid data type.")
