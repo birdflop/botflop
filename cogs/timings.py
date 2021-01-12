@@ -11,8 +11,6 @@ class Timings(commands.Cog):
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
     # TODO: Add descriptions or hyperlink from the following links
-    # https://minecraft.gamepedia.com/Server.properties#Java_Edition_3
-    # https://bukkit.gamepedia.com/Bukkit.yml
     # https://www.spigotmc.org/wiki/spigot-configuration/
     # https://paper.readthedocs.io/en/latest/server/configuration.html
     # https://pl3xgaming.github.io/PurpurDocs/Configuration/
@@ -28,7 +26,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
+                                    value="Spigot timings have limited information. Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4) for the most accurate timings analysis.")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -41,36 +39,33 @@ class Timings(commands.Cog):
             return
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
-        r = requests.get(timings_json).json()
-
-        if r is None:
-            embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
-            embed_var.add_field(name="❌ Invalid report",
-                                value="Create a new timings report.")
-            embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
-            embed_var.url = timings_url
-            await message.reply(embed=embed_var)
-            return
-
         embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
         embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
         embed_var.url = timings_url
+
+        r = requests.get(timings_json).json()
+        if r is None:
+            embed_var.add_field(name="❌ Invalid report",
+                                value="Create a new timings report.")
+            await message.reply(embed=embed_var)
+            return
+
         unchecked = 0
         try:
             try:
                 version = r["timingsMaster"]["version"]
                 if "1.16.4" not in version:
                     embed_var.add_field(name="❌ Legacy Build",
-                                        value="Update to 1.16.4.")
+                                        value="You are using " + version + ". Update to 1.16.4.")
                 using_yatopia = "yatopia" in r["timingsMaster"]["config"]
                 if using_yatopia:
                     embed_var.add_field(name="❌ Yatopia",
                                         value="Yatopia is prone to bugs. "
-                                              "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).")
+                                              "Consider using [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
                 elif "Paper" in version:
                     embed_var.add_field(name="||❌ Paper||",
                                         value="||Purpur has more optimizations but is generally less supported. "
-                                              "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).||")
+                                              "Consider using [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).||")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -82,7 +77,7 @@ class Timings(commands.Cog):
 
                 if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
                     embed_var.add_field(name="❌ online-mode",
-                                        value="Enable this in server.properties for security.")
+                                        value="Enable this in [server.properties](https://minecraft.gamepedia.com/Server.properties#Java_Edition_3) for security.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -109,7 +104,7 @@ class Timings(commands.Cog):
                     java_version = jvm_version.split(".")[0]
                     if int(java_version) < 14:
                         embed_var.add_field(name="❌ Java " + java_version,
-                                            value="If you are going to use ZGC, you should also use Java 14+.")
+                                            value="If you are going to use ZGC, you should also use [Java 14+](https://adoptopenjdk.net/installation.html).")
                 elif "-Daikars.new.flags=true" in flags:
                     if "-XX:+PerfDisableSharedMem" not in flags:
                         embed_var.add_field(name="❌ Outdated Flags",
@@ -215,7 +210,7 @@ class Timings(commands.Cog):
                 if "SuggestionBlocker" in plugins:
                     embed_var.add_field(name="❌ SuggestionBlocker",
                                         value="You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                                              "Set tab-complete to -1 in spigot.yml.")
+                                              "Set tab-complete to -1 in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/).")
                 if "FastAsyncWorldEdit" in plugins:
                     embed_var.add_field(name="❌ FastAsyncWorldEdit",
                                         value="FAWE can corrupt your world. "
@@ -234,12 +229,10 @@ class Timings(commands.Cog):
                                               "Remove ExploitFixer.")
                 if "EntityTrackerFixer" in plugins:
                     embed_var.add_field(name="❌ EntityTrackerFixer",
-                                        value="You probably don't need EntityTrackerFixer as Paper already has its features. "
-                                              "Remove EntityTrackerFixer.")
+                                        value="You don't need EntityTrackerFixer as Paper already has its features. ")
                 if "Orebfuscator" in plugins:
                     embed_var.add_field(name="❌ Orebfuscator",
-                                        value="You probably don't need Orebfuscator as Paper already has its features. "
-                                              "Remove Orebfuscator.")
+                                        value="You don't need Orebfuscator as Paper already has its features.")
                 if "ImageOnMap" in plugins:
                     embed_var.add_field(name="❌ ImageOnMap",
                                         value="This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
@@ -293,7 +286,7 @@ class Timings(commands.Cog):
                     if "VillagerLobotomizatornator" in plugins:
                         embed_var.add_field(name="❌ LimitPillagers",
                                             value="You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
-                                                  "Enable villager.lobotomize.enabled in purpur.yml.")
+                                                  "Enable villager.lobotomize.enabled in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -309,7 +302,7 @@ class Timings(commands.Cog):
                     else:
                         embed_var.add_field(name="❌ PhantomSMP",
                                             value="You probably don't need PhantomSMP as Paper already has its features. "
-                                                  "Enable phantoms-only-attack-insomniacs in paper.yml.")
+                                                  "Enable phantoms-only-attack-insomniacs in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -319,10 +312,10 @@ class Timings(commands.Cog):
                 bungeecord = r["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
                 if network_compression_threshold <= 256 and bungeecord == "false":
                     embed_var.add_field(name="❌ network-compression-threshold",
-                                        value="Increase this in server.properties. Recommended: 512.")
+                                        value="Increase this in [server.properties](https://minecraft.gamepedia.com/Server.properties#Java_Edition_3). Recommended: 512.")
                 if network_compression_threshold != -1 and bungeecord == "true":
                     embed_var.add_field(name="❌ network-compression-threshold",
-                                        value="Set this to -1 in server.properties for a bungee server like yours.")
+                                        value="Set this to -1 in [server.properties](https://minecraft.gamepedia.com/Server.properties#Java_Edition_3) for a bungee server like yours.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -331,7 +324,7 @@ class Timings(commands.Cog):
                 view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
                 if view_distance >= 10 and spigot_view_distance == "default":
                     embed_var.add_field(name="❌ view-distance",
-                                        value="Decrease this from default (10) in spigot.yml. "
+                                        value="Decrease this from default (10) in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 3.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -340,7 +333,7 @@ class Timings(commands.Cog):
                 chunk_gc_period = int(r["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
                 if chunk_gc_period >= 600:
                     embed_var.add_field(name="❌ chunk-gc.period-in-ticks",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 400.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 400.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -348,7 +341,7 @@ class Timings(commands.Cog):
                 ticks_per_monster_spawns = int(r["timingsMaster"]["config"]["bukkit"]["ticks-per"]["monster-spawns"])
                 if ticks_per_monster_spawns == 1:
                     embed_var.add_field(name="❌ ticks-per.monster-spawns",
-                                        value="Increase this in bukkit.yml.\nRecommended: 4.")
+                                        value="Increase this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 4.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -356,7 +349,7 @@ class Timings(commands.Cog):
                 monsters_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["monsters"])
                 if monsters_spawn_limit >= 70:
                     embed_var.add_field(name="❌ spawn-limits.monsters",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 15.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 15.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -364,7 +357,7 @@ class Timings(commands.Cog):
                 water_ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-ambient"])
                 if water_ambient_spawn_limit >= 20:
                     embed_var.add_field(name="❌ spawn-limits.water-ambient",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 2.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -372,7 +365,7 @@ class Timings(commands.Cog):
                 ambient_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
                 if ambient_spawn_limit >= 15:
                     embed_var.add_field(name="❌ spawn-limits.ambient",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 1.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 1.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -380,7 +373,7 @@ class Timings(commands.Cog):
                 animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
                 if animals_spawn_limit >= 10:
                     embed_var.add_field(name="❌ spawn-limits.animals",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 3.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 3.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -388,7 +381,7 @@ class Timings(commands.Cog):
                 water_animals_spawn_limit = int(r["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
                 if water_animals_spawn_limit >= 15:
                     embed_var.add_field(name="❌ spawn-limits.water-animals",
-                                        value="Decrease this in bukkit.yml.\nRecommended: 2.")
+                                        value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -399,11 +392,11 @@ class Timings(commands.Cog):
                     view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
                     if mob_spawn_range >= 8 and view_distance <= 6:
                         embed_var.add_field(name="❌ mob-spawn-range",
-                                            value="Decrease this in spigot.yml. "
+                                            value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                                   "Recommended: " + str(view_distance - 1) + ".")
                 elif mob_spawn_range >= 8 and int(spigot_view_distance) <= 6:
                             embed_var.add_field(name="❌ mob-spawn-range",
-                                                value="Decrease this in spigot.yml. "
+                                                value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                                       "Recommended: " + str(int(spigot_view_distance) - 1) + ".")
             except KeyError:
                 unchecked = unchecked + 1
@@ -414,7 +407,7 @@ class Timings(commands.Cog):
                         "animals"])
                 if animals_entity_activation_range >= 32:
                     embed_var.add_field(name="❌ entity-activation-range.animals",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 6.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -425,7 +418,7 @@ class Timings(commands.Cog):
                         "monsters"])
                 if monsters_entity_activation_range >= 32:
                     embed_var.add_field(name="❌ entity-activation-range.monsters",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 16.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -442,7 +435,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["misc"])
                 if misc_entity_activation_range >= 16:
                     embed_var.add_field(name="❌ entity-activation-range.misc",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 4.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -452,7 +445,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["water"])
                 if water_entity_activation_range >= 16:
                     embed_var.add_field(name="❌ entity-activation-range.water",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 12.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -463,7 +456,7 @@ class Timings(commands.Cog):
                         "villagers"])
                 if villagers_entity_activation_range >= 32:
                     embed_var.add_field(name="❌ entity-activation-range.villagers",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 16.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -481,7 +474,7 @@ class Timings(commands.Cog):
                         "tick-inactive-villagers"]
                 if tick_inactive_villagers == "true":
                     embed_var.add_field(name="❌ tick-inactive-villagers",
-                                        value="Disable this in spigot.yml.")
+                                        value="Disable this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -489,7 +482,7 @@ class Timings(commands.Cog):
                 nerf_spawner_mobs = r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["nerf-spawner-mobs"]
                 if nerf_spawner_mobs == "false":
                     embed_var.add_field(name="❌ nerf-spawner-mobs",
-                                        value="Enable this in spigot.yml.")
+                                        value="Enable this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -614,7 +607,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["arrow-despawn-rate"])
                 if arrow_despawn_rate >= 1200:
                     embed_var.add_field(name="❌ arrow-despawn-rate",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 300.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -624,7 +617,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["item"])
                 if item_merge_radius <= 2.5:
                     embed_var.add_field(name="❌ merge-radius.item",
-                                        value="Increase this in spigot.yml. "
+                                        value="Increase this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 4.0.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -634,7 +627,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["exp"])
                 if exp_merge_radius <= 3.0:
                     embed_var.add_field(name="❌ merge-radius.exp",
-                                        value="Increase this in spigot.yml. "
+                                        value="Increase this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 6.0.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -644,7 +637,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["max-entity-collisions"])
                 if max_entity_collisions >= 8:
                     embed_var.add_field(name="❌ max-entity-collisions",
-                                        value="Decrease this in spigot.yml. "
+                                        value="Decrease this in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). "
                                               "Recommended: 2.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -654,7 +647,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
                 if max_auto_save_chunks_per_tick >= 24:
                     embed_var.add_field(name="❌ max-auto-save-chunks-per-tick",
-                                        value="Decrease this in paper.yml. "
+                                        value="Decrease this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 6.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -664,7 +657,7 @@ class Timings(commands.Cog):
                     "optimize-explosions"]
                 if optimize_explosions == "false":
                     embed_var.add_field(name="❌ optimize-explosions",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -673,7 +666,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["mob-spawner-tick-rate"])
                 if mob_spawner_tick_rate == 1:
                     embed_var.add_field(name="❌ mob-spawner-tick-rate",
-                                        value="Increase this in paper.yml. "
+                                        value="Increase this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 2.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -684,7 +677,7 @@ class Timings(commands.Cog):
                         "disable-chest-cat-detection"]
                 if disable_chest_cat_detection == "false":
                     embed_var.add_field(name="❌ disable-chest-cat-detection",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -693,7 +686,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["container-update-tick-rate"])
                 if container_update_tick_rate == "false":
                     embed_var.add_field(name="❌ container-update-tick-rate",
-                                        value="Increase this in paper.yml. "
+                                        value="Increase this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 3.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -703,7 +696,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["grass-spread-tick-rate"])
                 if grass_spread_tick_rate == 1:
                     embed_var.add_field(name="❌ grass-spread-tick-rate",
-                                        value="Increase this in paper.yml. "
+                                        value="Increase this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 4")
             except KeyError:
                 unchecked = unchecked + 1
@@ -713,7 +706,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
                 if soft_despawn_range >= 32:
                     embed_var.add_field(name="❌ despawn-ranges.soft",
-                                        value="Decrease this in paper.yml. "
+                                        value="Decrease this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 28")
             except KeyError:
                 unchecked = unchecked + 1
@@ -722,7 +715,7 @@ class Timings(commands.Cog):
                 hard_despawn_range = int(r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
                 if hard_despawn_range >= 128:
                     embed_var.add_field(name="❌ despawn-ranges.hard",
-                                        value="Decrease this in paper.yml. "
+                                        value="Decrease this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 48")
             except KeyError:
                 unchecked = unchecked + 1
@@ -732,7 +725,7 @@ class Timings(commands.Cog):
                     "disable-move-event"]
                 if hopper_disable_move_event == "false":
                     embed_var.add_field(name="❌ hopper.disable-move-event",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -741,7 +734,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["non-player-arrow-despawn-rate"])
                 if non_player_arrow_despawn_rate == -1:
                     embed_var.add_field(name="❌ non-player-arrow-despawn-rate",
-                                        value="Set a value in paper.yml. "
+                                        value="Set a value in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 60")
             except KeyError:
                 unchecked = unchecked + 1
@@ -751,7 +744,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["creative-arrow-despawn-rate"])
                 if creative_arrow_despawn_rate == -1:
                     embed_var.add_field(name="❌ creative-arrow-despawn-rate",
-                                        value="Set a value in paper.yml. "
+                                        value="Set a value in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
                                               "Recommended: 60")
             except KeyError:
                 unchecked = unchecked + 1
@@ -761,7 +754,7 @@ class Timings(commands.Cog):
                     "prevent-moving-into-unloaded-chunks"]
                 if prevent_moving_into_unloaded_chunks == "false":
                     embed_var.add_field(name="❌ prevent-moving-into-unloaded-chunks",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -770,7 +763,7 @@ class Timings(commands.Cog):
                     "use-faster-eigencraft-redstone"]
                 if eigencraft_redstone == "false":
                     embed_var.add_field(name="❌ use-faster-eigencraft-redstone",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -778,7 +771,7 @@ class Timings(commands.Cog):
                 fix_climbing_bypass_gamerule = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["fix-climbing-bypassing-cramming-rule"]
                 if fix_climbing_bypass_gamerule == "false":
                     embed_var.add_field(name="❌ fix-climbing-bypassing-cramming-rule",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -786,7 +779,7 @@ class Timings(commands.Cog):
                 armor_stands_do_collision_entity_lookups = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-do-collision-entity-lookups"]
                 if armor_stands_do_collision_entity_lookups == "true":
                     embed_var.add_field(name="❌ armor-stands-do-collision-entity-lookups",
-                                        value="Disable this in paper.yml.")
+                                        value="Disable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -795,7 +788,7 @@ class Timings(commands.Cog):
                 armor_stands_tick = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
                 if armor_stands_tick == "true" and "PetBlocks" not in plugins and "BlockBalls" not in plugins and "ArmorStandTools" not in plugins:
                     embed_var.add_field(name="❌ armor-stands-tick",
-                                        value="Disable this in paper.yml.")
+                                        value="Disable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -804,7 +797,7 @@ class Timings(commands.Cog):
                     "per-player-mob-spawns"]
                 if per_player_mob_spawns == "false":
                     embed_var.add_field(name="❌ per-player-mob-spawns",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -813,7 +806,7 @@ class Timings(commands.Cog):
                     r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
                 if alt_item_despawn_rate_enabled == "false":
                     embed_var.add_field(name="❌ alt-item-despawn-rate.enabled",
-                                        value="Enable this in paper.yml.")
+                                        value="Enable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -828,21 +821,21 @@ class Timings(commands.Cog):
                         view_distance = int(r["timingsMaster"]["config"]["server.properties"]["view-distance"])
                         if view_distance >= 4:
                             embed_var.add_field(name="❌ no-tick-view-distance",
-                                                value="Set a value in paper.yml. "
-                                                      "Recommended: " + str(view_distance) + ". And reduce view-distance in server.properties. Recommended: 3.")
+                                                value="Set a value in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
+                                                      "Recommended: " + str(view_distance) + ". And reduce view-distance from default (" + str(view_distance) + ") in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). Recommended: 3.")
                     elif int(spigot_view_distance) >= 4:
                         embed_var.add_field(name="❌ no-tick-view-distance",
-                                            value="Set a value in paper.yml. "
-                                                  "Recommended: " + spigot_view_distance + ". And reduce view-distance in spigot.yml. Recommended: 3.")
+                                            value="Set a value in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). "
+                                                  "Recommended: " + spigot_view_distance + ". And reduce view-distance in [spigot.yml](https://www.spigotmc.org/wiki/spigot-configuration/). Recommended: 3.")
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
-                enable_treasure_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "enable-treasure-maps"]
-                if enable_treasure_maps == "true":
+                enable_treasure_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["enable-treasure-maps"]
+                already_discovered_maps = r["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["treasure-maps-return-already-discovered"]
+                if enable_treasure_maps == "true" and already_discovered_maps == "false":
                     embed_var.add_field(name="❌ enable-treasure-maps",
-                                        value="Disable this in paper.yml. Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away.")
+                                        value="Disable this in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -851,7 +844,7 @@ class Timings(commands.Cog):
                                                "projectile-load-save-per-chunk-limit"])
                 if projectile_load_save == -1:
                     embed_var.add_field(name="❌ projectile-load-save-per-chunk-limit",
-                                        value="Set a value in paper.yml. Recommended: 8.")
+                                        value="Set a value in [paper.yml](https://paper.readthedocs.io/en/latest/server/configuration.html). Recommended: 8.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -860,10 +853,10 @@ class Timings(commands.Cog):
                 plugins = r["timingsMaster"]["plugins"]
                 if use_alternate_keepalive == "false" and "TCPShield" not in plugins:
                     embed_var.add_field(name="❌ use-alternate-keepalive",
-                                        value="Enable this in purpur.yml.")
+                                        value="Enable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
                 if use_alternate_keepalive == "true" and "TCPShield" in plugins:
                     embed_var.add_field(name="❌ use-alternate-keepalive",
-                                        value="Disable this in purpur.yml. It causes issues with TCPShield.")
+                                        value="Disable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/). It causes issues with TCPShield.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -872,7 +865,7 @@ class Timings(commands.Cog):
                     "dont-send-useless-entity-packets"]
                 if dont_send_useless_entity_packets == "false":
                     embed_var.add_field(name="❌ dont-send-useless-entity-packets",
-                                        value="Enable this in purpur.yml.")
+                                        value="Enable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -882,39 +875,33 @@ class Timings(commands.Cog):
                         "disable-treasure-searching"]
                 if disable_treasure_searching == "false":
                     embed_var.add_field(name="❌ dolphin.disable-treasure-searching",
-                                        value="Enable this in purpur.yml.")
+                                        value="Enable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
-                brain_ticks = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "brain-ticks"])
+                brain_ticks = int(r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["brain-ticks"])
                 if brain_ticks == 1:
                     embed_var.add_field(name="❌ villager.brain-ticks",
-                                        value="Increase this in purpur.yml. "
+                                        value="Increase this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/). "
                                               "Recommended: 4.")
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
-                iron_golem_radius = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["radius"])
+                iron_golem_radius = int(r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["radius"])
                 if iron_golem_radius == 0:
                     embed_var.add_field(name="❌ spawn-iron-golem.radius",
-                                        value="Set a value in purpur.yml. "
+                                        value="Set a value in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/). "
                                               "Recommended: 32.")
             except KeyError:
                 unchecked = unchecked + 1
 
             try:
-                iron_golem_limit = int(
-                    r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                        "spawn-iron-golem"]["limit"])
+                iron_golem_limit = int(r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["limit"])
                 if iron_golem_limit == 0:
                     embed_var.add_field(name="❌ spawn-iron-golem.limit",
-                                        value="Set a value in purpur.yml. "
+                                        value="Set a value in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/). "
                                               "Recommended: 5.")
             except KeyError:
                 unchecked = unchecked + 1
@@ -925,7 +912,7 @@ class Timings(commands.Cog):
                         "aggressive-towards-villager-when-lagging"]
                 if aggressive_towards_villager_when_lagging == "true":
                     embed_var.add_field(name="❌ zombie.aggresive-towards-villager-when-lagging",
-                                        value="Disable this in purpur.yml.")
+                                        value="Disable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -935,7 +922,7 @@ class Timings(commands.Cog):
                         "entities-can-use-portals"]
                 if entities_can_use_portals == "true":
                     embed_var.add_field(name="❌ entities-can-use-portals",
-                                        value="Disable this in purpur.yml to prevent players from creating chunk anchors.")
+                                        value="Disable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/) to prevent players from creating chunk anchors.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -944,7 +931,7 @@ class Timings(commands.Cog):
                         "lobotomize"]["enabled"]
                 if lobotomize_enabled == "false":
                     embed_var.add_field(name="❌ villager.lobotomize.enabled",
-                                        value="Enable this in purpur.yml.")
+                                        value="Enable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -952,7 +939,7 @@ class Timings(commands.Cog):
                 teleport_if_outside_border = r["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
                 if teleport_if_outside_border == "false":
                     embed_var.add_field(name="❌ player.teleport-if-outside-border",
-                                        value="Enable this in purpur.yml.")
+                                        value="Enable this in [purpur.yml](https://pl3xgaming.github.io/PurpurDocs/Configuration/).")
             except KeyError:
                 unchecked = unchecked + 1
         except ValueError:
@@ -972,7 +959,7 @@ class Timings(commands.Cog):
         if issue_count >= 25:
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more.")
         if unchecked > 0:
-            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations due to your server version.||"
+            embed_var.description = "||" + str(unchecked) + " unchecked configuration optimizations due to your server version. Use the latest version of [Purpur](https://purpur.pl3x.net/downloads/#1.16.4) to resolve this.||"
         await message.reply(embed=embed_var)
 
 
