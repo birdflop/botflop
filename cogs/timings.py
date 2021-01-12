@@ -1,6 +1,16 @@
 import discord
 from discord.ext import commands
 import requests
+import yaml
+
+TIMINGS_CHECK = None
+YAML_ERROR = None
+with open("cogs/timings_check.yml", 'r') as stream:
+    try:
+        TIMINGS_CHECK = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        YAML_ERROR = exc
 
 class Timings(commands.Cog):
 
@@ -159,109 +169,18 @@ class Timings(commands.Cog):
 
             try:
                 plugins = r["timingsMaster"]["plugins"]
-                if "ClearLag" in plugins:
-                    embed_var.add_field(name="❌ ClearLag",
-                                        value="Plugins that claim to remove lag actually cause more lag. "
-                                              "Remove ClearLag.")
-                if "LagAssist" in plugins:
-                    embed_var.add_field(name="❌ LagAssist",
-                                        value="LagAssist should only be used for analytics and preventative measures."
-                                              "All other features of the plugin should be disabled.")
-                if "NoChunkLag" in plugins:
-                    embed_var.add_field(name="❌ NoChunkLag",
-                                        value="Plugins that claim to remove lag actually cause more lag. "
-                                              "Remove NoChunkLag.")
-                if "ServerBooster" in plugins:
-                    embed_var.add_field(name="❌ ServerBooster",
-                                        value="Plugins that claim to remove lag actually cause more lag. "
-                                              "Remove ServerBooster.")
-                if "MobLimiter" in plugins:
-                    embed_var.add_field(name="❌ MobLimiter",
-                                        value="You probably don't need MobLimiter as Bukkit already has its features. "
-                                              "Remove MobLimiter.")
-                if "BookLimiter" in plugins:
-                    embed_var.add_field(name="❌ BookLimiter",
-                                        value="You probably don't need BookLimiter as Paper already has its features. "
-                                              "Remove BookLimiter.")
-                if "LimitPillagers" in plugins:
-                    embed_var.add_field(name="❌ LimitPillagers",
-                                        value="You probably don't need LimitPillagers as Paper already adds its features. "
-                                              "Remove LimitPillagers.")
-                if "VillagerOptimiser" in plugins:
-                    embed_var.add_field(name="❌ VillagerOptimiser",
-                                        value="You probably don't need VillagerOptimiser as Paper already adds its features. "
-                                              "See entity-activation-range in spigot.yml.")
-                if "StackMob" in plugins:
-                    embed_var.add_field(name="❌ StackMob",
-                                        value="Stacking plugins actually cause more lag. "
-                                              "Remove StackMob.")
-                if "Stacker" in plugins:
-                    embed_var.add_field(name="❌ Stacker",
-                                        value="Stacking plugins actually cause more lag. "
-                                              "Remove Stacker.")
-                if "MobStacker" in plugins:
-                    embed_var.add_field(name="❌ MobStacker",
-                                        value="Stacking plugins actually cause more lag. "
-                                              "Remove MobStacker.")
-                if "WildStacker" in plugins:
-                    embed_var.add_field(name="❌ WildStacker",
-                                        value="Stacking plugins actually cause more lag. "
-                                              "Remove WildStacker.")
-                if "SuggestionBlocker" in plugins:
-                    embed_var.add_field(name="❌ SuggestionBlocker",
-                                        value="You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                                              "Set tab-complete to -1 in spigot.yml.")
-                if "FastAsyncWorldEdit" in plugins:
-                    embed_var.add_field(name="❌ FastAsyncWorldEdit",
-                                        value="FAWE can corrupt your world. "
-                                              "Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).")
-                if "CMI" in plugins:
-                    embed_var.add_field(name="❌ CMI",
-                                        value="CMI is a buggy plugin. "
-                                              "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).")
-                if "Spartan" in plugins:
-                    embed_var.add_field(name="❌ Spartan",
-                                        value="Spartan is a laggy anticheat. "
-                                              "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/).")
-                if "IllegalStack" in plugins:
-                    embed_var.add_field(name="❌ IllegalStack",
-                                        value="You probably don't need IllegalStack as Paper already has its features. "
-                                              "Remove IllegalStack.")
-                if "ExploitFixer" in plugins:
-                    embed_var.add_field(name="❌ ExploitFixer",
-                                        value="You probably don't need ExploitFixer as Paper already has its features. "
-                                              "Remove ExploitFixer.")
-                if "EntityTrackerFixer" in plugins:
-                    embed_var.add_field(name="❌ EntityTrackerFixer",
-                                        value="You probably don't need EntityTrackerFixer as Paper already has its features. "
-                                              "Remove EntityTrackerFixer.")
-                if "Orebfuscator" in plugins:
-                    embed_var.add_field(name="❌ Orebfuscator",
-                                        value="You probably don't need Orebfuscator as Paper already has its features. "
-                                              "Remove Orebfuscator.")
-                if "ImageOnMap" in plugins:
-                    embed_var.add_field(name="❌ ImageOnMap",
-                                        value="This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
-                                              "Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).")
-                if "CrazyActions" in plugins:
-                    embed_var.add_field(name="❌ CrazyAuctions",
-                                        value="CrazyAuctions is a laggy plugin, even according to the developer. "
-                                              "Consider replacing it with [AuctionHouse](https://www.spigotmc.org/resources/auctionhouse.61836/).")
-                if "GroupManager" in plugins:
-                    embed_var.add_field(name="❌ GroupManager",
-                                        value="GroupManager is an outdated permission plugin. "
-                                              "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).")
-                if "PermissionsEx" in plugins:
-                    embed_var.add_field(name="❌ PermissionsEx",
-                                        value="PermissionsEx is an outdated permission plugin. "
-                                              "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).")
-                if "bPermissions" in plugins:
-                    embed_var.add_field(name="❌ bPermissions",
-                                        value="bPermissions is an outdated permission plugin. "
-                                              "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).")
-                if "DisableJoinMessage" in plugins and "Essentials" in plugins:
-                    embed_var.add_field(name="❌ DisableJoinMessage",
-                                        value="You probably don't need DisableJoinMessage because Essentials already has its features. ")
+                if not YAML_ERROR:
+                    for plugin in plugins:
+                        for stored_plugin in TIMINGS_CHECK["plugins"]["paper"]:
+                            if plugin == stored_plugin["name"]:
+                                embed_var.add_field(**create_field(stored_plugin))
+                        if "purpur" in r["timingsMaster"]["config"] and "purpur" in TIMINGS_CHECK["plugins"]:
+                            for stored_plugin in TIMINGS_CHECK["plugins"]["purpur"]:
+                                if plugin == stored_plugin["name"]:
+                                    embed_var.add_field(**create_field(stored_plugin))
+                else:
+                    embed_var.add_field(name="Error loading YAML file",
+                                        value=YAML_ERROR)
                 for plugin in plugins:
                     if "songoda" in r["timingsMaster"]["plugins"][plugin]["authors"].casefold():
                         if plugin == "EpicHeads":
@@ -269,30 +188,11 @@ class Timings(commands.Cog):
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
                         elif plugin == "UltimateStacker":
                             embed_var.add_field(name="❌ UltimateStacker",
-                                                value="Stacking plugins actually cause more lag. "
+                                                value="Stacking plugins actually causes more lag. "
                                                       "Remove UltimateStacker.")
                         else:
                             embed_var.add_field(name="❌ " + plugin,
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
-            except KeyError:
-                unchecked = unchecked + 1
-
-            try:
-                using_purpur = "purpur" in r["timingsMaster"]["config"]
-                if using_purpur:
-                    plugins = r["timingsMaster"]["plugins"]
-                    if "SilkSpawners" in plugins:
-                        embed_var.add_field(name="❌ SilkSpawners",
-                                            value="You probably don't need SilkSpawners as Purpur already has its features. "
-                                                  "Remove SilkSpawners.")
-                    if "MineableSpawners" in plugins:
-                        embed_var.add_field(name="❌ MineableSpawners",
-                                            value="You probably don't need MineableSpawners as Purpur already has its features. "
-                                                  "Remove MineableSpawners.")
-                    if "VillagerLobotomizatornator" in plugins:
-                        embed_var.add_field(name="❌ LimitPillagers",
-                                            value="You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
-                                                  "Enable villager.lobotomize.enabled in purpur.yml.")
             except KeyError:
                 unchecked = unchecked + 1
 
@@ -971,6 +871,16 @@ class Timings(commands.Cog):
             embed_var.description = "||" + str(unchecked) + " missing configuration optimizations due to your server version.||"
         await message.reply(embed=embed_var)
 
+def create_field(option):
+    field = {"name": option["name"],
+            "value": option["value"]}
+    if "prefix" in option:
+        field["name"] = option["prefix"] + field["name"]
+    if "suffix" in option:
+        field["name"] = field["name"] + option["suffix"]
+    if "inline" in option:
+        field["inline"] = option["inline"]
+    return field
 
 def setup(bot):
     bot.add_cog(Timings(bot))
