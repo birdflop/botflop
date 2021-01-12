@@ -13,148 +13,148 @@ servers:
     "||Purpur has more optimizations but is generally less supported. "
     "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).||"
 plugins:
-    paper:
-        ClearLag:
-            prefix: "⚠ "
-            value: |-
-                "Plugins that claim to remove lag actually cause more lag. "
-                "Remove ClearLag."
-        LagAssist:
-            prefix: "⚠ "
-            value: |-
-                "LagAssist should only be used for analytics and preventative measures."
-                "All other features of the plugin should be disabled."
-        NoChunkLag:
-            prefix: "⚠ "
-            value: |-
-                "Plugins that claim to remove lag actually cause more lag. "
-                "Remove NoChunkLag."
-        ServerBooster:
-            prefix: "⚠ "
-            value: |-
-                "Plugins that claim to remove lag actually cause more lag. "
-                "Remove ServerBooster."
-        MobLimiter:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need MobLimiter as Bukkit already has its features. "
-                "Remove MobLimiter."
-        BookLimiter:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need BookLimiter as Paper already has its features. "
-                "Remove BookLimiter."
-        LimitPillagers:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need LimitPillagers as Paper already adds its features. "
-                "Remove LimitPillagers."
-        VillagerOptimiser:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need VillagerOptimiser as Paper already adds its features. "
-                "See entity-activation-range in spigot.yml."
-        StackMob:
-            prefix: "⚠ "
-            value: |-
-                "Stacking plugins actually cause more lag. "
-                "Remove StackMob."
-        Stacker:
-            prefix: "⚠ "
-            value: |-
-                "Stacking plugins actually cause more lag. "
-                "Remove Stacker."
-        MobStacker:
-            prefix: "⚠ "
-            value: |-
-                "Stacking plugins actually cause more lag. "
-                "Remove MobStacker."
-        WildStacker:
-            prefix: "⚠ "
-            value: |-
-                "Stacking plugins actually cause more lag. "
-                "Remove WildStacker."
-        SuggestionBlocker:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                "Set tab-complete to -1 in spigot.yml."
-        FastAsyncWorldEdit:
-            prefix: "⚠ "
-            value: |-
-                "FAWE can corrupt your world. "
-                "Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads)."
-        CMI:
-            prefix: "⚠ "
-            value: |-
-                "CMI is a buggy plugin. "
-                "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html)."
-        Spartan:
-            prefix: "⚠ "
-            value: |-
-                "Spartan is a laggy anticheat. "
-                "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/)."
-        IllegalStack:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need IllegalStack as Paper already has its features. "
-                "Remove IllegalStack."
-        ExploitFixer:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need ExploitFixer as Paper already has its features. "
-                "Remove ExploitFixer."
-        EntityTrackerFixer:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need EntityTrackerFixer as Paper already has its features. "
-                "Remove EntityTrackerFixer."
-        Orebfuscator:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need Orebfuscator as Paper already has its features. "
-                "Remove Orebfuscator."
-        ImageOnMap:
-            prefix: "⚠ "
-            value: |-
-                "This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
-                "Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/)."
-        CrazyActions:
-            prefix: "⚠ "
-            value: |-
-                "CrazyAuctions is a laggy plugin, even according to the developer. "
-                "Consider replacing it with [AuctionHouse](https://www.spigotmc.org/resources/auctionhouse.61836/)."
-        GroupManager:
-            prefix: "⚠ "
-            value: |-
-                "GroupManager is an outdated permission plugin. "
-                "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
-        PermissionsEx:
-            prefix: "⚠ "
-            value: |-
-                "PermissionsEx is an outdated permission plugin. "
-                "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
-        bPermissions:
-            prefix: "⚠ "
-            value: |-
-                "bPermissions is an outdated permission plugin. "
-                "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
-    purpur:
-        SilkSpawners:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need SilkSpawners as Purpur already has its features. "
-                "Remove SilkSpawners."
-        MineableSpawners:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need MineableSpawners as Purpur already has its features. "
-                "Remove MineableSpawners."
-        VillagerLobotomizatornator:
-            prefix: "⚠ "
-            value: |-
-                "You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
-                "Enable villager.lobotomize.enabled in purpur.yml."
+  paper:
+    ClearLag:
+      prefix: "⚠ "
+      value: |-
+        "Plugins that claim to remove lag actually cause more lag. "
+        "Remove ClearLag."
+    LagAssist:
+      prefix: "⚠ "
+      value: |-
+        "LagAssist should only be used for analytics and preventative measures."
+        "All other features of the plugin should be disabled."
+    NoChunkLag:
+      prefix: "⚠ "
+      value: |-
+        "Plugins that claim to remove lag actually cause more lag. "
+        "Remove NoChunkLag."
+    ServerBooster:
+      prefix: "⚠ "
+      value: |-
+        "Plugins that claim to remove lag actually cause more lag. "
+        "Remove ServerBooster."
+    MobLimiter:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need MobLimiter as Bukkit already has its features. "
+        "Remove MobLimiter."
+    BookLimiter:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need BookLimiter as Paper already has its features. "
+        "Remove BookLimiter."
+    LimitPillagers:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need LimitPillagers as Paper already adds its features. "
+        "Remove LimitPillagers."
+    VillagerOptimiser:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need VillagerOptimiser as Paper already adds its features. "
+        "See entity-activation-range in spigot.yml."
+    StackMob:
+      prefix: "⚠ "
+      value: |-
+        "Stacking plugins actually cause more lag. "
+        "Remove StackMob."
+    Stacker:
+      prefix: "⚠ "
+      value: |-
+        "Stacking plugins actually cause more lag. "
+        "Remove Stacker."
+    MobStacker:
+      prefix: "⚠ "
+      value: |-
+        "Stacking plugins actually cause more lag. "
+        "Remove MobStacker."
+    WildStacker:
+      prefix: "⚠ "
+      value: |-
+        "Stacking plugins actually cause more lag. "
+        "Remove WildStacker."
+    SuggestionBlocker:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need SuggestionBlocker as Spigot already adds its features. "
+        "Set tab-complete to -1 in spigot.yml."
+    FastAsyncWorldEdit:
+      prefix: "⚠ "
+      value: |-
+        "FAWE can corrupt your world. "
+        "Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads)."
+    CMI:
+      prefix: "⚠ "
+      value: |-
+        "CMI is a buggy plugin. "
+        "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html)."
+    Spartan:
+      prefix: "⚠ "
+      value: |-
+        "Spartan is a laggy anticheat. "
+        "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/)."
+    IllegalStack:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need IllegalStack as Paper already has its features. "
+        "Remove IllegalStack."
+    ExploitFixer:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need ExploitFixer as Paper already has its features. "
+        "Remove ExploitFixer."
+    EntityTrackerFixer:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need EntityTrackerFixer as Paper already has its features. "
+        "Remove EntityTrackerFixer."
+    Orebfuscator:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need Orebfuscator as Paper already has its features. "
+        "Remove Orebfuscator."
+    ImageOnMap:
+      prefix: "⚠ "
+      value: |-
+        "This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
+        "Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/)."
+    CrazyActions:
+      prefix: "⚠ "
+      value: |-
+        "CrazyAuctions is a laggy plugin, even according to the developer. "
+        "Consider replacing it with [AuctionHouse](https://www.spigotmc.org/resources/auctionhouse.61836/)."
+    GroupManager:
+      prefix: "⚠ "
+      value: |-
+        "GroupManager is an outdated permission plugin. "
+        "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
+    PermissionsEx:
+      prefix: "⚠ "
+      value: |-
+        "PermissionsEx is an outdated permission plugin. "
+        "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
+    bPermissions:
+      prefix: "⚠ "
+      value: |-
+        "bPermissions is an outdated permission plugin. "
+        "Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar)."
+  purpur:
+    SilkSpawners:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need SilkSpawners as Purpur already has its features. "
+        "Remove SilkSpawners."
+    MineableSpawners:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need MineableSpawners as Purpur already has its features. "
+        "Remove MineableSpawners."
+    VillagerLobotomizatornator:
+      prefix: "⚠ "
+      value: |-
+        "You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
+        "Enable villager.lobotomize.enabled in purpur.yml."
 config:
   server.properties:
     online-mode:
