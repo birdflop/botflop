@@ -21,7 +21,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
+                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/).")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -163,7 +163,7 @@ class Timings(commands.Cog):
                                               "Remove ClearLag.")
                 if "LagAssist" in plugins:
                     embed_var.add_field(name="❌ LagAssist",
-                                        value="LagAssist should only be used for analytics and preventative measures."
+                                        value="LagAssist should only be used for analytics and preventative measures. "
                                               "All other features of the plugin should be disabled.")
                 if "NoChunkLag" in plugins:
                     embed_var.add_field(name="❌ NoChunkLag",
@@ -217,10 +217,6 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ CMI",
                                         value="CMI is a buggy plugin. "
                                               "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).")
-                if "Spartan" in plugins:
-                    embed_var.add_field(name="❌ Spartan",
-                                        value="Spartan is a laggy anticheat. "
-                                              "Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/).")
                 if "IllegalStack" in plugins:
                     embed_var.add_field(name="❌ IllegalStack",
                                         value="You probably don't need IllegalStack as Paper already has its features. "
