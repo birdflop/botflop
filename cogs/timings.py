@@ -63,19 +63,16 @@ class Timings(commands.Cog):
         unchecked = 0
         try:
             try:
-                version = r["timingsMaster"]["version"]
-                if "1.16.4" not in version:
-                    embed_var.add_field(name="❌ Legacy Build",
-                                        value="Update to 1.16.4.")
-                using_yatopia = "yatopia" in r["timingsMaster"]["config"]
-                if using_yatopia:
-                    embed_var.add_field(name="❌ Yatopia",
-                                        value="Yatopia is prone to bugs. "
-                                              "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).")
-                elif "Paper" in version:
-                    embed_var.add_field(name="||❌ Paper||",
-                                        value="||Purpur has more optimizations but is generally less supported. "
-                                              "Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).||")
+                version = r["timingsMaster"]["version"].lower()
+                if "version" in TIMINGS_CHECK:
+                    if TIMINGS_CHECK["version"] in version:
+                        embed_var.add_field(name="❌ Legacy Build",
+                                            value="Update to " + TIMINGS_CHECK["server"]["version"])
+                if "servers" in TIMINGS_CHECK:
+                    for server in TIMINGS_CHECK["servers"]:
+                        if server["name"] in version:
+                            embed_var.add_field(**create_field(server))
+                            break
             except KeyError:
                 unchecked = unchecked + 1
 
