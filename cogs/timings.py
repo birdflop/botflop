@@ -185,14 +185,14 @@ class Timings(commands.Cog):
             try:
                 plugins = r["timingsMaster"]["plugins"]
                 if not YAML_ERROR:
-                    for plugin in plugins:
-                        for stored_plugin in TIMINGS_CHECK["plugins"]["paper"]:
-                            if plugin == stored_plugin["name"]:
-                                embed_var.add_field(**create_field(stored_plugin))
-                        if "purpur" in r["timingsMaster"]["config"] and "purpur" in TIMINGS_CHECK["plugins"]:
-                            for stored_plugin in TIMINGS_CHECK["plugins"]["purpur"]:
-                                if plugin == stored_plugin["name"]:
-                                    embed_var.add_field(**create_field(stored_plugin))
+                    for server_name in TIMINGS_CHECK["plugins"]:
+                        if server_name in r["timingsMaster"]["config"]:
+                            for plugin in plugins:
+                                for plugin_name in TIMINGS_CHECK["plugins"][server_name]:
+                                    if plugin == plugin_name:
+                                        stored_plugin = TIMINGS_CHECK["plugins"][server_name][plugin_name]
+                                        stored_plugin["name"] = plugin_name
+                                        embed_var.add_field(**create_field(stored_plugin))
                 else:
                     embed_var.add_field(name="Error loading YAML file",
                                         value=YAML_ERROR)
