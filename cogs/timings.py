@@ -22,7 +22,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Spigot timings have limited information. Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4) for the most accurate timings analysis.")
+                                    value="Spigot timings have limited information. Upgrade to [Purpur](https://purpur.pl3x.net/downloads) for the most accurate timings analysis.")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -56,11 +56,11 @@ class Timings(commands.Cog):
             if using_yatopia:
                 embed_var.add_field(name="❌ Yatopia",
                                     value="Yatopia is prone to bugs. "
-                                          "Consider using [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
+                                          "Consider using [Purpur](https://purpur.pl3x.net/downloads).")
             elif "Paper" in version:
                 embed_var.add_field(name="||❌ Paper||",
                                     value="||Purpur has more optimizations but is generally less supported. "
-                                          "Consider using [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).||")
+                                          "Consider using [Purpur](https://purpur.pl3x.net/downloads).||")
         except KeyError:
             unchecked = unchecked + 1
         except:
@@ -1173,7 +1173,7 @@ class Timings(commands.Cog):
         if issue_count >= 25:
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more.")
         if unchecked > 0:
-            embed_var.description = "||" + str(unchecked) + " unchecked configuration optimizations due to your server version. Use the latest version of [Purpur](https://purpur.pl3x.net/downloads/#1.16.4) to resolve this.||"
+            embed_var.description = "||" + str(unchecked) + " unchecked configuration optimizations due to your server version. Use the latest version of [Purpur](https://purpur.pl3x.net/downloads) to resolve this.||"
         await message.reply(embed=embed_var)
 
 
