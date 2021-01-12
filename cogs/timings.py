@@ -163,7 +163,7 @@ class Timings(commands.Cog):
                                               "Remove ClearLag.")
                 if "LagAssist" in plugins:
                     embed_var.add_field(name="❌ LagAssist",
-                                        value="LagAssist should only be used for analytics and preventative measures."
+                                        value="LagAssist should only be used for analytics and preventative measures. "
                                               "All other features of the plugin should be disabled.")
                 if "NoChunkLag" in plugins:
                     embed_var.add_field(name="❌ NoChunkLag",
