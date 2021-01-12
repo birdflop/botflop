@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import requests
 
+
 class Timings(commands.Cog):
 
     def __init__(self, bot):
@@ -9,6 +10,12 @@ class Timings(commands.Cog):
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
+    # TODO: Add descriptions or hyperlink from the following links
+    # https://minecraft.gamepedia.com/Server.properties#Java_Edition_3
+    # https://bukkit.gamepedia.com/Bukkit.yml
+    # https://www.spigotmc.org/wiki/spigot-configuration/
+    # https://paper.readthedocs.io/en/latest/server/configuration.html
+    # https://pl3xgaming.github.io/PurpurDocs/Configuration/
     async def analyze_timings(self, message):
         enterless_message = message.content.replace("\n", " ")
         words = enterless_message.split(" ")
@@ -21,7 +28,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/).")
+                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
                 embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
@@ -949,6 +956,9 @@ class Timings(commands.Cog):
             except KeyError:
                 unchecked = unchecked + 1
         except ValueError:
+            embed_var.add_field(name="❌ Invalid Configuration",
+                                value="At least one of your configuration files had an invalid data type.")
+        except TypeError:
             embed_var.add_field(name="❌ Invalid Configuration",
                                 value="At least one of your configuration files had an invalid data type.")
 
