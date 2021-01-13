@@ -23,7 +23,7 @@ class Timings(commands.Cog):
                 embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
                                     value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for the best timings analysis.")
-                embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
+                embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
                 return
@@ -36,7 +36,7 @@ class Timings(commands.Cog):
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
         embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
-        embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
+        embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
         embed_var.url = timings_url
 
         r1 = requests.get(timings_json).json()
