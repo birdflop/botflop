@@ -221,7 +221,7 @@ class Timings(commands.Cog):
 
         except ValueError as value_error:
             print(value_error)
-            embed_var.add_field(name="❌ Value Error",
+            embed_var.add_field(name="‼❕‼ Value Error",
                                 value=value_error)
 
         if len(embed_var.fields) == 0:
