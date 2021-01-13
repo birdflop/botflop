@@ -22,12 +22,6 @@ class Timings(commands.Cog):
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
-
-    # TODO: Add descriptions or hyperlink from the following links
-    # http://bit.ly/spiconf
-    # http://bit.ly/paperconf
-    # http://bit.ly/purpurc
-
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
@@ -86,7 +80,8 @@ class Timings(commands.Cog):
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
                 if timing_cost > 300:
                     embed_var.add_field(name="❌ Timingcost",
-                                        value="Your timingcost is " + str(timing_cost) + ". Find a [better host](https://www.birdflop.com).")
+                                        value="Your timingcost is " + str(
+                                            timing_cost) + ". Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
                 unchecked += 1
@@ -155,20 +150,28 @@ class Timings(commands.Cog):
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
                 if cpu == 1:
                     embed_var.add_field(name="❌ Threads",
-                                        value="You have only " + str(cpu) + " thread. Find a [better host](https://www.birdflop.com).")
+                                        value="You have only " + str(
+                                            cpu) + " thread. Find a [better host](https://www.birdflop.com).")
                 if cpu == 2:
                     embed_var.add_field(name="❌ Threads",
-                                        value="You have only " + str(cpu) + " threads. Find a [better host](https://www.birdflop.com).")
+                                        value="You have only " + str(
+                                            cpu) + " threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
                 unchecked += 1
 
             plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
-            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
-            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
-            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
-            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
-            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
+            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in \
+                                                                                           request["timingsMaster"][
+                                                                                               "config"] else None
+            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"][
+                "config"] else None
+            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"][
+                "config"] else None
+            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"][
+                "config"] else None
+            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"][
+                "config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
                     for server_name in TIMINGS_CHECK["plugins"]:
@@ -181,7 +184,8 @@ class Timings(commands.Cog):
                                             stored_plugin["name"] = plugin_name
                                             embed_var.add_field(**create_field(stored_plugin))
                                         else:
-                                            eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur)
+                                            eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins,
+                                                       server_properties, bukkit, spigot, paper, purpur)
                                 if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
                                     if plugin == "EpicHeads":
                                         embed_var.add_field(name="❌ EpicHeads",
@@ -189,7 +193,7 @@ class Timings(commands.Cog):
                                     elif plugin == "UltimateStacker":
                                         embed_var.add_field(name="❌ UltimateStacker",
                                                             value="Stacking plugins actually causes more lag. "
-                                                                    "Remove UltimateStacker.")
+                                                                  "Remove UltimateStacker.")
                                     else:
                                         embed_var.add_field(name="❌ " + plugin,
                                                             value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
@@ -198,7 +202,8 @@ class Timings(commands.Cog):
                         config = TIMINGS_CHECK["config"][config_name]
                         for option_name in config:
                             option = config[option_name]
-                            eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur)
+                            eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit,
+                                       spigot, paper, purpur)
             else:
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
@@ -214,7 +219,9 @@ class Timings(commands.Cog):
                         using_ntvd = False
                 if not using_ntvd:
                     embed_var.add_field(name="❌ no-tick-view-distance",
-                                        value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(tvd) + ". And reduce view-distance from default (" + str(tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                                        value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
+                                            tvd) + ". And reduce view-distance from default (" + str(
+                                            tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
                 unchecked = unchecked + 1
@@ -232,37 +239,42 @@ class Timings(commands.Cog):
 
         issue_count = len(embed_var.fields)
         if issue_count >= 25:
-            embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more.")
+            embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations",
+                                      value="Create a new timings report after resolving some of the above issues to see more.")
         if unchecked > 0:
             embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
         await message.reply(embed=embed_var)
 
-def eval_field(embed_var, option, option_name, unchecked, plugins=None, server_properties=None, bukkit=None, spigot=None, paper=None, purpur=None):
+
+def eval_field(embed_var, option, option_name, unchecked, plugins=None, server_properties=None, bukkit=None,
+               spigot=None, paper=None, purpur=None):
     try:
         for option_data in option:
             add_to_field = True
             for expression in option_data["expressions"]:
                 if ("server_properties" in expression and server_properties or
-                    "bukkit" in expression and bukkit or
-                    "spigot" in expression and spigot or
-                    "paper" in expression and paper or
-                    "purpur" in expression and purpur or
-                    "plugins" in expression and plugins):
+                        "bukkit" in expression and bukkit or
+                        "spigot" in expression and spigot or
+                        "paper" in expression and paper or
+                        "purpur" in expression and purpur or
+                        "plugins" in expression and plugins):
                     if not eval(expression):
                         add_to_field = False
                         break
             if add_to_field:
                 """ f strings don't like newlines so we replace the newlines with placeholder text before we eval """
-                option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace("\\|n\\", "\n")
+                option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace(
+                    "\\|n\\", "\n")
                 embed_var.add_field(**create_field({**{"name": option_name}, **option_data}))
                 break
     except KeyError as key:
         print("Missing: " + str(key))
         unchecked += 1
 
+
 def create_field(option):
     field = {"name": option["name"],
-            "value": option["value"]}
+             "value": option["value"]}
     if "prefix" in option:
         field["name"] = option["prefix"] + field["name"]
     if "suffix" in option:
@@ -270,6 +282,7 @@ def create_field(option):
     if "inline" in option:
         field["inline"] = option["inline"]
     return field
+
 
 def setup(bot):
     bot.add_cog(Timings(bot))

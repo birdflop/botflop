@@ -400,7 +400,7 @@ config:
       - int(paper["world-settings"]["default"]["creative-arrow-despawn-rate"]) == -1
       prefix: "❌ "
       value: "Set a value in [paper.yml](http://bit.ly/paperconf).\nRecommended: 60"
-    non-player-arrow-despawn-rate:
+    prevent-moving-into-unloaded-chunks:
     - expressions:
       - paper["world-settings"]["default"]["prevent-moving-into-unloaded-chunks"] == "false"
       prefix: "❌ "
