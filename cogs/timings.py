@@ -1,54 +1,65 @@
 import discord
 from discord.ext import commands
 import requests
+import yaml
+
+TIMINGS_CHECK = None
+YAML_ERROR = None
+with open("cogs/timings_check.yml", 'r') as stream:
+    try:
+        TIMINGS_CHECK = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        YAML_ERROR = exc
 
 
 class Timings(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.TIMINGS_TITLE = "Timings Analysis"
+        self.TIMINGS_TITLE_COLOR = 0x55ffff
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
+
+    # TODO: Add descriptions or hyperlink from the following links
+    # http://bit.ly/spiconf
+    # http://bit.ly/paperconf
+    # http://bit.ly/purpurc
+
     async def analyze_timings(self, message):
-        enterless_message = message.content.replace("\n", " ")
-        words = enterless_message.split(" ")
+        words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
+        embed_var = discord.Embed(title=self.TIMINGS_TITLE, color=self.TIMINGS_TITLE_COLOR)
+        embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
+
         for word in words:
             if word.startswith("https://timings.") and "/?id=" in word:
                 timings_url = word
                 break
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
-                embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for the best timings analysis.")
-                embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
+                                    value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for better timings analysis.")
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
                 return
+
         if timings_url == "":
             return
         if "#" in timings_url:
             timings_url = timings_url.split("#")[0]
         if "?id=" not in timings_url:
             return
+
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
-        embed_var = discord.Embed(title="Timings Analysis", color=0x55ffff)
-        embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
-        embed_var.url = timings_url
+        timings_url_raw = timings_url + "&raw=1"
 
-        r1 = requests.get(timings_json).json()
-        if r1 is None:
-            embed_var.add_field(name="❌ Invalid report",
-                                value="Create a new timings report.")
-            await message.reply(embed=embed_var)
-            return
-
-        timings_url = timings_url + "&raw=1"
-        r2 = requests.get(timings_url).json()
-        if r2 is None:
+        request_raw = requests.get(timings_url_raw).json()
+        request = requests.get(timings_json).json()
+        if request is None or request_raw is None:
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.")
             await message.reply(embed=embed_var)
@@ -56,1115 +67,162 @@ class Timings(commands.Cog):
 
         unchecked = 0
         try:
-            version = r1["timingsMaster"]["version"]
-            if "1.16.4" not in version:
-                embed_var.add_field(name="❌ Legacy Build",
-                                    value="You are using " + version + ". Update to 1.16.4.")
-            using_yatopia = "yatopia" in r1["timingsMaster"]["config"]
-            if using_yatopia:
-                embed_var.add_field(name="❌ Yatopia",
-                                    value="Yatopia is prone to bugs. "
-                                          "Consider using [Purpur](https://purpur.pl3x.net/downloads).")
-            elif "Paper" in version:
-                embed_var.add_field(name="||❌ Paper||",
-                                    value="||Purpur has more optimizations. Consider using [Purpur](https://purpur.pl3x.net/downloads).||")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
+            try:
+                version = request["timingsMaster"]["version"].lower()
+                if "version" in TIMINGS_CHECK:
+                    if TIMINGS_CHECK["version"] not in version:
+                        embed_var.add_field(name="❌ Legacy Build",
+                                            value="Update to " + TIMINGS_CHECK["version"])
+                if "servers" in TIMINGS_CHECK:
+                    for server in TIMINGS_CHECK["servers"]:
+                        if server["name"] in version:
+                            embed_var.add_field(**create_field(server))
+                            break
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked += 1
 
-        try:
-            timing_cost = int(r1["timingsMaster"]["system"]["timingcost"])
-            if timing_cost > 300:
-                embed_var.add_field(name="❌ Timingcost",
-                                    value="Your timingcost is " + str(timing_cost) + ". Find a [better host](https://www.birdflop.com).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
+            try:
+                timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
+                if timing_cost > 300:
+                    embed_var.add_field(name="❌ Timingcost",
+                                        value="Your timingcost is " + str(timing_cost) + ". Find a [better host](https://www.birdflop.com).")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked += 1
 
-        try:
-            jvm_version = r1["timingsMaster"]["system"]["jvmversion"]
-            if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
-                embed_var.add_field(name="❌ Java Version",
-                                    value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
+            try:
+                jvm_version = request["timingsMaster"]["system"]["jvmversion"]
+                if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
+                    embed_var.add_field(name="❌ Java Version",
+                                        value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked += 1
 
-        try:
-            flags = r1["timingsMaster"]["system"]["flags"]
-            if "-XX:+UseZGC" in flags:
-                jvm_version = r1["timingsMaster"]["system"]["jvmversion"]
-                java_version = jvm_version.split(".")[0]
-                if int(java_version) < 14:
-                    embed_var.add_field(name="❌ Java " + java_version,
-                                        value="If you are going to use ZGC, you should also use [Java 14+](https://adoptopenjdk.net/installation.html).")
-            elif "-Daikars.new.flags=true" in flags:
-                if "-XX:+PerfDisableSharedMem" not in flags:
-                    embed_var.add_field(name="❌ Outdated Flags",
-                                        value="Add `-XX:+PerfDisableSharedMem` to flags")
-                if "XX:G1MixedGCCountTarget=4" not in flags:
-                    embed_var.add_field(name="❌ Outdated Flags",
-                                        value="Add `-XX:G1MixedGCCountTarget=4` to flags")
-                if "-Xmx" in flags:
-                    max_mem = 0
-                    flaglist = flags.split(" ")
-                    for flag in flaglist:
-                        if flag.startswith("-Xmx"):
-                            max_mem = flag.split("-Xmx")[1]
-                            max_mem = max_mem.replace("G", "000")
-                            max_mem = max_mem.replace("M", "")
-                            max_mem = max_mem.replace("g", "000")
-                            max_mem = max_mem.replace("m", "")
-                    if int(max_mem) < 5400:
-                        embed_var.add_field(name="❌ Low Memory",
-                                            value="Allocate at least 6-10GB of ram to your server if you can afford it.")
-                    if "-Xms" in flags:
-                        min_mem = 0
+            try:
+                flags = request["timingsMaster"]["system"]["flags"]
+                if "-XX:+UseZGC" in flags:
+                    jvm_version = request["timingsMaster"]["system"]["jvmversion"]
+                    java_version = jvm_version.split(".")[0]
+                    if int(java_version) < 14:
+                        embed_var.add_field(name="❌ Java " + java_version,
+                                            value="If you are going to use ZGC, you should also use Java 14+.")
+                elif "-Daikars.new.flags=true" in flags:
+                    if "-XX:+PerfDisableSharedMem" not in flags:
+                        embed_var.add_field(name="❌ Outdated Flags",
+                                            value="Add `-XX:+PerfDisableSharedMem` to flags")
+                    if "XX:G1MixedGCCountTarget=4" not in flags:
+                        embed_var.add_field(name="❌ Outdated Flags",
+                                            value="Add `-XX:G1MixedGCCountTarget=4` to flags")
+                    if "-Xmx" in flags:
+                        max_mem = 0
                         flaglist = flags.split(" ")
                         for flag in flaglist:
-                            if flag.startswith("-Xms"):
-                                min_mem = flag.split("-Xms")[1]
-                                min_mem = min_mem.replace("G", "000")
-                                min_mem = min_mem.replace("M", "")
-                                min_mem = min_mem.replace("g", "000")
-                                min_mem = min_mem.replace("m", "")
-                        if min_mem != max_mem:
-                            embed_var.add_field(name="❌ Aikar's Flags",
-                                                value="Your Xmx and Xms values should be equivalent when using Aikar's flags.")
-            elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
-                embed_var.add_field(name="❌ Outdated Flags",
-                                    value="Update [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
-            else:
-                embed_var.add_field(name="❌ Aikar's Flags",
-                                    value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-        try:
-            cpu = int(r1["timingsMaster"]["system"]["cpu"])
-            if cpu == 1:
-                embed_var.add_field(name="❌ Threads",
-                                    value="You have only " + str(cpu) + " thread. Find a [better host](https://www.birdflop.com).")
-            if cpu == 2:
-                embed_var.add_field(name="❌ Threads",
-                                    value="You have only " + str(cpu) + " threads. Find a [better host](https://www.birdflop.com).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            plugins = r1["timingsMaster"]["plugins"]
-            if "ClearLag" in plugins:
-                embed_var.add_field(name="❌ ClearLag",
-                                    value="Plugins that claim to remove lag actually cause more lag. "
-                                          "Remove ClearLag.")
-            if "LagAssist" in plugins:
-                embed_var.add_field(name="❌ LagAssist",
-                                    value="LagAssist should only be used for analytics and preventative measures. "
-                                          "All other features of the plugin should be disabled.")
-            if "NoChunkLag" in plugins:
-                embed_var.add_field(name="❌ NoChunkLag",
-                                    value="Plugins that claim to remove lag actually cause more lag. "
-                                          "Remove NoChunkLag.")
-            if "ServerBooster" in plugins:
-                embed_var.add_field(name="❌ ServerBooster",
-                                    value="Plugins that claim to remove lag actually cause more lag. "
-                                          "Remove ServerBooster.")
-            if "MobLimiter" in plugins:
-                embed_var.add_field(name="❌ MobLimiter",
-                                    value="You probably don't need MobLimiter as Bukkit already has its features. "
-                                          "Remove MobLimiter.")
-            if "BookLimiter" in plugins:
-                embed_var.add_field(name="❌ BookLimiter",
-                                    value="You probably don't need BookLimiter as Paper already has its features. "
-                                          "Remove BookLimiter.")
-            if "LimitPillagers" in plugins:
-                embed_var.add_field(name="❌ LimitPillagers",
-                                    value="You probably don't need LimitPillagers as Paper already adds its features. "
-                                          "Remove LimitPillagers.")
-            if "VillagerOptimiser" in plugins:
-                embed_var.add_field(name="❌ VillagerOptimiser",
-                                    value="You probably don't need VillagerOptimiser as Paper already adds its features. "
-                                          "See entity-activation-range in spigot.yml.")
-            if "StackMob" in plugins:
-                embed_var.add_field(name="❌ StackMob",
-                                    value="Stacking plugins actually cause more lag. "
-                                          "Remove StackMob.")
-            if "Stacker" in plugins:
-                embed_var.add_field(name="❌ Stacker",
-                                    value="Stacking plugins actually cause more lag. "
-                                          "Remove Stacker.")
-            if "MobStacker" in plugins:
-                embed_var.add_field(name="❌ MobStacker",
-                                    value="Stacking plugins actually cause more lag. "
-                                          "Remove MobStacker.")
-            if "WildStacker" in plugins:
-                embed_var.add_field(name="❌ WildStacker",
-                                    value="Stacking plugins actually cause more lag. "
-                                          "Remove WildStacker.")
-            if "SuggestionBlocker" in plugins:
-                embed_var.add_field(name="❌ SuggestionBlocker",
-                                    value="You probably don't need SuggestionBlocker as Spigot already adds its features. "
-                                          "Set tab-complete to -1 in [spigot.yml](http://bit.ly/spiconf).")
-            if "FastAsyncWorldEdit" in plugins:
-                embed_var.add_field(name="❌ FastAsyncWorldEdit",
-                                    value="FAWE can corrupt your world. "
-                                          "Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).")
-            if "CMI" in plugins:
-                embed_var.add_field(name="❌ CMI",
-                                    value="CMI is a buggy plugin. "
-                                          "Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).")
-            if "IllegalStack" in plugins:
-                embed_var.add_field(name="❌ IllegalStack",
-                                    value="You probably don't need IllegalStack as Paper already has its features. "
-                                          "Remove IllegalStack.")
-            if "ExploitFixer" in plugins:
-                embed_var.add_field(name="❌ ExploitFixer",
-                                    value="You probably don't need ExploitFixer as Paper already has its features. "
-                                          "Remove ExploitFixer.")
-            if "EntityTrackerFixer" in plugins:
-                embed_var.add_field(name="❌ EntityTrackerFixer",
-                                    value="You don't need EntityTrackerFixer as Paper already has its features. ")
-            if "Orebfuscator" in plugins:
-                embed_var.add_field(name="❌ Orebfuscator",
-                                    value="You don't need Orebfuscator as Paper already has its features.")
-            if "ImageOnMap" in plugins:
-                embed_var.add_field(name="❌ ImageOnMap",
-                                    value="This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. "
-                                          "Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).")
-            if "CrazyActions" in plugins:
-                embed_var.add_field(name="❌ CrazyAuctions",
-                                    value="CrazyAuctions is a laggy plugin, even according to the developer. "
-                                          "Consider replacing it with [AuctionHouse](https://www.spigotmc.org/resources/auctionhouse.61836/).")
-            if "GroupManager" in plugins:
-                embed_var.add_field(name="❌ GroupManager",
-                                    value="GroupManager is an outdated permission plugin. "
-                                          "Consider replacing it with [LuckPerms](https://luckperms.net/download).")
-            if "PermissionsEx" in plugins:
-                embed_var.add_field(name="❌ PermissionsEx",
-                                    value="PermissionsEx is an outdated permission plugin. "
-                                          "Consider replacing it with [LuckPerms](https://luckperms.net/download).")
-            if "bPermissions" in plugins:
-                embed_var.add_field(name="❌ bPermissions",
-                                    value="bPermissions is an outdated permission plugin. "
-                                          "Consider replacing it with [LuckPerms](https://luckperms.net/download).")
-            if "DisableJoinMessage" in plugins and "Essentials" in plugins:
-                embed_var.add_field(name="❌ DisableJoinMessage",
-                                    value="You probably don't need DisableJoinMessage because Essentials already has its features. ")
-            for plugin in plugins:
-                if "songoda" in r1["timingsMaster"]["plugins"][plugin]["authors"].casefold():
-                    if plugin == "EpicHeads":
-                        embed_var.add_field(name="❌ EpicHeads",
-                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
-                    elif plugin == "UltimateStacker":
-                        embed_var.add_field(name="❌ UltimateStacker",
-                                            value="Stacking plugins actually cause more lag. "
-                                                  "Remove UltimateStacker.")
-                    else:
-                        embed_var.add_field(name="❌ " + plugin,
-                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            using_purpur = "purpur" in r1["timingsMaster"]["config"]
-            if using_purpur:
-                plugins = r1["timingsMaster"]["plugins"]
-                if "SilkSpawners" in plugins:
-                    embed_var.add_field(name="❌ SilkSpawners",
-                                        value="You probably don't need SilkSpawners as Purpur already has its features. "
-                                              "Remove SilkSpawners.")
-                if "MineableSpawners" in plugins:
-                    embed_var.add_field(name="❌ MineableSpawners",
-                                        value="You probably don't need MineableSpawners as Purpur already has its features. "
-                                              "Remove MineableSpawners.")
-                if "VillagerLobotomizatornator" in plugins:
-                    embed_var.add_field(name="❌ LimitPillagers",
-                                        value="You probably don't need VillagerLobotomizatornator as Purpur already adds its features. "
-                                              "Enable villager.lobotomize.enabled in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            plugins = r1["timingsMaster"]["plugins"]
-            if "PhantomSMP" in plugins:
-                phantoms_only_insomniacs = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                    "phantoms-only-attack-insomniacs"]
-                if phantoms_only_insomniacs == "false":
-                    embed_var.add_field(name="❌ PhantomSMP",
-                                        value="You probably don't need PhantomSMP as Paper already has its features. "
-                                              "Remove PhantomSMP.")
+                            if flag.startswith("-Xmx"):
+                                max_mem = flag.split("-Xmx")[1]
+                                max_mem = max_mem.replace("G", "000")
+                                max_mem = max_mem.replace("M", "")
+                                max_mem = max_mem.replace("g", "000")
+                                max_mem = max_mem.replace("m", "")
+                        if int(max_mem) < 5400:
+                            embed_var.add_field(name="❌ Low Memory",
+                                                value="Allocate at least 6-10GB of ram to your server if you can afford it.")
+                        if "-Xms" in flags:
+                            min_mem = 0
+                            flaglist = flags.split(" ")
+                            for flag in flaglist:
+                                if flag.startswith("-Xms"):
+                                    min_mem = flag.split("-Xms")[1]
+                                    min_mem = min_mem.replace("G", "000")
+                                    min_mem = min_mem.replace("M", "")
+                                    min_mem = min_mem.replace("g", "000")
+                                    min_mem = min_mem.replace("m", "")
+                            if min_mem != max_mem:
+                                embed_var.add_field(name="❌ Aikar's Flags",
+                                                    value="Your Xmx and Xms values should be equivalent when using Aikar's flags.")
+                elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
+                    embed_var.add_field(name="❌ Outdated Flags",
+                                        value="Update [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
                 else:
-                    embed_var.add_field(name="❌ PhantomSMP",
-                                        value="You probably don't need PhantomSMP as Paper already has its features. "
-                                              "Enable phantoms-only-attack-insomniacs in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            online_mode = r1["timingsMaster"]["onlinemode"]
-            bungeecord = r1["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            velocity_online_mode = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["online-mode"]
-            velocity_enabled = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["enabled"]
-
-            if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
-                embed_var.add_field(name="❌ online-mode",
-                                    value="Enable this in [server.properties](http://bit.ly/servprop) for security.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            network_compression_threshold = int(
-                r1["timingsMaster"]["config"]["server.properties"]["network-compression-threshold"])
-            bungeecord = r1["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            if network_compression_threshold <= 256 and bungeecord == "false":
-                embed_var.add_field(name="❌ network-compression-threshold",
-                                    value="Increase this in [server.properties](http://bit.ly/servprop). Recommended: 512.")
-            if network_compression_threshold != -1 and bungeecord == "true":
-                embed_var.add_field(name="❌ network-compression-threshold",
-                                    value="Set this to -1 in [server.properties](http://bit.ly/servprop) for a bungee server like yours.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            using_ntvd = True
-            worlds = r2["worlds"]
-            for world in worlds:
-                tvd = int(r2["worlds"][world]["ticking-distance"])
-                ntvd = int(r2["worlds"][world]["notick-viewdistance"])
-                if ntvd >= tvd >= 4:
-                    using_ntvd = False
-            if not using_ntvd:
-                embed_var.add_field(name="❌ no-tick-view-distance",
-                                    value="Set a value in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(tvd) + ". And reduce view-distance from default (" + str(tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
-        except KeyError:
-            print("KeyError")
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            spigot_view_distance = r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
-            view_distance = int(r1["timingsMaster"]["config"]["server.properties"]["view-distance"])
-            if view_distance >= 10 and spigot_view_distance == "default":
-                embed_var.add_field(name="❌ view-distance",
-                                    value="Decrease this from default (10) in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 3.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            chunk_gc_period = int(r1["timingsMaster"]["config"]["bukkit"]["chunk-gc"]["period-in-ticks"])
-            if chunk_gc_period >= 600:
-                embed_var.add_field(name="❌ chunk-gc.period-in-ticks",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 400.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            ticks_per_monster_spawns = int(r1["timingsMaster"]["config"]["bukkit"]["ticks-per"]["monster-spawns"])
-            if ticks_per_monster_spawns == 1:
-                embed_var.add_field(name="❌ ticks-per.monster-spawns",
-                                    value="Increase this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 4.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            monsters_spawn_limit = int(r1["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["monsters"])
-            if monsters_spawn_limit >= 70:
-                embed_var.add_field(name="❌ spawn-limits.monsters",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 15.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            water_ambient_spawn_limit = int(r1["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-ambient"])
-            if water_ambient_spawn_limit >= 20:
-                embed_var.add_field(name="❌ spawn-limits.water-ambient",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            ambient_spawn_limit = int(r1["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["ambient"])
-            if ambient_spawn_limit >= 15:
-                embed_var.add_field(name="❌ spawn-limits.ambient",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 1.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            animals_spawn_limit = int(r1["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["animals"])
-            if animals_spawn_limit >= 10:
-                embed_var.add_field(name="❌ spawn-limits.animals",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 3.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            water_animals_spawn_limit = int(r1["timingsMaster"]["config"]["bukkit"]["spawn-limits"]["water-animals"])
-            if water_animals_spawn_limit >= 15:
-                embed_var.add_field(name="❌ spawn-limits.water-animals",
-                                    value="Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            mob_spawn_range = int(r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["mob-spawn-range"])
-            spigot_view_distance = r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["view-distance"]
-            if spigot_view_distance == "default":
-                view_distance = int(r1["timingsMaster"]["config"]["server.properties"]["view-distance"])
-                if mob_spawn_range >= 8 and view_distance <= 6:
-                    embed_var.add_field(name="❌ mob-spawn-range",
-                                        value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                              "Recommended: " + str(view_distance - 1) + ".")
-            elif mob_spawn_range >= 8 and int(spigot_view_distance) <= 6:
-                        embed_var.add_field(name="❌ mob-spawn-range",
-                                            value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                                  "Recommended: " + str(int(spigot_view_distance) - 1) + ".")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            animals_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "animals"])
-            if animals_entity_activation_range >= 32:
-                embed_var.add_field(name="❌ entity-activation-range.animals",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 6.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            monsters_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "monsters"])
-            if monsters_entity_activation_range >= 32:
-                embed_var.add_field(name="❌ entity-activation-range.monsters",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 16.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            raiders_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "raiders"])
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            misc_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["misc"])
-            if misc_entity_activation_range >= 16:
-                embed_var.add_field(name="❌ entity-activation-range.misc",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 4.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            water_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"]["water"])
-            if water_entity_activation_range >= 16:
-                embed_var.add_field(name="❌ entity-activation-range.water",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 12.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            villagers_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "villagers"])
-            if villagers_entity_activation_range >= 32:
-                embed_var.add_field(name="❌ entity-activation-range.villagers",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 16.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            flying_monsters_entity_activation_range = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "flying-monsters"])
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            tick_inactive_villagers = \
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "tick-inactive-villagers"]
-            if tick_inactive_villagers == "true":
-                embed_var.add_field(name="❌ tick-inactive-villagers",
-                                    value="Disable this in [spigot.yml](http://bit.ly/spiconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            nerf_spawner_mobs = r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["nerf-spawner-mobs"]
-            if nerf_spawner_mobs == "false":
-                embed_var.add_field(name="❌ nerf-spawner-mobs",
-                                    value="Enable this in [spigot.yml](http://bit.ly/spiconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_villagers_every = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-every"])
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-        try:
-            wake_up_inactive_villagers_for = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-for"])
-            if wake_up_inactive_villagers_for >= 100:
-                embed_var.add_field(name="❌ wake-up-inactive.villagers-for",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 20.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_flying_monsters_for = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["flying-monsters-for"])
-            if wake_up_inactive_flying_monsters_for >= 100:
-                embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-for",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 60.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_animals_every = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["animals-every"])
-
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_villagers_max_per_tick = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["villagers-max-per-tick"])
-            if wake_up_inactive_villagers_max_per_tick >= 4:
-                embed_var.add_field(name="❌ wake-up-inactive.villagers-max-per-tick",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 1.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_animals_for = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["animals-for"])
-            if wake_up_inactive_animals_for >= 100:
-                embed_var.add_field(name="❌ wake-up-inactive.animals-for",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 40.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_monsters_max_per_tick = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["monsters-max-per-tick"])
-            if wake_up_inactive_monsters_max_per_tick >= 8:
-                embed_var.add_field(name="❌ wake-up-inactive.monsters-max-per-tick",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 4.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_flying_monsters_max_per_tick = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["flying-monsters-max-per-tick"])
-            if wake_up_inactive_flying_monsters_max_per_tick >= 8:
-                embed_var.add_field(name="❌ wake-up-inactive.flying-monsters-max-per-tick",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 1.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_flying_monsters_every = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["flying-monsters-every"])
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_monsters_every = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["monsters-every"])
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_animals_max_per_tick = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["animals-max-per-tick"])
-            if wake_up_inactive_animals_max_per_tick >= 4:
-                embed_var.add_field(name="❌ wake-up-inactive.animals-max-per-tick",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 2.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            wake_up_inactive_monsters_for = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["entity-activation-range"][
-                    "wake-up-inactive"]["monsters-for"])
-            if wake_up_inactive_monsters_for >= 100:
-                embed_var.add_field(name="❌ wake-up-inactive.monsters-for",
-                                    value="Decrease this in spigot.yml. "
-                                          "Recommended: 60.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            arrow_despawn_rate = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["arrow-despawn-rate"])
-            if arrow_despawn_rate >= 1200:
-                embed_var.add_field(name="❌ arrow-despawn-rate",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 300.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            item_merge_radius = float(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["item"])
-            if item_merge_radius <= 2.5:
-                embed_var.add_field(name="❌ merge-radius.item",
-                                    value="Increase this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 4.0.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            exp_merge_radius = float(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["merge-radius"]["exp"])
-            if exp_merge_radius <= 3.0:
-                embed_var.add_field(name="❌ merge-radius.exp",
-                                    value="Increase this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 6.0.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            max_entity_collisions = int(
-                r1["timingsMaster"]["config"]["spigot"]["world-settings"]["default"]["max-entity-collisions"])
-            if max_entity_collisions >= 8:
-                embed_var.add_field(name="❌ max-entity-collisions",
-                                    value="Decrease this in [spigot.yml](http://bit.ly/spiconf). "
-                                          "Recommended: 2.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            max_auto_save_chunks_per_tick = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["max-auto-save-chunks-per-tick"])
-            if max_auto_save_chunks_per_tick >= 24:
-                embed_var.add_field(name="❌ max-auto-save-chunks-per-tick",
-                                    value="Decrease this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 6.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            optimize_explosions = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "optimize-explosions"]
-            if optimize_explosions == "false":
-                embed_var.add_field(name="❌ optimize-explosions",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            mob_spawner_tick_rate = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["mob-spawner-tick-rate"])
-            if mob_spawner_tick_rate == 1:
-                embed_var.add_field(name="❌ mob-spawner-tick-rate",
-                                    value="Increase this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 2.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            disable_chest_cat_detection = \
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["game-mechanics"][
-                    "disable-chest-cat-detection"]
-            if disable_chest_cat_detection == "false":
-                embed_var.add_field(name="❌ disable-chest-cat-detection",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            container_update_tick_rate = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["container-update-tick-rate"])
-            if container_update_tick_rate == "false":
-                embed_var.add_field(name="❌ container-update-tick-rate",
-                                    value="Increase this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 3.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            grass_spread_tick_rate = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["grass-spread-tick-rate"])
-            if grass_spread_tick_rate == 1:
-                embed_var.add_field(name="❌ grass-spread-tick-rate",
-                                    value="Increase this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 4")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            soft_despawn_range = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            if soft_despawn_range >= 32:
-                embed_var.add_field(name="❌ despawn-ranges.soft",
-                                    value="Decrease this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 28")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            hard_despawn_range = int(r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["despawn-ranges"]["soft"])
-            if hard_despawn_range >= 128:
-                embed_var.add_field(name="❌ despawn-ranges.hard",
-                                    value="Decrease this in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 48")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            hopper_disable_move_event = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["hopper"][
-                "disable-move-event"]
-            plugins = r1["timingsMaster"]["plugins"]
-            if hopper_disable_move_event == "false" and "QuickShop" not in plugins:
-                embed_var.add_field(name="❌ hopper.disable-move-event",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            non_player_arrow_despawn_rate = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["non-player-arrow-despawn-rate"])
-            if non_player_arrow_despawn_rate == -1:
-                embed_var.add_field(name="❌ non-player-arrow-despawn-rate",
-                                    value="Set a value in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 60")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            creative_arrow_despawn_rate = int(
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["creative-arrow-despawn-rate"])
-            if creative_arrow_despawn_rate == -1:
-                embed_var.add_field(name="❌ creative-arrow-despawn-rate",
-                                    value="Set a value in [paper.yml](http://bit.ly/paperconf). "
-                                          "Recommended: 60")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            prevent_moving_into_unloaded_chunks = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "prevent-moving-into-unloaded-chunks"]
-            if prevent_moving_into_unloaded_chunks == "false":
-                embed_var.add_field(name="❌ prevent-moving-into-unloaded-chunks",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            eigencraft_redstone = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "use-faster-eigencraft-redstone"]
-            if eigencraft_redstone == "false":
-                embed_var.add_field(name="❌ use-faster-eigencraft-redstone",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            fix_climbing_bypass_gamerule = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["fix-climbing-bypassing-cramming-rule"]
-            if fix_climbing_bypass_gamerule == "false":
-                embed_var.add_field(name="❌ fix-climbing-bypassing-cramming-rule",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            armor_stands_do_collision_entity_lookups = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-do-collision-entity-lookups"]
-            if armor_stands_do_collision_entity_lookups == "true":
-                embed_var.add_field(name="❌ armor-stands-do-collision-entity-lookups",
-                                    value="Disable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            plugins = r1["timingsMaster"]["plugins"]
-            armor_stands_tick = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["armor-stands-tick"]
-            if armor_stands_tick == "true" and "PetBlocks" not in plugins and "BlockBalls" not in plugins and "ArmorStandTools" not in plugins:
-                embed_var.add_field(name="❌ armor-stands-tick",
-                                    value="Disable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            per_player_mob_spawns = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                "per-player-mob-spawns"]
-            if per_player_mob_spawns == "false":
-                embed_var.add_field(name="❌ per-player-mob-spawns",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            alt_item_despawn_rate_enabled = \
-                r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"]
-            if alt_item_despawn_rate_enabled == "false":
-                embed_var.add_field(name="❌ alt-item-despawn-rate.enabled",
-                                    value="Enable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            enable_treasure_maps = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["enable-treasure-maps"]
-            already_discovered_maps = r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"]["treasure-maps-return-already-discovered"]
-            if enable_treasure_maps == "true" and already_discovered_maps == "false":
-                embed_var.add_field(name="❌ enable-treasure-maps",
-                                    value="Disable this in [paper.yml](http://bit.ly/paperconf).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            projectile_load_save = int(r1["timingsMaster"]["config"]["paper"]["world-settings"]["default"][
-                                           "projectile-load-save-per-chunk-limit"])
-            if projectile_load_save == -1:
-                embed_var.add_field(name="❌ projectile-load-save-per-chunk-limit",
-                                    value="Set a value in [paper.yml](http://bit.ly/paperconf). Recommended: 8.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            use_alternate_keepalive = r1["timingsMaster"]["config"]["purpur"]["settings"]["use-alternate-keepalive"]
-            plugins = r1["timingsMaster"]["plugins"]
-            if use_alternate_keepalive == "false" and "TCPShield" not in plugins:
-                embed_var.add_field(name="❌ use-alternate-keepalive",
-                                    value="Enable this in [purpur.yml](http://bit.ly/purpurc).")
-            if use_alternate_keepalive == "true" and "TCPShield" in plugins:
-                embed_var.add_field(name="❌ use-alternate-keepalive",
-                                    value="Disable this in [purpur.yml](http://bit.ly/purpurc). It causes issues with TCPShield.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            dont_send_useless_entity_packets = r1["timingsMaster"]["config"]["purpur"]["settings"][
-                "dont-send-useless-entity-packets"]
-            if dont_send_useless_entity_packets == "false":
-                embed_var.add_field(name="❌ dont-send-useless-entity-packets",
-                                    value="Enable this in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            disable_treasure_searching = \
-                r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["dolphin"][
-                    "disable-treasure-searching"]
-            if disable_treasure_searching == "false":
-                embed_var.add_field(name="❌ dolphin.disable-treasure-searching",
-                                    value="Enable this in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            brain_ticks = int(r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["brain-ticks"])
-            if brain_ticks == 1:
-                embed_var.add_field(name="❌ villager.brain-ticks",
-                                    value="Increase this in [purpur.yml](http://bit.ly/purpurc). "
-                                          "Recommended: 4.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            iron_golem_radius = int(r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["radius"])
-            if iron_golem_radius == 0:
-                embed_var.add_field(name="❌ spawn-iron-golem.radius",
-                                    value="Set a value in [purpur.yml](http://bit.ly/purpurc). "
-                                          "Recommended: 32.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            iron_golem_limit = int(r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"]["spawn-iron-golem"]["limit"])
-            if iron_golem_limit == 0:
-                embed_var.add_field(name="❌ spawn-iron-golem.limit",
-                                    value="Set a value in [purpur.yml](http://bit.ly/purpurc). "
-                                          "Recommended: 5.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            aggressive_towards_villager_when_lagging = \
-                r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["zombie"][
-                    "aggressive-towards-villager-when-lagging"]
-            if aggressive_towards_villager_when_lagging == "true":
-                embed_var.add_field(name="❌ zombie.aggresive-towards-villager-when-lagging",
-                                    value="Disable this in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            entities_can_use_portals = \
-                r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"][
-                    "entities-can-use-portals"]
-            if entities_can_use_portals == "true":
-                embed_var.add_field(name="❌ entities-can-use-portals",
-                                    value="Disable this in [purpur.yml](http://bit.ly/purpurc) to prevent players from creating chunk anchors.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            lobotomize_enabled = r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["mobs"]["villager"][
-                    "lobotomize"]["enabled"]
-            if lobotomize_enabled == "false":
-                embed_var.add_field(name="❌ villager.lobotomize.enabled",
-                                    value="Enable this in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
-            teleport_if_outside_border = r1["timingsMaster"]["config"]["purpur"]["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"]
-            if teleport_if_outside_border == "false":
-                embed_var.add_field(name="❌ player.teleport-if-outside-border",
-                                    value="Enable this in [purpur.yml](http://bit.ly/purpurc).")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
+                    embed_var.add_field(name="❌ Aikar's Flags",
+                                        value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked += 1
+
+            try:
+                cpu = int(request["timingsMaster"]["system"]["cpu"])
+                if cpu == 1:
+                    embed_var.add_field(name="❌ Threads",
+                                        value="You have only " + str(cpu) + " thread. Find a [better host](https://www.birdflop.com).")
+                if cpu == 2:
+                    embed_var.add_field(name="❌ Threads",
+                                        value="You have only " + str(cpu) + " threads. Find a [better host](https://www.birdflop.com).")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked += 1
+
+            plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
+            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
+            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
+            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
+            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
+            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
+            if not YAML_ERROR:
+                if "plugins" in TIMINGS_CHECK:
+                    for server_name in TIMINGS_CHECK["plugins"]:
+                        if server_name in request["timingsMaster"]["config"]:
+                            for plugin in plugins:
+                                for plugin_name in TIMINGS_CHECK["plugins"][server_name]:
+                                    if plugin == plugin_name:
+                                        stored_plugin = TIMINGS_CHECK["plugins"][server_name][plugin_name]
+                                        if isinstance(stored_plugin, dict):
+                                            stored_plugin["name"] = plugin_name
+                                            embed_var.add_field(**create_field(stored_plugin))
+                                        else:
+                                            eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur)
+                                if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
+                                    if plugin == "EpicHeads":
+                                        embed_var.add_field(name="❌ EpicHeads",
+                                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
+                                    elif plugin == "UltimateStacker":
+                                        embed_var.add_field(name="❌ UltimateStacker",
+                                                            value="Stacking plugins actually causes more lag. "
+                                                                    "Remove UltimateStacker.")
+                                    else:
+                                        embed_var.add_field(name="❌ " + plugin,
+                                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
+                if "config" in TIMINGS_CHECK:
+                    for config_name in TIMINGS_CHECK["config"]:
+                        config = TIMINGS_CHECK["config"][config_name]
+                        for option_name in config:
+                            option = config[option_name]
+                            eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur)
+            else:
+                embed_var.add_field(name="Error loading YAML file",
+                                    value=YAML_ERROR)
+
+            try:
+                using_ntvd = True
+                worlds = request_raw["worlds"]
+                tvd = None
+                for world in worlds:
+                    tvd = int(request_raw["worlds"][world]["ticking-distance"])
+                    ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
+                    if ntvd >= tvd >= 4:
+                        using_ntvd = False
+                if not using_ntvd:
+                    embed_var.add_field(name="❌ no-tick-view-distance",
+                                        value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(tvd) + ". And reduce view-distance from default (" + str(tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked = unchecked + 1
+
+        except ValueError as value_error:
+            print(value_error)
+            embed_var.add_field(name="❌ Value Error",
+                                value=value_error)
 
         if len(embed_var.fields) == 0:
             embed_var.add_field(name="✅ All good",
@@ -1176,9 +234,42 @@ class Timings(commands.Cog):
         if issue_count >= 25:
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations", value="Create a new timings report after resolving some of the above issues to see more.")
         if unchecked > 0:
-            embed_var.description = "||" + str(unchecked) + " unchecked configuration optimizations due to your server version. Use the latest version of [Purpur](https://purpur.pl3x.net/downloads) to resolve this.||"
+            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
         await message.reply(embed=embed_var)
 
+def eval_field(embed_var, option, option_name, unchecked, plugins=None, server_properties=None, bukkit=None, spigot=None, paper=None, purpur=None):
+    try:
+        for option_data in option:
+            add_to_field = True
+            for expression in option_data["expressions"]:
+                if ("server_properties" in expression and server_properties or
+                    "bukkit" in expression and bukkit or
+                    "spigot" in expression and spigot or
+                    "paper" in expression and paper or
+                    "purpur" in expression and purpur or
+                    "plugins" in expression and plugins):
+                    if not eval(expression):
+                        add_to_field = False
+                        break
+            if add_to_field:
+                """ f strings don't like newlines so we replace the newlines with placeholder text before we eval """
+                option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace("\\|n\\", "\n")
+                embed_var.add_field(**create_field({**{"name": option_name}, **option_data}))
+                break
+    except KeyError as key:
+        print("Missing: " + str(key))
+        unchecked += 1
+
+def create_field(option):
+    field = {"name": option["name"],
+            "value": option["value"]}
+    if "prefix" in option:
+        field["name"] = option["prefix"] + field["name"]
+    if "suffix" in option:
+        field["name"] = field["name"] + option["suffix"]
+    if "inline" in option:
+        field["inline"] = option["inline"]
+    return field
 
 def setup(bot):
     bot.add_cog(Timings(bot))
