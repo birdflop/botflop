@@ -12,6 +12,7 @@ with open("cogs/timings_check.yml", 'r') as stream:
         print(exc)
         YAML_ERROR = exc
 
+
 class Timings(commands.Cog):
 
     def __init__(self, bot):
