@@ -228,7 +228,7 @@ class Timings(commands.Cog):
 
         except ValueError as value_error:
             print(value_error)
-            embed_var.add_field(name="❌ Value Error",
+            embed_var.add_field(name="‼❕‼ Value Error",
                                 value=value_error)
 
         if len(embed_var.fields) == 0:
@@ -245,28 +245,41 @@ class Timings(commands.Cog):
             embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
         await message.reply(embed=embed_var)
 
-
-def eval_field(embed_var, option, option_name, unchecked, plugins=None, server_properties=None, bukkit=None,
-               spigot=None, paper=None, purpur=None):
+def eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur):
+    dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot, "paper": paper, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
             for expression in option_data["expressions"]:
-                if ("server_properties" in expression and server_properties or
-                        "bukkit" in expression and bukkit or
-                        "spigot" in expression and spigot or
-                        "paper" in expression and paper or
-                        "purpur" in expression and purpur or
-                        "plugins" in expression and plugins):
+                for config_name in dict_of_vars:
+                    if config_name in expression and not dict_of_vars[config_name]:
+                        add_to_field = False
+                        break
+                if not add_to_field:
+                    break
+                try:
                     if not eval(expression):
                         add_to_field = False
                         break
+                except ValueError as value_error:
+                    add_to_field = False
+                    print(value_error)
+                    embed_var.add_field(name="‼❕‼ Value Error in Bot",
+                                        value=f'`{value_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
+            for config_name in dict_of_vars:
+                if config_name in option_data["value"] and not dict_of_vars[config_name]:
+                    add_to_field = False
+                    break
             if add_to_field:
                 """ f strings don't like newlines so we replace the newlines with placeholder text before we eval """
                 option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace(
                     "\\|n\\", "\n")
                 embed_var.add_field(**create_field({**{"name": option_name}, **option_data}))
                 break
+            else:
+                unchecked = unchecked + 1
+
+
     except KeyError as key:
         print("Missing: " + str(key))
         unchecked += 1
