@@ -258,6 +258,10 @@ def eval_field(embed_var, option, option_name, unchecked, plugins, server_proper
                     print(value_error)
                     embed_var.add_field(name="❌ Value Error in Bot",
                                         value=f'`{value_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
+            for config_name in dict_of_vars:
+                if config_name in option_data["value"] and not dict_of_vars[config_name]:
+                    add_to_field = False
+                    break
             if add_to_field:
                 """ f strings don't like newlines so we replace the newlines with placeholder text before we eval """
                 option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace("\\|n\\", "\n")
