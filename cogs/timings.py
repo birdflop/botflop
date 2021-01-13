@@ -75,21 +75,6 @@ class Timings(commands.Cog):
                                 value="At least one of your configuration files had an invalid data type.")
 
         try:
-            online_mode = r1["timingsMaster"]["onlinemode"]
-            bungeecord = r1["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
-            velocity_online_mode = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["online-mode"]
-            velocity_enabled = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["enabled"]
-
-            if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
-                embed_var.add_field(name="❌ online-mode",
-                                    value="Enable this in [server.properties](http://bit.ly/servprop) for security.")
-        except KeyError:
-            unchecked = unchecked + 1
-        except:
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
-
-        try:
             timing_cost = int(r1["timingsMaster"]["system"]["timingcost"])
             if timing_cost > 300:
                 embed_var.add_field(name="❌ Timingcost",
@@ -329,6 +314,21 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ PhantomSMP",
                                         value="You probably don't need PhantomSMP as Paper already has its features. "
                                               "Enable phantoms-only-attack-insomniacs in [paper.yml](http://bit.ly/paperconf).")
+        except KeyError:
+            unchecked = unchecked + 1
+        except:
+            embed_var.add_field(name="❌ Invalid Configuration",
+                                value="At least one of your configuration files had an invalid data type.")
+
+        try:
+            online_mode = r1["timingsMaster"]["onlinemode"]
+            bungeecord = r1["timingsMaster"]["config"]["spigot"]["settings"]["bungeecord"]
+            velocity_online_mode = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["online-mode"]
+            velocity_enabled = r1["timingsMaster"]["config"]["paper"]["settings"]["velocity-support"]["enabled"]
+
+            if not online_mode and bungeecord == "false" and (velocity_online_mode == "false" or velocity_enabled == "false"):
+                embed_var.add_field(name="❌ online-mode",
+                                    value="Enable this in [server.properties](http://bit.ly/servprop) for security.")
         except KeyError:
             unchecked = unchecked + 1
         except:
