@@ -238,20 +238,21 @@ class Timings(commands.Cog):
         await message.reply(embed=embed_var)
 
 def eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur):
+    dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot, "paper": paper, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
             for expression in option_data["expressions"]:
+                for config_name in dict_of_vars:
+                    if config_name in expression and not dict_of_vars[config_name]:
+                        add_to_field = False
+                        break
+                if not add_to_field:
+                    break
                 try:
-                    if ("server_properties" in expression and server_properties or
-                        "bukkit" in expression and bukkit or
-                        "spigot" in expression and spigot or
-                        "paper" in expression and paper or
-                        "purpur" in expression and purpur or
-                        "plugins" in expression and plugins):
-                            if not eval(expression):
-                                add_to_field = False
-                                break
+                    if not eval(expression):
+                        add_to_field = False
+                        break
                 except ValueError as value_error:
                     add_to_field = False
                     print(value_error)
@@ -262,6 +263,10 @@ def eval_field(embed_var, option, option_name, unchecked, plugins, server_proper
                 option_data["value"] = eval('f"""' + option_data["value"].replace("\n", "\\|n\\") + '"""').replace("\\|n\\", "\n")
                 embed_var.add_field(**create_field({**{"name": option_name}, **option_data}))
                 break
+            else:
+                unchecked = unchecked + 1
+
+
     except KeyError as key:
         print("Missing: " + str(key))
         unchecked += 1
