@@ -448,18 +448,6 @@ config:
       - int(paper["world-settings"]["default"]["projectile-load-save-per-chunk-limit"]) == -1
       prefix: "❌ "
       value: "Set a value in [paper.yml](http://bit.ly/paperconf). Recommended: 8."
-    no-tick-view-distance:
-    - expressions:
-      - int(paper["world-settings"]["default"]["viewdistances"]["no-tick-view-distance"]) == -1
-      - spigot["world-settings"]["default"]["view-distance"] == "default"
-      - int(server_properties["view-distance"]) >= 4
-      prefix: "❌ "
-      value: Set a value in [paper.yml](http://bit.ly/paperconf).\nRecommended {server_properties["view-distance"]}. Reduce view-distance in server.properties to 3.
-    - expressions:
-      - int(paper["world-settings"]["default"]["viewdistances"]["no-tick-view-distance"]) == -1
-      - int(spigot["world-settings"]["default"]["view-distance"]) >= 4
-      prefix: "❌ "
-      value: Set a value in [paper.yml](http://bit.ly/paperconf).\nRecommended {spigot["world-settings"]["default"]["view-distance"]}. Reduce view-distance in server.properties to 3.
   purpur:
     settings.use-alternate-keepalive:
     - expressions:

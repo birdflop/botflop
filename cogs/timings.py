@@ -21,10 +21,17 @@ class Timings(commands.Cog):
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
+
+    # TODO: Add descriptions or hyperlink from the following links
+    # http://bit.ly/spiconf
+    # http://bit.ly/paperconf
+    # http://bit.ly/purpurc
+
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
         embed_var = discord.Embed(title=self.TIMINGS_TITLE, color=self.TIMINGS_TITLE_COLOR)
+        embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
 
         for word in words:
             if word.startswith("https://timings.") and "/?id=" in word:
@@ -33,8 +40,7 @@ class Timings(commands.Cog):
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Upgrade to [Purpur](https://purpur.pl3x.net/downloads/#1.16.4).")
-                embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
+                                    value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for better timings analysis.")
                 embed_var.url = timings_url
                 await message.reply(embed=embed_var)
                 return
@@ -48,22 +54,20 @@ class Timings(commands.Cog):
 
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
+        timings_url_raw = timings_url + "&raw=1"
 
-        r = requests.get(timings_json).json()
-        if r is None:
+        request_raw = requests.get(timings_url_raw).json()
+        request = requests.get(timings_json).json()
+        if request is None or request_raw is None:
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.")
-            embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
-            embed_var.url = timings_url
             await message.reply(embed=embed_var)
             return
 
-        embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
-        embed_var.url = timings_url
         unchecked = 0
         try:
             try:
-                version = r["timingsMaster"]["version"].lower()
+                version = request["timingsMaster"]["version"].lower()
                 if "version" in TIMINGS_CHECK:
                     if TIMINGS_CHECK["version"] not in version:
                         embed_var.add_field(name="❌ Legacy Build",
@@ -78,7 +82,7 @@ class Timings(commands.Cog):
                 unchecked += 1
 
             try:
-                timing_cost = int(r["timingsMaster"]["system"]["timingcost"])
+                timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
                 if timing_cost > 300:
                     embed_var.add_field(name="❌ Timingcost",
                                         value="Your timingcost is " + str(timing_cost) + ". Find a [better host](https://www.birdflop.com).")
@@ -87,7 +91,7 @@ class Timings(commands.Cog):
                 unchecked += 1
 
             try:
-                jvm_version = r["timingsMaster"]["system"]["jvmversion"]
+                jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                 if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                     embed_var.add_field(name="❌ Java Version",
                                         value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
@@ -96,9 +100,9 @@ class Timings(commands.Cog):
                 unchecked += 1
 
             try:
-                flags = r["timingsMaster"]["system"]["flags"]
+                flags = request["timingsMaster"]["system"]["flags"]
                 if "-XX:+UseZGC" in flags:
-                    jvm_version = r["timingsMaster"]["system"]["jvmversion"]
+                    jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                     java_version = jvm_version.split(".")[0]
                     if int(java_version) < 14:
                         embed_var.add_field(name="❌ Java " + java_version,
@@ -147,7 +151,7 @@ class Timings(commands.Cog):
                 unchecked += 1
 
             try:
-                cpu = int(r["timingsMaster"]["system"]["cpu"])
+                cpu = int(request["timingsMaster"]["system"]["cpu"])
                 if cpu == 1:
                     embed_var.add_field(name="❌ Threads",
                                         value="You have only " + str(cpu) + " thread. Find a [better host](https://www.birdflop.com).")
@@ -158,16 +162,16 @@ class Timings(commands.Cog):
                 print("Missing: " + str(key))
                 unchecked += 1
 
-            plugins = r["timingsMaster"]["plugins"] if "plugins" in r["timingsMaster"] else None
-            server_properties = r["timingsMaster"]["config"]["server.properties"] if "server.properties" in r["timingsMaster"]["config"] else None
-            bukkit = r["timingsMaster"]["config"]["bukkit"] if "bukkit" in r["timingsMaster"]["config"] else None
-            spigot = r["timingsMaster"]["config"]["spigot"] if "spigot" in r["timingsMaster"]["config"] else None
-            paper = r["timingsMaster"]["config"]["paper"] if "paper" in r["timingsMaster"]["config"] else None
-            purpur = r["timingsMaster"]["config"]["purpur"] if "purpur" in r["timingsMaster"]["config"] else None
+            plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
+            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
+            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
+            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
+            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
+            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
                     for server_name in TIMINGS_CHECK["plugins"]:
-                        if server_name in r["timingsMaster"]["config"]:
+                        if server_name in request["timingsMaster"]["config"]:
                             for plugin in plugins:
                                 for plugin_name in TIMINGS_CHECK["plugins"][server_name]:
                                     if plugin == plugin_name:
@@ -177,7 +181,7 @@ class Timings(commands.Cog):
                                             embed_var.add_field(**create_field(stored_plugin))
                                         else:
                                             eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur)
-                                if "songoda" in r["timingsMaster"]["plugins"][plugin]["authors"].casefold():
+                                if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
                                     if plugin == "EpicHeads":
                                         embed_var.add_field(name="❌ EpicHeads",
                                                             value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
@@ -198,10 +202,26 @@ class Timings(commands.Cog):
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
 
-        except ValueError as bruh:
-            print(bruh)
-            embed_var.add_field(name="❌ Invalid Configuration",
-                                value="At least one of your configuration files had an invalid data type.")
+            try:
+                using_ntvd = True
+                worlds = request_raw["worlds"]
+                tvd = None
+                for world in worlds:
+                    tvd = int(request_raw["worlds"][world]["ticking-distance"])
+                    ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
+                    if ntvd >= tvd >= 4:
+                        using_ntvd = False
+                if not using_ntvd:
+                    embed_var.add_field(name="❌ no-tick-view-distance",
+                                        value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(tvd) + ". And reduce view-distance from default (" + str(tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked = unchecked + 1
+
+        except ValueError as value_error:
+            print(value_error)
+            embed_var.add_field(name="❌ Value Error",
+                                value=value_error)
 
         if len(embed_var.fields) == 0:
             embed_var.add_field(name="✅ All good",
