@@ -31,6 +31,7 @@ class Timings(commands.Cog):
         for word in words:
             if word.startswith("https://timings.") and "/?id=" in word:
                 timings_url = word
+                embed_var.url = timings_url
                 break
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
