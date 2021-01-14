@@ -296,7 +296,6 @@ def eval_field(embed_var, option, option_name, unchecked, plugins, server_proper
             else:
                 unchecked = unchecked + 1
 
-
     except KeyError as key:
         print("Missing: " + str(key))
         unchecked += 1
