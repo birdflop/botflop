@@ -7,12 +7,12 @@
 # wake_up_inactive_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-every"])
 version: "1.16.4"
 servers:
-- name: "yatopia"
+- name: "Yatopia"
   prefix: "❌"
   value: |-
     Yatopia is prone to bugs.
     Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
-- name: "paper"
+- name: "Paper"
   prefix: "||❌"
   suffix: "||"
   value: |-

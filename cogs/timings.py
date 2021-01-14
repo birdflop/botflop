@@ -62,11 +62,11 @@ class Timings(commands.Cog):
         unchecked = 0
         try:
             try:
-                version = request["timingsMaster"]["version"].lower()
+                version = request["timingsMaster"]["version"]
                 if "version" in TIMINGS_CHECK:
-                    if TIMINGS_CHECK["version"] not in version:
+                    if TIMINGS_CHECK["version"] not in version and "1.16.5" not in version:
                         embed_var.add_field(name="❌ Legacy Build",
-                                            value="Update to " + TIMINGS_CHECK["version"])
+                                            value="You are using " + version + ". Update to " + TIMINGS_CHECK["version"])
                 if "servers" in TIMINGS_CHECK:
                     for server in TIMINGS_CHECK["servers"]:
                         if server["name"] in version:
