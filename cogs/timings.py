@@ -18,14 +18,13 @@ class Timings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.TIMINGS_TITLE = "Timings Analysis"
-        self.TIMINGS_TITLE_COLOR = 0x55ffff
 
     # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
-        embed_var = discord.Embed(title=self.TIMINGS_TITLE, color=self.TIMINGS_TITLE_COLOR)
+        embed_var = discord.Embed(title=self.TIMINGS_TITLE)
         embed_var.set_footer(text="Requested by " + message.author.name, icon_url=message.author.avatar_url)
 
         for word in words:
@@ -223,6 +222,31 @@ class Timings(commands.Cog):
                                         value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
                                             tvd) + ". And reduce view-distance from default (" + str(
                                             tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked = unchecked + 1
+
+            try:
+                normal_ticks = request["timingsMaster"]["data"][0]["totalTicks"]
+                worst_tps = 20
+                index = 0
+                while index < len(request["timingsMaster"]["data"]):
+                    total_ticks = request["timingsMaster"]["data"][index]["totalTicks"]
+                    if total_ticks == normal_ticks:
+                        end_time = request["timingsMaster"]["data"][index]["end"]
+                        start_time = request["timingsMaster"]["data"][index]["start"]
+                        tps = total_ticks / (end_time - start_time)
+                        if tps < worst_tps:
+                            worst_tps = tps
+                    index = index + 1
+                if worst_tps < 10:
+                    red = 255
+                    green = int(255 * (0.1 * worst_tps))
+                else:
+                    red = int(255 * (-0.1 * worst_tps + 2))
+                    green = 255
+                color = int(red*256*256 + green*256)
+                embed_var.color = color
             except KeyError as key:
                 print("Missing: " + str(key))
                 unchecked = unchecked + 1
