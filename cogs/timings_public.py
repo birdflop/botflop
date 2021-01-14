@@ -217,7 +217,7 @@ class Timings(commands.Cog):
                     ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
                     if ntvd >= tvd >= 4:
                         using_ntvd = False
-                if not using_ntvd:
+                if not using_ntvd and tvd > 3:
                     embed_var.add_field(name="❌ no-tick-view-distance",
                                         value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
                                             tvd) + ". And reduce view-distance from default (" + str(
