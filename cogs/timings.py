@@ -237,12 +237,19 @@ class Timings(commands.Cog):
             await message.reply(embed=embed_var)
             return
 
+        if unchecked > 0:
+            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
+
         issue_count = len(embed_var.fields)
+        field_at_index = 24
         if issue_count >= 25:
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations",
                                       value="Create a new timings report after resolving some of the above issues to see more.")
-        if unchecked > 0:
-            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
+        while len(embed_var) > 6000:
+            embed_var.insert_field_at(index=field_at_index, name="Plus " + str(issue_count - field_at_index) + " more recommendations",
+                                      value="Create a new timings report after resolving some of the above issues to see more.")
+            del embed_var._fields[(field_at_index + 1):]
+            field_at_index-=1
         await message.reply(embed=embed_var)
 
 def eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur):
