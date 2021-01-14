@@ -31,6 +31,7 @@ class Timings(commands.Cog):
         for word in words:
             if word.startswith("https://timings.") and "/?id=" in word:
                 timings_url = word
+                embed_var.url = timings_url
                 break
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
@@ -186,17 +187,6 @@ class Timings(commands.Cog):
                                         else:
                                             eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins,
                                                        server_properties, bukkit, spigot, paper, purpur)
-                                if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
-                                    if plugin == "EpicHeads":
-                                        embed_var.add_field(name="❌ EpicHeads",
-                                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
-                                    elif plugin == "UltimateStacker":
-                                        embed_var.add_field(name="❌ UltimateStacker",
-                                                            value="Stacking plugins actually causes more lag. "
-                                                                  "Remove UltimateStacker.")
-                                    else:
-                                        embed_var.add_field(name="❌ " + plugin,
-                                                            value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
                 if "config" in TIMINGS_CHECK:
                     for config_name in TIMINGS_CHECK["config"]:
                         config = TIMINGS_CHECK["config"][config_name]
@@ -207,6 +197,23 @@ class Timings(commands.Cog):
             else:
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
+
+            try:
+                for plugin in plugins:
+                    if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
+                        if plugin == "EpicHeads":
+                            embed_var.add_field(name="⚠ EpicHeads",
+                                                value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
+                        elif plugin == "UltimateStacker":
+                            embed_var.add_field(name="⚠ UltimateStacker",
+                                                value="Stacking plugins actually causes more lag. "
+                                                        "Remove UltimateStacker.")
+                        else:
+                            embed_var.add_field(name="⚠ " + plugin,
+                                                value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
+            except KeyError as key:
+                print("Missing: " + str(key))
+                unchecked = unchecked + 1
 
             try:
                 using_ntvd = True
