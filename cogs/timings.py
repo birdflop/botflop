@@ -207,7 +207,7 @@ class Timings(commands.Cog):
                         elif plugin == "UltimateStacker":
                             embed_var.add_field(name="⚠ UltimateStacker",
                                                 value="Stacking plugins actually causes more lag. "
-                                                        "Remove UltimateStacker.")
+                                                      "Remove UltimateStacker.")
                         else:
                             embed_var.add_field(name="⚠ " + plugin,
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
@@ -235,7 +235,7 @@ class Timings(commands.Cog):
 
         except ValueError as value_error:
             print(value_error)
-            embed_var.add_field(name="‼❕‼ Value Error",
+            embed_var.add_field(name="❗ Value Error",
                                 value=value_error)
 
         if len(embed_var.fields) == 0:
@@ -253,14 +253,17 @@ class Timings(commands.Cog):
             embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations",
                                       value="Create a new timings report after resolving some of the above issues to see more.")
         while len(embed_var) > 6000:
-            embed_var.insert_field_at(index=field_at_index, name="Plus " + str(issue_count - field_at_index) + " more recommendations",
+            embed_var.insert_field_at(index=field_at_index,
+                                      name="Plus " + str(issue_count - field_at_index) + " more recommendations",
                                       value="Create a new timings report after resolving some of the above issues to see more.")
             del embed_var._fields[(field_at_index + 1):]
-            field_at_index-=1
+            field_at_index -= 1
         await message.reply(embed=embed_var)
 
+
 def eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur):
-    dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot, "paper": paper, "purpur": purpur}
+    dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot,
+                    "paper": paper, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
@@ -278,7 +281,7 @@ def eval_field(embed_var, option, option_name, unchecked, plugins, server_proper
                 except ValueError as value_error:
                     add_to_field = False
                     print(value_error)
-                    embed_var.add_field(name="‼❕‼ Value Error in Bot",
+                    embed_var.add_field(name="❗ Value Error",
                                         value=f'`{value_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
             for config_name in dict_of_vars:
                 if config_name in option_data["value"] and not dict_of_vars[config_name]:
