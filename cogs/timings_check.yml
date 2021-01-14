@@ -24,7 +24,6 @@ plugins:
       prefix: "⚠"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
-        Remove ClearLag.
     LagAssist:
       prefix: "⚠"
       value: |-
@@ -34,27 +33,22 @@ plugins:
       prefix: "⚠"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
-        Remove NoChunkLag.
+    NoMobLag:
+      prefix: "⚠"
+      value: |-
+        Plugins that claim to remove lag actually cause more lag.
     ServerBooster:
       prefix: "⚠"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
-        Remove ServerBooster.
-    MobLimiter:
-      prefix: "⚠"
-      value: |-
-        You probably don't need MobLimiter as Bukkit already has its features. 
-        Remove MobLimiter.
     BookLimiter:
       prefix: "⚠"
       value: |-
-        You probably don't need BookLimiter as Paper already has its features. 
-        Remove BookLimiter.
+        You don't need BookLimiter as Paper already has its features.
     LimitPillagers:
       prefix: "⚠"
       value: |-
         You probably don't need LimitPillagers as Paper already adds its features. 
-        Remove LimitPillagers.
     VillagerOptimiser:
       prefix: "⚠"
       value: |-
@@ -64,22 +58,18 @@ plugins:
       prefix: "⚠"
       value: |-
         Stacking plugins actually cause more lag. 
-        Remove StackMob.
     Stacker:
       prefix: "⚠"
       value: |-
         Stacking plugins actually cause more lag. 
-        Remove Stacker.
     MobStacker:
       prefix: "⚠"
       value: |-
         Stacking plugins actually cause more lag. 
-        Remove MobStacker.
     WildStacker:
       prefix: "⚠"
       value: |-
         Stacking plugins actually cause more lag. 
-        Remove WildStacker.
     SuggestionBlocker:
       prefix: "⚠"
       value: |-
@@ -95,35 +85,26 @@ plugins:
       value: |-
         CMI is a buggy plugin. 
         Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).
-    Spartan:
-      prefix: "⚠"
-      value: |-
-        Spartan is a laggy anticheat. 
-        Consider replacing it with [Matrix](https://matrix.rip/), [NCP](https://ci.codemc.io/job/Updated-NoCheatPlus/job/Updated-NoCheatPlus/), or [AAC](https://www.spigotmc.org/resources/aac-advanced-anti-cheat-hack-kill-aura-blocker.6442/).
     IllegalStack:
       prefix: "⚠"
       value: |-
-        You probably don't need IllegalStack as Paper already has its features. 
-        Remove IllegalStack.
+        You probably don't need IllegalStack for survival servers as Paper already has its features.
     ExploitFixer:
       prefix: "⚠"
       value: |-
         You probably don't need ExploitFixer as Paper already has its features. 
-        Remove ExploitFixer.
     EntityTrackerFixer:
       prefix: "⚠"
       value: |-
         You don't need EntityTrackerFixer as Paper already has its features.
-        Remove EntityTrackerFixer.
     Orebfuscator:
       prefix: "⚠"
       value: |-
-        You don't need Orebfuscator as Paper already has its features.
-        Remove Orebfuscator.
+        You don't need Orebfuscator as [Paper](https://gist.github.com/stonar96/ba18568bd91e5afd590e8038d14e245e) already has its features.
     ImageOnMap:
       prefix: "⚠"
       value: |-
-        This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. 
+        This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104).
         Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).
     GroupManager:
       prefix: "⚠"
@@ -146,24 +127,26 @@ plugins:
       prefix: "⚠"
       value: |-
         You probably don't need PhantomSMP as Paper already has its features.
-        Remove PhantomSMP.
     - expressions:
       - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "true"
       prefix: "⚠"
       value: |-
         You probably don't need PhantomSMP as Paper already has its features.
         Enable phantoms-only-attack-insomniacs in [paper.yml](http://bit.ly/paperconf).
+  tuinity:
+    PacketLimiter:
+      prefix: "⚠"
+      value: |-
+        You don't need PacketLimiter as Tuinity already has its features.
   purpur:
     SilkSpawners:
       prefix: "⚠"
       value: |-
         You probably don't need SilkSpawners as Purpur already has its features. 
-        Remove SilkSpawners.
     MineableSpawners:
       prefix: "⚠"
       value: |-
         You probably don't need MineableSpawners as Purpur already has its features. 
-        Remove MineableSpawners.
     VillagerLobotomizatornator:
       prefix: "⚠"
       value: |-

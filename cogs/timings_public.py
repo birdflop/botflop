@@ -61,7 +61,6 @@ class Timings(commands.Cog):
             await message.reply(embed=embed_var)
             return
 
-        unchecked = 0
         try:
             try:
                 version = request["timingsMaster"]["version"] if "version" in request["timingsMaster"] else None
@@ -82,7 +81,6 @@ class Timings(commands.Cog):
                             break
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked += 1
 
             try:
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
@@ -92,7 +90,6 @@ class Timings(commands.Cog):
                                             timing_cost) + ". Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked += 1
 
             try:
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
@@ -101,7 +98,6 @@ class Timings(commands.Cog):
                                         value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked += 1
 
             try:
                 flags = request["timingsMaster"]["system"]["flags"]
@@ -152,7 +148,6 @@ class Timings(commands.Cog):
                                         value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked += 1
 
             try:
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
@@ -166,13 +161,13 @@ class Timings(commands.Cog):
                                             cpu) + " threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked += 1
 
             plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
             server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
             bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
             spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
             paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
+            tuinity = request["timingsMaster"]["config"]["tuinity"] if "tuinity" in request["timingsMaster"]["config"] else None
             purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
@@ -186,15 +181,15 @@ class Timings(commands.Cog):
                                             stored_plugin["name"] = plugin_name
                                             embed_var.add_field(**create_field(stored_plugin))
                                         else:
-                                            eval_field(embed_var, stored_plugin, plugin_name, unchecked, plugins,
-                                                       server_properties, bukkit, spigot, paper, purpur)
+                                            eval_field(embed_var, stored_plugin, plugin_name, plugins,
+                                                       server_properties, bukkit, spigot, paper, tuinity, purpur)
                 if "config" in TIMINGS_CHECK:
                     for config_name in TIMINGS_CHECK["config"]:
                         config = TIMINGS_CHECK["config"][config_name]
                         for option_name in config:
                             option = config[option_name]
-                            eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit,
-                                       spigot, paper, purpur)
+                            eval_field(embed_var, option, option_name, plugins, server_properties, bukkit,
+                                       spigot, paper, tuinity, purpur)
             else:
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
@@ -214,7 +209,6 @@ class Timings(commands.Cog):
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked = unchecked + 1
 
             try:
                 using_ntvd = True
@@ -223,7 +217,7 @@ class Timings(commands.Cog):
                 for world in worlds:
                     tvd = int(request_raw["worlds"][world]["ticking-distance"])
                     ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
-                    if ntvd >= tvd >= 4:
+                    if ntvd <= tvd and tvd >= 4:
                         using_ntvd = False
                 if not using_ntvd:
                     embed_var.add_field(name="❌ no-tick-view-distance",
@@ -232,7 +226,6 @@ class Timings(commands.Cog):
                                             tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked = unchecked + 1
 
             try:
                 normal_ticks = request["timingsMaster"]["data"][0]["totalTicks"]
@@ -257,7 +250,6 @@ class Timings(commands.Cog):
                 embed_var.color = color
             except KeyError as key:
                 print("Missing: " + str(key))
-                unchecked = unchecked + 1
 
         except ValueError as value_error:
             print(value_error)
@@ -269,9 +261,6 @@ class Timings(commands.Cog):
                                 value="Analyzed with no issues")
             await message.reply(embed=embed_var)
             return
-
-        if unchecked > 0:
-            embed_var.description = "||" + str(unchecked) + " missing configuration optimizations.||"
 
         issue_count = len(embed_var.fields)
         field_at_index = 24
@@ -287,9 +276,9 @@ class Timings(commands.Cog):
         await message.reply(embed=embed_var)
 
 
-def eval_field(embed_var, option, option_name, unchecked, plugins, server_properties, bukkit, spigot, paper, purpur):
+def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, tuinity, purpur):
     dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot,
-                    "paper": paper, "purpur": purpur}
+                    "paper": paper, "tuinity": tuinity, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
@@ -319,12 +308,9 @@ def eval_field(embed_var, option, option_name, unchecked, plugins, server_proper
                     "\\|n\\", "\n")
                 embed_var.add_field(**create_field({**{"name": option_name}, **option_data}))
                 break
-            else:
-                unchecked = unchecked + 1
 
     except KeyError as key:
         print("Missing: " + str(key))
-        unchecked += 1
 
 
 def create_field(option):
