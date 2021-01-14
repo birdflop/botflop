@@ -27,7 +27,11 @@ guild_id = int(os.getenv('guild_id'))
 verification_channel = int(os.getenv('verification_channel'))
 verification_message = int(os.getenv('verification_message'))
 application_api_key = os.getenv('application_api_key')
-running_on_panel = bool(os.getenv('running_on_panel'))
+running_on_panel = str(os.getenv('running_on_panel'))
+if running_on_panel == "False":
+    running_on_panel = False
+else:
+    running_on_panel = True
 
 logging.basicConfig(filename='console.log',
                     level=logging.INFO,
@@ -258,10 +262,8 @@ async def updater():
 #        else:
 #            await ctx.send("Sorry, that is not a valid plugin.")
 
-
 @updater.before_loop
 async def before_updater():
-    logging.info('waiting to enter loop')
     await bot.wait_until_ready()
 
 
@@ -275,6 +277,7 @@ else:
             bot.load_extension(f'cogs.{file_name[:-3]}')
 
 if running_on_panel == True:
+    print("running on panel, starting loops")
     updater.start()
     linking_updater = bot.get_cog('Linking_updater')
     linking_updater.linking_updater.start()
