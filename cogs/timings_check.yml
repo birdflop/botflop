@@ -425,11 +425,6 @@ config:
       - paper["world-settings"]["default"]["enable-treasure-maps"] == "true"
       prefix: "❌"
       value: "Disable this in [paper.yml](http://bit.ly/paperconf). Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away."
-    projectile-load-save-per-chunk-limit:
-    - expressions:
-      - int(paper["world-settings"]["default"]["projectile-load-save-per-chunk-limit"]) == -1
-      prefix: "❌"
-      value: "Set a value in [paper.yml](http://bit.ly/paperconf). Recommended: 8."
   purpur:
     settings.use-alternate-keepalive:
     - expressions:
@@ -482,3 +477,8 @@ config:
       - purpur["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"] == "false"
       prefix: "❌"
       value: "Enable this in [purpur.yml](http://bit.ly/purpurc)."
+    projectile-load-save-per-chunk-limit:
+    - expressions:
+        - int(paper["world-settings"]["default"]["projectile-load-save-per-chunk-limit"]) == -1
+      prefix: "❌"
+      value: "Set a value in paper.yml. Recommended: 8."
