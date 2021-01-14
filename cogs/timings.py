@@ -303,7 +303,7 @@ def create_field(option):
     field = {"name": option["name"],
              "value": option["value"]}
     if "prefix" in option:
-        field["name"] = option["prefix"] + field["name"]
+        field["name"] = option["prefix"] + " " + field["name"]
     if "suffix" in option:
         field["name"] = field["name"] + option["suffix"]
     if "inline" in option:
