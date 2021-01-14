@@ -162,17 +162,11 @@ class Timings(commands.Cog):
                 unchecked += 1
 
             plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
-            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in \
-                                                                                           request["timingsMaster"][
-                                                                                               "config"] else None
-            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"][
-                "config"] else None
-            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"][
-                "config"] else None
-            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"][
-                "config"] else None
-            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"][
-                "config"] else None
+            server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
+            bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
+            spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
+            paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
+            purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
                     for server_name in TIMINGS_CHECK["plugins"]:
