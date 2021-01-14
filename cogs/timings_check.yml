@@ -125,11 +125,6 @@ plugins:
       value: |-
         This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104). If it is not essential, you should remove it. 
         Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).
-    CrazyActions:
-      prefix: "⚠ "
-      value: |-
-        CrazyAuctions is a laggy plugin, even according to the developer. 
-        Consider replacing it with [AuctionHouse](https://www.spigotmc.org/resources/auctionhouse.61836/).
     GroupManager:
       prefix: "⚠ "
       value: |-
