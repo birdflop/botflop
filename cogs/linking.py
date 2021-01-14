@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import aiohttp
 import asyncio
 
+
 class Linking(commands.Cog):
 
     def __init__(self, bot):
@@ -21,10 +22,10 @@ class Linking(commands.Cog):
         self.client_role_id = int(os.getenv('client_role_id'))
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
-    
+
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author != self.bot.user and message.guild == None:
+        if message.author != self.bot.user and message.guild is None:
             channel = message.channel
             await channel.send("Processing, please wait...")
             # Potential API key, so tries it out
@@ -63,7 +64,7 @@ class Linking(commands.Cog):
                                 if user['discord_id'] == message.author.id:
                                     discord_id_already_exists = True
                                     logging.info("Discord ID already exists")
-                            if client_id_already_exists == False and discord_id_already_exists == False:
+                            if not client_id_already_exists and not discord_id_already_exists:
                                 data['users'].append({
                                     'discord_id': message.author.id,
                                     'client_id': json_response['attributes']['id'],
@@ -102,9 +103,9 @@ class Linking(commands.Cog):
                                                 user_elktail = False
                                                 for server in servers_json_response['data']:
                                                     server_owner = server['attributes']['server_owner']
-                                                    if server_owner == True:
+                                                    if server_owner:
                                                         user_client = True
-                                                    elif server_owner == False:
+                                                    elif not server_owner:
                                                         user_subuser = True
                                                     server_node = server['attributes']['node']
                                                     if server_node == "Crabwings - NYC":
@@ -113,19 +114,19 @@ class Linking(commands.Cog):
                                                         user_duckfeet = True
                                                     elif server_node == "Elktail - EU":
                                                         user_elktail = True
-                                                if user_client == True:
+                                                if user_client:
                                                     role = discord.utils.get(guild.roles, id=self.client_role_id)
                                                     await member.add_roles(role)
-                                                if user_subuser == True:
+                                                if user_subuser:
                                                     role = discord.utils.get(guild.roles, id=self.subuser_role_id)
                                                     await member.add_roles(role)
-                                                if user_crabwings == True:
+                                                if user_crabwings:
                                                     role = discord.utils.get(guild.roles, id=self.crabwings_role_id)
                                                     await member.add_roles(role)
-                                                if user_duckfeet == True:
+                                                if user_duckfeet:
                                                     role = discord.utils.get(guild.roles, id=self.duckfeet_role_id)
                                                     await member.add_roles(role)
-                                                if user_elktail == True:
+                                                if user_elktail:
                                                     role = discord.utils.get(guild.roles, id=self.elktail_role_id)
                                                     await member.add_roles(role)
                                                 role = discord.utils.get(guild.roles, id=self.verified_role_id)
@@ -155,7 +156,8 @@ class Linking(commands.Cog):
                             # Says if API key is the corect # of characters but invalid
                             await channel.send("Sorry, that appears to be an invalid API key.")
                             logging.info(
-                                'invalid sent to ' + message.author.name + "#" + str(message.author.discriminator) + " (" + str(
+                                'invalid sent to ' + message.author.name + "#" + str(
+                                    message.author.discriminator) + " (" + str(
                                     message.author.id) + ")")
             else:
                 # Says this if API key is incorrect # of characters
@@ -163,6 +165,7 @@ class Linking(commands.Cog):
                     'Sorry, that doesn\'t appear to be an API token. An API token should be a long string resembling this: ```yQSB12ik6YRcmE4d8tIEj5gkQqDs6jQuZwVOo4ZjSGl28d46```')
                 logging.info("obvious incorrect sent to " + message.author.name + "#" + str(
                     message.author.discriminator) + " (" + str(message.author.id) + ")")
+
 
 def setup(bot):
     bot.add_cog(Linking(bot))
