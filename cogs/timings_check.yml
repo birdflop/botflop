@@ -323,6 +323,7 @@ config:
       value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: {int(server_properties[\"view-distance\"]) - 1}."
     - expressions:
       - int(spigot["world-settings"]["default"]["mob-spawn-range"]) >= 8
+      - spigot["world-settings"]["default"]["view-distance"] != "default"
       - int(spigot["world-settings"]["default"]["view-distance"]) <= 6
       prefix: "❌"
       value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: {int(spigot[\"world-settings\"][\"default\"][\"view-distance\"]) - 1}."
