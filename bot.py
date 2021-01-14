@@ -48,8 +48,8 @@ async def on_message(message):
 
     # Binflop
     if len(message.attachments) > 0:
-        if message.attachments[0].url.endswith(
-                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')) == False:
+        if not message.attachments[0].url.endswith(
+                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')):
             download = message.attachments[0].url
             async with aiohttp.ClientSession() as session:
                 async with session.get(download, allow_redirects=True) as r:
@@ -157,10 +157,10 @@ async def updater():
                 i += 1
                 already_exists = False
                 for server2 in modified_servers['servers']:
-                    if already_exists == False:
+                    if not already_exists:
                         if server['attributes']['uuid'] == server2['uuid']:
                             already_exists = True
-                if already_exists == False:
+                if not already_exists:
                     headers = {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -174,7 +174,6 @@ async def updater():
                         server['attributes']['limits']['cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(
                         server['attributes']['feature_limits']['databases']) + ', "allocations": ' + str(
                         server['attributes']['feature_limits']['allocations']) + ', "backups": 3 } }'
-
 
                     async with aiohttp.ClientSession() as session:
                         async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, data=data) as response:
