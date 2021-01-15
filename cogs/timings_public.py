@@ -40,7 +40,7 @@ class Timings(commands.Cog):
                     "https://timings.spigotmc.org/?url="):
                 embed_var.add_field(name="❌ Spigot",
                                     value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for better timings analysis.")
-                embed_var.url = timings_url
+                embed_var.url = word
                 await message.reply(embed=embed_var)
                 return
 
