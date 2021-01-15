@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import requests
 import yaml
+import re
 
 TIMINGS_CHECK = None
 YAML_ERROR = None
@@ -12,6 +13,7 @@ with open("cogs/timings_check.yml", 'r', encoding="utf8") as stream:
         print(exc)
         YAML_ERROR = exc
 
+VERSION_REGEX = re.compile(r"\d+\.\d+\.\d+")
 
 class Timings(commands.Cog):
 
@@ -63,11 +65,17 @@ class Timings(commands.Cog):
 
         try:
             try:
-                version = request["timingsMaster"]["version"]
-                if "version" in TIMINGS_CHECK:
-                    if TIMINGS_CHECK["version"] not in version and "1.16.5" not in version:
-                        embed_var.add_field(name="❌ Legacy Build",
-                                            value="You are using " + version + ". Update to " + TIMINGS_CHECK["version"])
+                version = request["timingsMaster"]["version"] if "version" in request["timingsMaster"] else None
+                if "version" in TIMINGS_CHECK and version:
+                    version_result = VERSION_REGEX.search(version)
+                    version_result = version_result.group() if version_result else None
+                    if version_result:
+                        if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
+                            embed_var.add_field(name="❌ Legacy Build",
+                                                value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`')
+                    else:
+                        embed_var.add_field(name="❗ Value Error",
+                                            value=f'Could not locate version from `{version}`')
                 if "servers" in TIMINGS_CHECK:
                     for server in TIMINGS_CHECK["servers"]:
                         if server["name"] in version:
@@ -321,6 +329,13 @@ def create_field(option):
         field["inline"] = option["inline"]
     return field
 
+# Returns -1 if version A is older than version B
+# Returns 0 if version A and B are equivalent
+# Returns 1 if version A is newer than version B
+def compare_versions(versionA, versionB):
+  def normalize(v):
+      return [int(x) for x in re.sub(r'(\.0+)*$','', v).split(".")]
+  return (normalize(versionA) > normalize(versionB)) - (normalize(versionA) < normalize(versionB))
 
 def setup(bot):
     bot.add_cog(Timings(bot))
