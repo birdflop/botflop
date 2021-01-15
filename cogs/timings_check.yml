@@ -53,7 +53,7 @@ plugins:
       prefix: "⚠"
       value: |-
         You probably don't need VillagerOptimiser as Paper already adds its features. 
-        See entity-activation-range in [spigot.yml](http://bit.ly/spiconf).
+        See entity-activation-range in spigot.yml.
     StackMob:
       prefix: "⚠"
       value: |-
