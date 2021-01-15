@@ -51,7 +51,10 @@ logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 async def on_ready():
     # Marks bot as running
     logging.info('I am running.')
-
+    servers = bot.guilds
+    logging.info("I am in the following " + str(len(servers)) + " servers:")
+    for server in servers:
+        print(server.name + " by " + server.owner.name + "#" + server.owner.discriminator)
 
 @bot.event
 async def on_message(message):
