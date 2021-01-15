@@ -133,7 +133,8 @@ async def on_raw_reaction_add(payload):
 @bot.command()
 async def ping(ctx):
     if running_on_panel:
-        await ctx.send(f'Private bot ping is {round(bot.latency * 1000)}ms')
+        if guild_id == ctx.guild.id:
+            await ctx.send(f'Private bot ping is {round(bot.latency * 1000)}ms')
     if not running_on_panel:
         await ctx.send(f'Public bot ping is {round(bot.latency * 1000)}ms')
 
