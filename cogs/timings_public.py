@@ -15,13 +15,12 @@ with open("cogs/timings_check.yml", 'r', encoding="utf8") as stream:
 
 VERSION_REGEX = re.compile(r"\d+\.\d+\.\d+")
 
+
 class Timings(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
         self.TIMINGS_TITLE = "Timings Analysis"
-
-    # Use @commands.Cog.listener() instead of event and use @commands.command() for commands
 
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")

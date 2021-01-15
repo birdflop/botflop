@@ -55,18 +55,16 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if running_on_panel == False:
-    # Account link
-
+    if not running_on_panel:
         # Binflop
         if len(message.attachments) > 0:
-            if message.attachments[0].url.endswith(
-                    ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')) == False:
+            if not message.attachments[0].url.endswith(
+                    ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')):
                 download = message.attachments[0].url
                 async with aiohttp.ClientSession() as session:
                     async with session.get(download, allow_redirects=True) as r:
 
-    #            r = requests.get(download, allow_redirects=True)
+                        # r = requests.get(download, allow_redirects=True)
                         text = await r.text()
                         text = "\n".join(text.splitlines())
                         if '�' not in text:  # If it's not an image/gif
@@ -88,9 +86,10 @@ async def on_message(message):
         await timings.analyze_timings(message)
     await bot.process_commands(message)
 
+
 @bot.event
 async def on_raw_reaction_add(payload):
-    if running_on_panel == True:
+    if running_on_panel:
         global verification_message
         global verification_channel
         if payload.message_id != verification_message:
@@ -127,44 +126,47 @@ async def on_raw_reaction_add(payload):
                 await member.edit(roles=[])
                 await member.send("Your Discord account has successfully been unlinked from your Panel account!")
                 logging.info(
-                    'successfully unlinked ' + member.name + "#" + str(member.discriminator) + " (" + str(member.id) + ")")
+                    'successfully unlinked ' + member.name + "#" + str(member.discriminator) + " (" + str(
+                        member.id) + ")")
 
 
 @bot.command()
 async def ping(ctx):
-    if running_on_panel == True:
+    if running_on_panel:
         await ctx.send(f'Private bot ping is {round(bot.latency * 1000)}ms')
-    if running_on_panel == False:
+    if not running_on_panel:
         await ctx.send(f'Public bot ping is {round(bot.latency * 1000)}ms')
 
 
 @bot.command(name="react", pass_context=True)
 @has_permissions(administrator=True)
 async def react(ctx, url, reaction):
-    if running_on_panel == False:
+    if not running_on_panel:
         channel = await bot.fetch_channel(int(url.split("/")[5]))
         message = await channel.fetch_message(int(url.split("/")[6]))
         await message.add_reaction(reaction)
         logging.info('reacted to ' + url + ' with ' + reaction)
 
+
 @bot.command(name="lag", pass_context=True)
 @commands.guild_only()
 async def lag(ctx):
-    if running_on_panel == False:
+    if not running_on_panel:
         if ctx.guild.id == guild_id:
             guild = discord.utils.get(bot.guilds, id=guild_id)
             role = discord.utils.find(lambda r: r.id == crabwings_role_id, guild.roles)
             if role in ctx.author.roles:
                 ssh_client = paramiko.SSHClient()
                 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(hostname=crabwings_ip, username=crabwings_username, password=crabwings_password, port=crabwings_port)
-                stdin,stdout,stderr=ssh_client.exec_command('service wings restart')
+                ssh_client.connect(hostname=crabwings_ip, username=crabwings_username, password=crabwings_password,
+                                   port=crabwings_port)
+                stdin, stdout, stderr = ssh_client.exec_command('service wings restart')
                 await ctx.send("Success, resolved Crabwings lag!")
                 logging.info(".lag successfully executed by " + ctx.author.name + "#" + str(ctx.author.discriminator))
             else:
-                await ctx.send ("You must be a Crabwings client/subuser to use this command.")
-                logging.info(".lag unsuccessfully attempted by " + ctx.author.name + "#" + str(ctx.author.discriminator))
-
+                await ctx.send("You must be a Crabwings client/subuser to use this command.")
+                logging.info(
+                    ".lag unsuccessfully attempted by " + ctx.author.name + "#" + str(ctx.author.discriminator))
 
 
 @tasks.loop(minutes=10)
@@ -178,9 +180,9 @@ async def updater():
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + application_api_key,
     }
-    #response = requests.get(url, headers=headers)
+    # response = requests.get(url, headers=headers)
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers = headers) as response:
+        async with session.get(url, headers=headers) as response:
             servers_json_response = await response.json()
 
             file = open('modified_servers.json', 'r')
@@ -193,10 +195,10 @@ async def updater():
                 i += 1
                 already_exists = False
                 for server2 in modified_servers['servers']:
-                    if already_exists == False:
+                    if not already_exists:
                         if server['attributes']['uuid'] == server2['uuid']:
                             already_exists = True
-                if already_exists == False:
+                if not already_exists:
                     headers = {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -207,13 +209,14 @@ async def updater():
                         server['attributes']['limits']['memory']) + ', "swap": 0, "disk": ' + str(
                         server['attributes']['limits']['disk']) + ', "io": ' + str(
                         server['attributes']['limits']['io']) + ', "cpu": ' + str(
-                        server['attributes']['limits']['cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(
+                        server['attributes']['limits'][
+                            'cpu']) + ', "threads": null, "feature_limits": { "databases": ' + str(
                         server['attributes']['feature_limits']['databases']) + ', "allocations": ' + str(
                         server['attributes']['feature_limits']['allocations']) + ', "backups": 3 } }'
 
-
                     async with aiohttp.ClientSession() as session:
-                        async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(server['attributes']['id']) + '/build', headers=headers, data=data) as response:
+                        async with session.patch('https://panel.birdflop.com/api/application/servers/' + str(
+                                server['attributes']['id']) + '/build', headers=headers, data=data) as response:
                             if response.status == 200:
                                 modified_servers['servers'].append({
                                     'uuid': str(server['attributes']['uuid'])
@@ -226,7 +229,8 @@ async def updater():
 
                                 logging.info("modified " + str(server['attributes']['name']) + ' with data ' + data)
                             else:
-                                logging.info("failed to modify " + str(server['attributes']['name']) + ' with data ' + data)
+                                logging.info(
+                                    "failed to modify " + str(server['attributes']['name']) + ' with data ' + data)
 
 
 # Plugin Updater
@@ -292,7 +296,7 @@ async def before_updater():
     await bot.wait_until_ready()
 
 
-if running_on_panel == True:
+if running_on_panel:
     for file_name in os.listdir('./cogs'):
         if file_name.endswith('_panel.py'):
             bot.load_extension(f'cogs.{file_name[:-3]}')
@@ -301,7 +305,7 @@ else:
         if file_name.endswith('_public.py'):
             bot.load_extension(f'cogs.{file_name[:-3]}')
 
-if running_on_panel == True:
+if running_on_panel:
     print("running on panel, starting loops")
     updater.start()
     linking_updater = bot.get_cog('Linking_updater')
