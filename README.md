@@ -8,7 +8,7 @@ Paste a timings report to review an in-depth description of potential optimizati
 ![Timings 2](https://i.imgur.com/2ApteF5.png)
 
 ## Hastebin upload
-Botflop converts text files into hastebin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
+Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![message.txt](https://i.imgur.com/JAuL3zy.png)
 ![latest.log](https://i.imgur.com/AoZGQRi.png)
