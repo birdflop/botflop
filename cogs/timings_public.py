@@ -225,10 +225,16 @@ class Timings(commands.Cog):
                     if ntvd <= tvd and tvd >= 4:
                         using_ntvd = False
                 if not using_ntvd:
-                    embed_var.add_field(name="❌ no-tick-view-distance",
-                                        value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
-                                            tvd) + ". And reduce view-distance from default (" + str(
-                                            tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                    if spigot["world-settings"]["default"]["view-distance"] == "default":
+                        embed_var.add_field(name="❌ no-tick-view-distance",
+                                            value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
+                                                tvd) + ". And reduce view-distance from default (" + str(
+                                                tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                    else:
+                        embed_var.add_field(name="❌ no-tick-view-distance",
+                                            value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
+                                                tvd) + ". And reduce view-distance from " + str(
+                                                tvd) + " in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
