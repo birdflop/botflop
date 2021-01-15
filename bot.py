@@ -9,6 +9,7 @@ from discord.ext.commands import has_permissions, MissingPermissions
 from dotenv import load_dotenv
 import aiohttp
 import asyncio
+import paramiko
 
 # import subprocess
 
@@ -28,6 +29,11 @@ verification_channel = int(os.getenv('verification_channel'))
 verification_message = int(os.getenv('verification_message'))
 application_api_key = os.getenv('application_api_key')
 running_on_panel = str(os.getenv('running_on_panel'))
+crabwings_ip = os.getenv('crabwings_ip')
+crabwings_port = int(os.getenv('crabwings_port'))
+crabwings_username = os.getenv('crabwings_username')
+crabwings_password = os.getenv('crabwings_password')
+
 if running_on_panel == "False":
     running_on_panel = False
 else:
@@ -140,6 +146,25 @@ async def react(ctx, url, reaction):
         message = await channel.fetch_message(int(url.split("/")[6]))
         await message.add_reaction(reaction)
         logging.info('reacted to ' + url + ' with ' + reaction)
+
+@bot.command(name="lag", pass_context=True)
+@commands.guild_only()
+async def lag(ctx):
+    if running_on_panel == False:
+        if ctx.guild.id == guild_id:
+            guild = discord.utils.get(bot.guilds, id=guild_id)
+            role = discord.utils.find(lambda r: r.id == crabwings_role_id, guild.roles)
+            if role in ctx.author.roles:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(hostname=crabwings_ip, username=crabwings_username, password=crabwings_password, port=crabwings_port)
+                stdin,stdout,stderr=ssh_client.exec_command('service wings restart')
+                await ctx.send("Success, resolved Crabwings lag!")
+                logging.info(".lag successfully executed by " + ctx.author.name + "#" + str(ctx.author.discriminator))
+            else:
+                await ctx.send ("You must be a Crabwings client/subuser to use this command.")
+                logging.info(".lag unsuccessfully attempted by " + ctx.author.name + "#" + str(ctx.author.discriminator))
+
 
 
 @tasks.loop(minutes=10)
