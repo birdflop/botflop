@@ -70,7 +70,7 @@ class Timings(commands.Cog):
                     version_result = version_result.group() if version_result else None
                     if version_result:
                         if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
-                            version = version.replace("git-", "").replace("MC:", "")
+                            version = version.replace("git-", "").replace("MC: ", "")
                             embed_var.add_field(name="❌ Legacy Build",
                                                 value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`')
                     else:
