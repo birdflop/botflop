@@ -101,11 +101,6 @@ plugins:
       prefix: "⚠"
       value: |-
         You don't need Orebfuscator as [Paper](https://gist.github.com/stonar96/ba18568bd91e5afd590e8038d14e245e) already has its features.
-    ImageOnMap:
-      prefix: "⚠"
-      value: |-
-        This plugin has a [memory leak](https://github.com/zDevelopers/ImageOnMap/issues/104).
-        Consider replacing it with [an alternative](https://www.spigotmc.org/resources/drmap.87368/).
     GroupManager:
       prefix: "⚠"
       value: |-
