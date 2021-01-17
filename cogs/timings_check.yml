@@ -420,7 +420,7 @@ config:
     - expressions:
       - paper["world-settings"]["default"]["enable-treasure-maps"] == "true"
       prefix: "❌"
-      value: "Disable this in [paper.yml](http://bit.ly/paperconf). Why? Generating treasure maps is extremely expensive and can hang a server if the structure it's trying to locate is really far away."
+      value: "Disable this in [paper.yml](http://bit.ly/paperconf). Generating treasure maps can be extremely expensive if the structure it's trying to locate is far away."
   purpur:
     settings.use-alternate-keepalive:
     - expressions:
