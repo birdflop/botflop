@@ -21,129 +21,133 @@ servers:
 plugins:
   paper:
     ClearLag:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
     LagAssist:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         LagAssist should only be used for analytics and preventative measures.
         All other features of the plugin should be disabled.
     NoChunkLag:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
     NoMobLag:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Plugins that claim to remove lag actually cause more lag.
     ServerBooster:
-      prefix: "⚠"
+      prefix: "❌"
+      value: |-
+        Plugins that claim to remove lag actually cause more lag. 
+    AntiLag:
+      prefix: "❌"
       value: |-
         Plugins that claim to remove lag actually cause more lag. 
     BookLimiter:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You don't need BookLimiter as Paper already has its features.
     LimitPillagers:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need LimitPillagers as Paper already adds its features. 
     VillagerOptimiser:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need VillagerOptimiser as Paper already adds its features. 
         See entity-activation-range in spigot.yml.
     StackMob:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Stacking plugins actually cause more lag. 
     Stacker:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Stacking plugins actually cause more lag. 
     MobStacker:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Stacking plugins actually cause more lag. 
     WildStacker:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         Stacking plugins actually cause more lag. 
     SuggestionBlocker:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need SuggestionBlocker as Spigot already adds its features. 
         Set tab-complete to -1 in [spigot.yml](http://bit.ly/spiconf).
     FastAsyncWorldEdit:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         FAWE can corrupt your world. 
         Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
     CMI:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         CMI is a buggy plugin. 
         Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).
     IllegalStack:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need IllegalStack for survival servers as Paper already has its features.
     ExploitFixer:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need ExploitFixer as Paper already has its features. 
     EntityTrackerFixer:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You don't need EntityTrackerFixer as Paper already has its features.
     Orebfuscator:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You don't need Orebfuscator as [Paper](https://gist.github.com/stonar96/ba18568bd91e5afd590e8038d14e245e) already has its features.
     GroupManager:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         GroupManager is an outdated permission plugin. 
         Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
     PermissionsEx:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         PermissionsEx is an outdated permission plugin. 
         Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
     bPermissions:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         bPermissions is an outdated permission plugin. 
         Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
     PhantomSMP:
     - expressions:
       - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "false"
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need PhantomSMP as Paper already has its features.
     - expressions:
       - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "true"
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need PhantomSMP as Paper already has its features.
         Enable phantoms-only-attack-insomniacs in [paper.yml](http://bit.ly/paperconf).
   tuinity:
     PacketLimiter:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You don't need PacketLimiter as Tuinity already has its features.
   purpur:
     SilkSpawners:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need SilkSpawners as Purpur already has its features. 
     MineableSpawners:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need MineableSpawners as Purpur already has its features. 
     VillagerLobotomizatornator:
-      prefix: "⚠"
+      prefix: "❌"
       value: |-
         You probably don't need VillagerLobotomizatornator as Purpur already adds its features. 
         Enable villager.lobotomize.enabled in [purpur.yml](http://bit.ly/purpurc).
