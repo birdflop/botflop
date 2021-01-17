@@ -26,7 +26,7 @@ class Timings(commands.Cog):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
         embed_var = discord.Embed(title=self.TIMINGS_TITLE)
-        embed_var.set_footer(text="Requested by " + message.author.name + message.author.discriminator, icon_url=message.author.avatar_url)
+        embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
 
         for word in words:
             if word.startswith("https://timings.") and "/d=" in word:
@@ -70,7 +70,7 @@ class Timings(commands.Cog):
                     version_result = version_result.group() if version_result else None
                     if version_result:
                         if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
-                            version = version.replace("git-", "").replace("MC:", "")
+                            version = version.replace("git-", "").replace("MC: ", "")
                             embed_var.add_field(name="❌ Legacy Build",
                                                 value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`')
                     else:
