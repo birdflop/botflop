@@ -203,14 +203,14 @@ class Timings(commands.Cog):
                 for plugin in plugins:
                     if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
                         if plugin == "EpicHeads":
-                            embed_var.add_field(name="⚠ EpicHeads",
+                            embed_var.add_field(name="❌ EpicHeads",
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
                         elif plugin == "UltimateStacker":
-                            embed_var.add_field(name="⚠ UltimateStacker",
+                            embed_var.add_field(name="❌ UltimateStacker",
                                                 value="Stacking plugins actually causes more lag. "
                                                       "Remove UltimateStacker.")
                         else:
-                            embed_var.add_field(name="⚠ " + plugin,
+                            embed_var.add_field(name="❌ " + plugin,
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
             except KeyError as key:
                 print("Missing: " + str(key))
