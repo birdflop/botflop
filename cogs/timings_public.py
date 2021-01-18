@@ -97,7 +97,7 @@ class Timings(commands.Cog):
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                 if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                     embed_var.add_field(name="❌ Java Version",
-                                        value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
+                                        value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html) - it's faster, more stable, and Paper is requiring that all servers upgrade to Java 11 before 1.17 releases.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
