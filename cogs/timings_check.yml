@@ -23,7 +23,7 @@ plugins:
     ClearLag:
       prefix: "❌"
       value: |-
-        Plugins that claim to remove lag actually cause more lag. 
+        Plugins that claim to remove lag usually cause more lag than they fix.
     LagAssist:
       prefix: "❌"
       value: |-
@@ -32,19 +32,19 @@ plugins:
     NoChunkLag:
       prefix: "❌"
       value: |-
-        Plugins that claim to remove lag actually cause more lag. 
+        Plugins that claim to remove lag usually cause more lag than they fix.
     NoMobLag:
       prefix: "❌"
       value: |-
-        Plugins that claim to remove lag actually cause more lag.
+        Plugins that claim to remove lag usually cause more lag than they fix.
     ServerBooster:
       prefix: "❌"
       value: |-
-        Plugins that claim to remove lag actually cause more lag. 
+        Plugins that claim to remove lag usually cause more lag than they fix.
     AntiLag:
       prefix: "❌"
       value: |-
-        Plugins that claim to remove lag actually cause more lag. 
+        Plugins that claim to remove lag usually cause more lag than they fix.
     BookLimiter:
       prefix: "❌"
       value: |-
@@ -61,19 +61,19 @@ plugins:
     StackMob:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking plugins usually cause more lag than they fix. 
     Stacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking plugins usually cause more lag than they fix. 
     MobStacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking plugins usually cause more lag than they fix. 
     WildStacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking plugins usually cause more lag than they fix. 
     SuggestionBlocker:
       prefix: "❌"
       value: |-
@@ -83,16 +83,16 @@ plugins:
       prefix: "❌"
       value: |-
         FAWE can corrupt your world. 
-        Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
+        If you don't *need* FAWE's performance benefits, consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
     CMI:
       prefix: "❌"
       value: |-
-        CMI is a buggy plugin. 
+        CMI has been known to cause bugs. 
         Consider replacing CMI with [EssentialsX](https://essentialsx.net/downloads.html).
     IllegalStack:
       prefix: "❌"
       value: |-
-        You probably don't need IllegalStack for survival servers as Paper already has its features.
+        You probably don't need IllegalStack as Paper already has its features.
     ExploitFixer:
       prefix: "❌"
       value: |-
