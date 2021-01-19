@@ -22,6 +22,7 @@ class Timings(commands.Cog):
         self.bot = bot
         self.TIMINGS_TITLE = "Timings Analysis"
 
+    # TODO: Check Tuinity.yml for spawn rate changes
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
@@ -335,13 +336,16 @@ def create_field(option):
         field["inline"] = option["inline"]
     return field
 
+
 # Returns -1 if version A is older than version B
 # Returns 0 if version A and B are equivalent
 # Returns 1 if version A is newer than version B
-def compare_versions(versionA, versionB):
-  def normalize(v):
-      return [int(x) for x in re.sub(r'(\.0+)*$','', v).split(".")]
-  return (normalize(versionA) > normalize(versionB)) - (normalize(versionA) < normalize(versionB))
+def compare_versions(version_a, version_b):
+    def normalize(v):
+        return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+
+    return (normalize(version_a) > normalize(version_b)) - (normalize(version_a) < normalize(version_b))
+
 
 def setup(bot):
     bot.add_cog(Timings(bot))

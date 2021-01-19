@@ -5,7 +5,7 @@
 # wake_up_inactive_animals_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["animals-every"])
 # wake_up_inactive_flying_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["flying-monsters-every"])
 # wake_up_inactive_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-every"])
-version: "1.16.4"
+version: "1.16.5"
 servers:
 - name: "Yatopia"
   prefix: "❌"
