@@ -427,22 +427,22 @@ config:
       value: "Disable this in [paper.yml](http://bit.ly/paperconf). Generating treasure maps can be extremely expensive if the structure it's trying to locate is far away."
     entity-per-chunk-save-limit.experience_orb:
     - expressions:
-      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"][experience_orb]) == -1
+      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"]["experience_orb"]) == -1
       prefix: "❌"
       value: "Set a value in paper.yml. Recommended: 16."
     entity-per-chunk-save-limit.snowball:
     - expressions:
-      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"][snowball]) == -1
+      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"]["snowball"]) == -1
       prefix: "❌"
       value: "Set a value in paper.yml. Recommended: 16."
     entity-per-chunk-save-limit.ender_pearl:
     - expressions:
-      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"][ender_pearl]) == -1
+      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"]["ender_pearl"]) == -1
       prefix: "❌"
       value: "Set a value in paper.yml. Recommended: 16."
     entity-per-chunk-save-limit.arrow:
     - expressions:
-      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"][arrow]) == -1
+      - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"]["arrow"]) == -1
       prefix: "❌"
       value: "Set a value in paper.yml. Recommended: 16."
   purpur:
