@@ -73,7 +73,7 @@ class Timings(commands.Cog):
                         if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
                             version = version.replace("git-", "").replace("MC: ", "")
                             embed_var.add_field(name="❌ Legacy Build",
-                                                value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`')
+                                                value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`.')
                     else:
                         embed_var.add_field(name="❗ Value Error",
                                             value=f'Could not locate version from `{version}`')
@@ -98,7 +98,7 @@ class Timings(commands.Cog):
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                 if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                     embed_var.add_field(name="❌ Java Version",
-                                        value="You are using Java " + jvm_version + ". Update to [Java 11](https://adoptopenjdk.net/installation.html).")
+                                        value=f"You are using Java {jvm_version}. Update to [Java 11](https://adoptopenjdk.net/installation.html).")
             except KeyError as key:
                 print("Missing: " + str(key))
 
@@ -159,12 +159,10 @@ class Timings(commands.Cog):
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
                 if cpu == 1:
                     embed_var.add_field(name="❌ Threads",
-                                        value="You have only " + str(
-                                            cpu) + " thread. Find a [better host](https://www.birdflop.com).")
+                                        value=f"You have only {cpu} thread. Find a [better host](https://www.birdflop.com).")
                 if cpu == 2:
                     embed_var.add_field(name="❌ Threads",
-                                        value="You have only " + str(
-                                            cpu) + " threads. Find a [better host](https://www.birdflop.com).")
+                                        value=f"You have only {cpu} threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
 
@@ -173,7 +171,7 @@ class Timings(commands.Cog):
                 if len(datapacks) > 2:
                     datapack_count = len(datapacks) - 2
                     embed_var.add_field(name="❌ Datapacks",
-                                        value="You have " + str(datapack_count) + " datapack(s). To see if they are causing lag, unzip them and look for a folder called functions. If the folder exists, remove the datapack.")
+                                        value=f"You have {datapack_count} datapack(s). To see if they are causing lag, unzip them and look for a folder called functions. If the folder exists, remove the datapack.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
@@ -237,14 +235,12 @@ class Timings(commands.Cog):
                 if not using_ntvd:
                     if spigot["world-settings"]["default"]["view-distance"] == "default":
                         embed_var.add_field(name="❌ no-tick-view-distance",
-                                            value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
-                                                tvd) + ". And reduce view-distance from default (" + str(
-                                                tvd) + ") in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                                            value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                  f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
                     else:
                         embed_var.add_field(name="❌ no-tick-view-distance",
-                                            value="Set in [paper.yml](http://bit.ly/paperconf). Recommended: " + str(
-                                                tvd) + ". And reduce view-distance from " + str(
-                                                tvd) + " in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                                            value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                  f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
@@ -286,11 +282,11 @@ class Timings(commands.Cog):
         issue_count = len(embed_var.fields)
         field_at_index = 24
         if issue_count >= 25:
-            embed_var.insert_field_at(index=24, name="Plus " + str(issue_count - 24) + " more recommendations",
+            embed_var.insert_field_at(index=24, name=f"Plus {issue_count - 24} more recommendations",
                                       value="Create a new timings report after resolving some of the above issues to see more.")
         while len(embed_var) > 6000:
             embed_var.insert_field_at(index=field_at_index,
-                                      name="Plus " + str(issue_count - field_at_index) + " more recommendations",
+                                      name=f"Plus {issue_count - field_at_index} more recommendations",
                                       value="Create a new timings report after resolving some of the above issues to see more.")
             del embed_var._fields[(field_at_index + 1):]
             field_at_index -= 1
