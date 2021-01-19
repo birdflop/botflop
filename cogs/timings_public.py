@@ -168,6 +168,15 @@ class Timings(commands.Cog):
             except KeyError as key:
                 print("Missing: " + str(key))
 
+            try:
+                datapacks = request_raw["datapacks"]
+                if len(datapacks) > 2:
+                    datapack_count = len(datapacks) - 2
+                    embed_var.add_field(name="❌ Datapacks",
+                                        value="You have " + str(datapack_count) + " datapack(s). To see if they are causing lag, unzip them and look for a folder called functions. If the folder exists, remove the datapack.")
+            except KeyError as key:
+                print("Missing: " + str(key))
+
             plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
             server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
             bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
