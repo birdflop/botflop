@@ -218,7 +218,7 @@ config:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["animals"]) >= 32
       prefix: "❌"
-      value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 6."
+      value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 16."
     entity-activation-range.monsters:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["monsters"]) >= 32
@@ -228,7 +228,7 @@ config:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["misc"]) >= 16
       prefix: "❌"
-      value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 4."
+      value: "Decrease this in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 12."
     entity-activation-range.water:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["water"]) >= 16
