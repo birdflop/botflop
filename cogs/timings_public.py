@@ -227,25 +227,25 @@ class Timings(commands.Cog):
                 print("Missing: " + str(key))
 
             try:
-                using_ntvd = True
-                worlds = request_raw["worlds"]
-                tvd = None
-                for world in worlds:
-                    tvd = int(request_raw["worlds"][world]["ticking-distance"])
-                    ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
-                    if ntvd <= tvd and tvd >= 4:
-                        using_ntvd = False
-                if not using_ntvd:
-                    using_tweaks = "ViewDistanceTweaks" in plugins
-                    if not using_tweaks:
-                        if spigot["world-settings"]["default"]["view-distance"] == "default":
-                            embed_var.add_field(name="❌ no-tick-view-distance",
-                                                value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                      f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
-                        else:
-                            embed_var.add_field(name="❌ no-tick-view-distance",
-                                                value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                      f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                using_tweaks = "ViewDistanceTweaks" in plugins
+                if not using_tweaks:
+                    using_ntvd = True
+                    worlds = request_raw["worlds"]
+                    tvd = None
+                    for world in worlds:
+                        tvd = int(request_raw["worlds"][world]["ticking-distance"])
+                        ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
+                        if ntvd <= tvd and tvd >= 4:
+                            using_ntvd = False
+                        if not using_ntvd:
+                            if spigot["world-settings"]["default"]["view-distance"] == "default":
+                                embed_var.add_field(name="❌ no-tick-view-distance",
+                                                    value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                          f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                            else:
+                                embed_var.add_field(name="❌ no-tick-view-distance",
+                                                    value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                          f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
