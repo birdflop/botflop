@@ -236,14 +236,16 @@ class Timings(commands.Cog):
                     if ntvd <= tvd and tvd >= 4:
                         using_ntvd = False
                 if not using_ntvd:
-                    if spigot["world-settings"]["default"]["view-distance"] == "default":
-                        embed_var.add_field(name="❌ no-tick-view-distance",
-                                            value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                  f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
-                    else:
-                        embed_var.add_field(name="❌ no-tick-view-distance",
-                                            value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                  f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                    using_tweaks = "ViewDistanceTweaks" in plugins
+                    if not using_tweaks:
+                        if spigot["world-settings"]["default"]["view-distance"] == "default":
+                            embed_var.add_field(name="❌ no-tick-view-distance",
+                                                value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                      f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                        else:
+                            embed_var.add_field(name="❌ no-tick-view-distance",
+                                                value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
+                                                      f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
             except KeyError as key:
                 print("Missing: " + str(key))
 
