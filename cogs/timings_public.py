@@ -231,7 +231,6 @@ class Timings(commands.Cog):
                 if not using_tweaks:
                     using_ntvd = True
                     worlds = request_raw["worlds"]
-                    tvd = None
                     for world in worlds:
                         tvd = int(request_raw["worlds"][world]["ticking-distance"])
                         ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
