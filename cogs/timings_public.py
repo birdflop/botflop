@@ -50,6 +50,7 @@ class Timings(commands.Cog):
             timings_url = timings_url.split("#")[0]
         if "?id=" not in timings_url:
             return
+        print(timings_url)
 
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
