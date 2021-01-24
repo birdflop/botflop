@@ -27,7 +27,7 @@ class Timings(commands.Cog):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
         embed_var = discord.Embed(title=self.TIMINGS_TITLE)
-        embed_var.set_footer(text="Requested by " + message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
+        embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
 
         for word in words:
             if word.startswith("https://timings.") and "/d=" in word:
@@ -89,8 +89,7 @@ class Timings(commands.Cog):
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
                 if timing_cost > 300:
                     embed_var.add_field(name="❌ Timingcost",
-                                        value="Your timingcost is " + str(
-                                            timing_cost) + ". Find a [better host](https://www.birdflop.com).")
+                                        value=f"Your timingcost is {timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
                 print("Missing: " + str(key))
 
@@ -167,7 +166,6 @@ class Timings(commands.Cog):
                 print("Missing: " + str(key))
 
             try:
-                datapacks = request_raw["datapacks"]
                 handlers = request_raw["idmap"]["handlers"]
                 for handler in handlers:
                     handler_name = request_raw["idmap"]["handlers"][handler][1]
