@@ -152,27 +152,6 @@ async def react(ctx, url, reaction):
         logging.info('reacted to ' + url + ' with ' + reaction)
 
 
-@bot.command(name="lag", pass_context=True)
-@commands.guild_only()
-async def lag(ctx):
-    if not running_on_panel:
-        if ctx.guild.id == guild_id:
-            guild = discord.utils.get(bot.guilds, id=guild_id)
-            role = discord.utils.find(lambda r: r.id == crabwings_role_id, guild.roles)
-            if role in ctx.author.roles:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(hostname=crabwings_ip, username=crabwings_username, password=crabwings_password,
-                                   port=crabwings_port)
-                stdin, stdout, stderr = ssh_client.exec_command('service wings restart')
-                await ctx.send("Success, resolved Crabwings lag!")
-                logging.info(".lag successfully executed by " + ctx.author.name + "#" + str(ctx.author.discriminator))
-            else:
-                await ctx.send("You must be a Crabwings client/subuser to use this command.")
-                logging.info(
-                    ".lag unsuccessfully attempted by " + ctx.author.name + "#" + str(ctx.author.discriminator))
-
-
 @tasks.loop(minutes=10)
 async def updater():
     # Update backups
