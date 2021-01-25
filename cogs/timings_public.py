@@ -30,9 +30,9 @@ class Timings(commands.Cog):
         embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
 
         for word in words:
-            if word.startswith("https://timin.") and "/d=" in word:
+            if word.startswith("https://timin") and "/d=" in word:
                 word.replace("/d=", "/?id=")
-            if word.startswith("https://timin.") and "/?id=" in word:
+            if word.startswith("https://timin") and "/?id=" in word:
                 timings_url = word
                 embed_var.url = timings_url
                 break
@@ -211,7 +211,8 @@ class Timings(commands.Cog):
 
             try:
                 for plugin in plugins:
-                    if "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
+                    authors = request["timingsMaster"]["plugins"][plugin]["authors"]
+                    if authors is not None and "songoda" in request["timingsMaster"]["plugins"][plugin]["authors"].casefold():
                         if plugin == "EpicHeads":
                             embed_var.add_field(name="❌ EpicHeads",
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative such as [HeadsPlus](https://spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).")
