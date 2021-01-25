@@ -30,9 +30,9 @@ class Timings(commands.Cog):
         embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
 
         for word in words:
-            if word.startswith("https://timings.") and "/d=" in word:
+            if word.startswith("https://timin.") and "/d=" in word:
                 word.replace("/d=", "/?id=")
-            if word.startswith("https://timings.") and "/?id=" in word:
+            if word.startswith("https://timin.") and "/?id=" in word:
                 timings_url = word
                 embed_var.url = timings_url
                 break
