@@ -48,7 +48,7 @@ plugins:
     BookLimiter:
       prefix: "❌"
       value: |-
-        You don't need BookLimiter as Paper already has its features.
+        You don't need BookLimiter as Paper already fixes all crash bugs.
     LimitPillagers:
       prefix: "❌"
       value: |-
@@ -77,7 +77,7 @@ plugins:
     FastAsyncWorldEdit:
       prefix: "❌"
       value: |-
-        FAWE can corrupt your world. 
+        FAWE has been known to cause issues.
         Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
     CMI:
       prefix: "❌"
