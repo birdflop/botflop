@@ -73,12 +73,7 @@ plugins:
     WildStacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
-    SuggestionBlocker:
-      prefix: "❌"
-      value: |-
-        You probably don't need SuggestionBlocker as Spigot already adds its features. 
-        Set tab-complete to -1 in [spigot.yml](http://bit.ly/spiconf).
+        Stacking plugins actually cause more lag.
     FastAsyncWorldEdit:
       prefix: "❌"
       value: |-
