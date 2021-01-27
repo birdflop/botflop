@@ -87,11 +87,11 @@ plugins:
     IllegalStack:
       prefix: "❌"
       value: |-
-        You probably don't need IllegalStack for survival servers as Paper already has its features.
+        You probably don't need IllegalStack as Paper already fixes all dupe and crash bugs.
     ExploitFixer:
       prefix: "❌"
       value: |-
-        You probably don't need ExploitFixer as Paper already has its features. 
+        You probably don't need ExploitFixer as Paper already fixes all dupe and crash bugs.
     EntityTrackerFixer:
       prefix: "❌"
       value: |-
