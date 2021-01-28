@@ -61,19 +61,19 @@ plugins:
     StackMob:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking mobs causes more lag.
     Stacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking mobs causes more lag.
     MobStacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag. 
+        Stacking mobs causes more lag.
     WildStacker:
       prefix: "❌"
       value: |-
-        Stacking plugins actually cause more lag.
+        Stacking mobs causes more lag.
     FastAsyncWorldEdit:
       prefix: "❌"
       value: |-
