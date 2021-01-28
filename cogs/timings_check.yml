@@ -208,7 +208,7 @@ config:
       - int(server_properties["view-distance"]) >= 10
       - spigot["world-settings"]["default"]["view-distance"] == "default"
       prefix: "❌"
-      value: "Decrease this from default (10) in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 3."
+      value: "Decrease this from default (10) in [spigot.yml](http://bit.ly/spiconf).\nRecommended: 4."
     entity-activation-range.animals:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["animals"]) >= 32
@@ -415,11 +415,6 @@ config:
       - paper["world-settings"]["default"]["alt-item-despawn-rate"]["enabled"] == "false"
       prefix: "❌"
       value: "Enable this in [paper.yml](http://bit.ly/paperconf)."
-    enable-treasure-maps:
-    - expressions:
-      - paper["world-settings"]["default"]["enable-treasure-maps"] == "true"
-      prefix: "❌"
-      value: "Disable this in [paper.yml](http://bit.ly/paperconf). Generating treasure maps can be extremely expensive if the structure it's trying to locate is far away."
     entity-per-chunk-save-limit.experience_orb:
     - expressions:
       - int(paper["world-settings"]["default"]["entity-per-chunk-save-limit"]["experience_orb"]) == -1
@@ -455,11 +450,6 @@ config:
     settings.dont-send-useless-entity-packets:
     - expressions:
       - purpur["settings"]["dont-send-useless-entity-packets"] == "false"
-      prefix: "❌"
-      value: "Enable this in [purpur.yml](http://bit.ly/purpurc)."
-    mobs.dolphin.disable-treasure-searching:
-    - expressions:
-      - purpur["world-settings"]["default"]["mobs"]["dolphin"]["disable-treasure-searching"] == "false"
       prefix: "❌"
       value: "Enable this in [purpur.yml](http://bit.ly/purpurc)."
     mobs.villager.brain-ticks:

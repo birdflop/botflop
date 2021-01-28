@@ -233,15 +233,15 @@ class Timings(commands.Cog):
                     for world in worlds:
                         tvd = int(request_raw["worlds"][world]["ticking-distance"])
                         ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
-                        if ntvd <= tvd and tvd >= 4:
+                        if ntvd <= tvd and tvd >= 5:
                             if spigot["world-settings"]["default"]["view-distance"] == "default":
                                 embed_var.add_field(name="❌ no-tick-view-distance",
                                                     value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                          f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                                                          f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 4.")
                             else:
                                 embed_var.add_field(name="❌ no-tick-view-distance",
                                                     value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                          f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 3.")
+                                                          f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 4.")
                             break
             except KeyError as key:
                 print("Missing: " + str(key))
