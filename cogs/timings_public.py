@@ -317,6 +317,11 @@ def eval_field(embed_var, option, option_name, plugins, server_properties, bukki
                     print(value_error)
                     embed_var.add_field(name="❗ Value Error",
                                         value=f'`{value_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
+                except TypeError as type_error:
+                    add_to_field = False
+                    print(type_error)
+                    embed_var.add_field(name="❗ Type Error",
+                                        value=f'`{type_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
             for config_name in dict_of_vars:
                 if config_name in option_data["value"] and not dict_of_vars[config_name]:
                     add_to_field = False
