@@ -161,11 +161,6 @@ config:
       - spigot["settings"]["bungeecord"] == "false"
       prefix: "❌"
       value: "Increase this in [server.properties](http://bit.ly/servprop). Recommended: 512."
-    - expressions:
-      - int(server_properties["network-compression-threshold"]) != -1
-      - spigot["settings"]["bungeecord"] == "true"
-      prefix: "❌"
-      value: "Set this to -1 in [server.properties](http://bit.ly/servprop) for a bungee server like yours."
   bukkit:
     chunk-gc.period-in-ticks:
     - expressions:
