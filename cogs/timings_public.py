@@ -117,7 +117,8 @@ class Timings(commands.Cog):
                     if "XX:G1MixedGCCountTarget=4" not in flags:
                         embed_var.add_field(name="❌ Outdated Flags",
                                             value="Add `-XX:G1MixedGCCountTarget=4` to flags.")
-                    if "-XX:+UseG1GC" not in flags:
+                    jvm_version = request["timingsMaster"]["system"]["jvmversion"]
+                    if "-XX:+UseG1GC" not in flags and jvm_version.startswith("1.8."):
                         embed_var.add_field(name="❌ Aikar's Flags",
                                             value="You must use G1GC when using Aikar's flags.")
                     if "-Xmx" in flags:
