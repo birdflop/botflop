@@ -1,12 +1,12 @@
-# Botflop
+# "Botflop"
 [Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server
 
 # Current abilities
 ## Analyze timings reports
 Paste a timings report to review an in-depth description of potential optimizations. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
-![Timings 1](https://i.imgur.com/MT6ScnL.png)
-![Timings 2](https://i.imgur.com/2ApteF5.png)
+![Timings 1](https://i.imgur.com/nt6EUVN.png)
+![Timings 2](https://i.imgur.com/BTfed8r.png)
 
 ## Hastebin upload
 Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
@@ -15,10 +15,6 @@ Botflop converts text files into bin links. You can try it out yourself on our [
 ![latest.log](https://i.imgur.com/AoZGQRi.png)
 ![config.yml](https://i.imgur.com/qovRot8.png)
 
-## Pterodactyl linking
-* Links Pterodactyl panel and Discord accounts
-* Ensures backups even when running with Blesta
-
-## In Progress
-* `.update` command to update either all available plugins to the latest version or just one plugin
-* ability to fix all timings recommendations with one click or one click per recommendation
+## React
+Botflop reacts to messages (requires Administrator permission)
+![reaction](https://i.imgur.com/o1swgZw.png)
