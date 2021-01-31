@@ -1,4 +1,4 @@
-# Botflop
+# Birdflop Bot (Affectionately "Botflop")
 [Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server
 
 # Current abilities
@@ -15,10 +15,6 @@ Botflop converts text files into bin links. You can try it out yourself on our [
 ![latest.log](https://i.imgur.com/AoZGQRi.png)
 ![config.yml](https://i.imgur.com/qovRot8.png)
 
-## Pterodactyl linking
-* Links Pterodactyl panel and Discord accounts
-* Ensures backups even when running with Blesta
-
-## In Progress
-* `.update` command to update either all available plugins to the latest version or just one plugin
-* ability to fix all timings recommendations with one click or one click per recommendation
+## React
+Botflop reacts to messages if you want a bot to react to the message.
+![reaction](https://i.imgur.com/o1swgZw.png)
