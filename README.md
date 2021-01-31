@@ -16,5 +16,5 @@ Botflop converts text files into bin links. You can try it out yourself on our [
 ![config.yml](https://i.imgur.com/qovRot8.png)
 
 ## React
-Botflop reacts to messages (requires Administrator permission).
+Botflop reacts to messages (requires Administrator permission)
 ![reaction](https://i.imgur.com/o1swgZw.png)
