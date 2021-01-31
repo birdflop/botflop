@@ -181,7 +181,7 @@ config:
     - expressions:
       - int(bukkit["spawn-limits"]["water-ambient"]) >= 20
       prefix: "❌"
-      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2."
+      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 5."
     spawn-limits.ambient:
     - expressions:
       - int(bukkit["spawn-limits"]["ambient"]) >= 15
@@ -191,12 +191,12 @@ config:
     - expressions:
       - int(bukkit["spawn-limits"]["animals"]) >= 10
       prefix: "❌"
-      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 3."
+      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 5."
     spawn-limits.water-animals:
     - expressions:
       - int(bukkit["spawn-limits"]["water-animals"]) >= 15
       prefix: "❌"
-      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 2."
+      value: "Decrease this in [bukkit.yml](https://bukkit.gamepedia.com/Bukkit.yml).\nRecommended: 5."
   spigot:
     view-distance:
     - expressions:
@@ -356,7 +356,7 @@ config:
     - expressions:
       - int(paper["world-settings"]["default"]["despawn-ranges"]["hard"]) >= 128
       prefix: "❌"
-      value: "Decrease this in [paper.yml](http://bit.ly/paperconf).\nRecommended: 48."
+      value: "Decrease this in [paper.yml](http://bit.ly/paperconf).\nRecommended: 96."
     hopper.disable-move-event:
     - expressions:
       - paper["world-settings"]["default"]["hopper"]["disable-move-event"] == "false"
