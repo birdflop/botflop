@@ -144,8 +144,7 @@ class Timings(commands.Cog):
                             players = (player_ticks / timed_ticks)
                             max_online_players = max(players, max_online_players)
                             index = index + 1
-                        print("hi")
-                        if max_online_players > 27 and 1000 * max_online_players / int(max_mem) > 5:
+                        if 1000 * max_online_players / int(max_mem) > 5 and int(max_mem) < 15000:
                             if max_online_players < 60:
                                 embed_var.add_field(name="❌ Low memory",
                                                     value="You should be using more RAM with this many players.")
