@@ -161,7 +161,7 @@ class Timings(commands.Cog):
                 if cpu == 1:
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} thread. Find a [better host](https://www.birdflop.com).")
-                if cpu == 2:
+                if cpu == 2 or cpu == 3:
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
@@ -250,8 +250,7 @@ class Timings(commands.Cog):
             try:
                 normal_ticks = request["timingsMaster"]["data"][0]["totalTicks"]
                 worst_tps = 20
-                index = 0
-                while index < len(request["timingsMaster"]["data"]):
+                for index in range(len(request["timingsMaster"]["data"])):
                     total_ticks = request["timingsMaster"]["data"][index]["totalTicks"]
                     if total_ticks == normal_ticks:
                         end_time = request["timingsMaster"]["data"][index]["end"]
@@ -259,7 +258,6 @@ class Timings(commands.Cog):
                         tps = total_ticks / (end_time - start_time)
                         if tps < worst_tps:
                             worst_tps = tps
-                    index = index + 1
                 if worst_tps < 10:
                     red = 255
                     green = int(255 * (0.1 * worst_tps))
