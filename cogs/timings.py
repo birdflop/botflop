@@ -134,6 +134,25 @@ class Timings(commands.Cog):
                         if int(max_mem) < 5400:
                             embed_var.add_field(name="❌ Low Memory",
                                                 value="Allocate at least 6-10GB of ram to your server if you can afford it.")
+                        index = 0
+                        max_online_players = 0
+                        while index < len(request["timingsMaster"]["data"]):
+                            timed_ticks = request["timingsMaster"]["data"][index]["minuteReports"][0]["ticks"][
+                                "timedTicks"]
+                            player_ticks = request["timingsMaster"]["data"][index]["minuteReports"][0]["ticks"][
+                                "playerTicks"]
+                            players = (player_ticks / timed_ticks)
+                            max_online_players = max(players, max_online_players)
+                            index = index + 1
+                        print("hi")
+                        if max_online_players > 27 and 1000 * max_online_players / int(max_mem) > 5:
+                            if max_online_players < 60:
+                                embed_var.add_field(name="❌ Low memory",
+                                                    value="You should be using more RAM with this many players.")
+                            else:
+                                embed_var.add_field(name="❌ Low memory",
+                                                    value="You should be using more RAM this this many players. Consider getting a dedicated server.")
+
                         if "-Xms" in flags:
                             min_mem = 0
                             flaglist = flags.split(" ")
