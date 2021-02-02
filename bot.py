@@ -36,7 +36,7 @@ async def on_message(message):
     # Binflop
     if len(message.attachments) > 0:
         if not message.attachments[0].url.endswith(
-                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')):
+                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image', '.svg')):
             download = message.attachments[0].url
             async with aiohttp.ClientSession() as session:
                 async with session.get(download, allow_redirects=True) as r:
