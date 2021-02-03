@@ -144,13 +144,13 @@ class Timings(commands.Cog):
                             players = (player_ticks / timed_ticks)
                             max_online_players = max(players, max_online_players)
                             index = index + 1
-                        if 1000 * max_online_players / int(max_mem) > 5 and int(max_mem) < 15000:
-                            if max_online_players < 60:
+                        if 1000 * max_online_players / int(max_mem) > 5 and int(max_mem) < 12000:
+                            if max_online_players < 80:
                                 embed_var.add_field(name="❌ Low memory",
                                                     value="You should be using more RAM with this many players.")
                             else:
                                 embed_var.add_field(name="❌ Low memory",
-                                                    value="You should be using more RAM this this many players. Consider getting a dedicated server.")
+                                                    value="You should be using more RAM with this many players. Consider getting a dedicated server.")
 
                         if "-Xms" in flags:
                             min_mem = 0
