@@ -1,7 +1,5 @@
 # "Botflop"
-~~[Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server.~~
-
-EDIT: Botflop is currently in 100 servers and cannot be added to additional servers until it becomes a verified bot. I applied on January 29 -- the day that Botflop reached 75 servers (the minimum to apply), but I have not heard back yet. If Discord sticks to their goal of 5 business days, it should be verified by  February 4.
+[Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server.
 
 # Current abilities
 ## Analyze timings reports
