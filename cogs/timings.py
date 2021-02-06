@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import requests
+import aiohttp
 import yaml
 import re
 import logging
@@ -57,8 +57,11 @@ class Timings(commands.Cog):
         timings_json = timings_host + "data.php?id=" + timings_id
         timings_url_raw = timings_url + "&raw=1"
 
-        request_raw = requests.get(timings_url_raw).json()
-        request = requests.get(timings_json).json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(timings_url_raw) as response:
+                request_raw = response.json()
+            async with session.get(timings_json) as response:
+                request = response.json()
         if request is None or request_raw is None:
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.")
