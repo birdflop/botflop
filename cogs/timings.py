@@ -183,7 +183,7 @@ class Timings(commands.Cog):
                 if cpu == 1:
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} thread. Find a [better host](https://www.birdflop.com).")
-                if cpu == 2 or cpu == 3:
+                if cpu == 2:
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
