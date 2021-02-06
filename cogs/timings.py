@@ -3,6 +3,7 @@ from discord.ext import commands
 import requests
 import yaml
 import re
+import logging
 
 TIMINGS_CHECK = None
 YAML_ERROR = None
@@ -10,7 +11,7 @@ with open("cogs/timings_check.yml", 'r', encoding="utf8") as stream:
     try:
         TIMINGS_CHECK = yaml.safe_load(stream)
     except yaml.YAMLError as exc:
-        print(exc)
+        logging.info(exc)
         YAML_ERROR = exc
 
 VERSION_REGEX = re.compile(r"\d+\.\d+\.\d+")
@@ -50,7 +51,7 @@ class Timings(commands.Cog):
             timings_url = timings_url.split("#")[0]
         if "?id=" not in timings_url:
             return
-        print(timings_url)
+        logging.info(timings_url)
 
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
@@ -84,7 +85,7 @@ class Timings(commands.Cog):
                             embed_var.add_field(**create_field(server))
                             break
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
@@ -92,7 +93,7 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ Timingcost",
                                         value=f"Your timingcost is {timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
@@ -100,7 +101,7 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ Java Version",
                                         value=f"You are using Java {jvm_version}. Update to [Java 11](https://adoptopenjdk.net/installation.html).")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 flags = request["timingsMaster"]["system"]["flags"]
@@ -172,7 +173,7 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ Aikar's Flags",
                                         value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
@@ -183,7 +184,7 @@ class Timings(commands.Cog):
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} threads. Find a [better host](https://www.birdflop.com).")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 handlers = request_raw["idmap"]["handlers"]
@@ -194,7 +195,7 @@ class Timings(commands.Cog):
                         embed_var.add_field(name=f"❌ {handler_name}",
                                             value=f"This datapack uses command functions which are laggy.")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             plugins = request["timingsMaster"]["plugins"] if "plugins" in request["timingsMaster"] else None
             server_properties = request["timingsMaster"]["config"]["server.properties"] if "server.properties" in request["timingsMaster"]["config"] else None
@@ -243,7 +244,7 @@ class Timings(commands.Cog):
                             embed_var.add_field(name="❌ " + plugin,
                                                 value="This plugin was made by Songoda. Songoda resources are poorly developed and often cause problems. You should find an alternative.")
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 using_tweaks = "ViewDistanceTweaks" in plugins
@@ -263,7 +264,7 @@ class Timings(commands.Cog):
                                                           f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 4.")
                             break
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
             try:
                 normal_ticks = request["timingsMaster"]["data"][0]["totalTicks"]
@@ -285,10 +286,10 @@ class Timings(commands.Cog):
                 color = int(red*256*256 + green*256)
                 embed_var.color = color
             except KeyError as key:
-                print("Missing: " + str(key))
+                logging.info("Missing: " + str(key))
 
         except ValueError as value_error:
-            print(value_error)
+            logging.info(value_error)
             embed_var.add_field(name="❗ Value Error",
                                 value=value_error)
 
@@ -331,12 +332,12 @@ def eval_field(embed_var, option, option_name, plugins, server_properties, bukki
                         break
                 except ValueError as value_error:
                     add_to_field = False
-                    print(value_error)
+                    logging.info(value_error)
                     embed_var.add_field(name="❗ Value Error",
                                         value=f'`{value_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
                 except TypeError as type_error:
                     add_to_field = False
-                    print(type_error)
+                    logging.info(type_error)
                     embed_var.add_field(name="❗ Type Error",
                                         value=f'`{type_error}`\nexpression:\n`{expression}`\noption:\n`{option_name}`')
             for config_name in dict_of_vars:
@@ -351,7 +352,7 @@ def eval_field(embed_var, option, option_name, plugins, server_properties, bukki
                 break
 
     except KeyError as key:
-        print("Missing: " + str(key))
+        logging.info("Missing: " + str(key))
 
 
 def create_field(option):
