@@ -59,9 +59,9 @@ class Timings(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             async with session.get(timings_url_raw) as response:
-                request_raw = response.json()
+                await request_raw = response.json()
             async with session.get(timings_json) as response:
-                request = response.json()
+                await request = response.json()
         if request is None or request_raw is None:
             embed_var.add_field(name="❌ Invalid report",
                                 value="Create a new timings report.")
