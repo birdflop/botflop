@@ -77,7 +77,7 @@ class Timings(commands.Cog):
                     if version_result:
                         if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
                             version = version.replace("git-", "").replace("MC: ", "")
-                            embed_var.add_field(name="❌ Legacy Build",
+                            embed_var.add_field(name="❌ Outdated",
                                                 value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`.')
                     else:
                         embed_var.add_field(name="❗ Value Error",
@@ -148,14 +148,9 @@ class Timings(commands.Cog):
                             players = (player_ticks / timed_ticks)
                             max_online_players = max(players, max_online_players)
                             index = index + 1
-                        if 1000 * max_online_players / int(max_mem) > 5 and int(max_mem) < 12000:
-                            if max_online_players < 80:
-                                embed_var.add_field(name="❌ Low memory",
-                                                    value="You should be using more RAM with this many players.")
-                            else:
-                                embed_var.add_field(name="❌ Low memory",
-                                                    value="You should be using more RAM with this many players. Consider getting a dedicated server.")
-
+                        if 1000 * max_online_players / int(max_mem) > 6 and int(max_mem) < 10000:
+                            embed_var.add_field(name="❌ Low memory",
+                                                value="You should be using more RAM with this many players.")
                         if "-Xms" in flags:
                             min_mem = 0
                             flaglist = flags.split(" ")
