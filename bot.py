@@ -70,7 +70,7 @@ async def ping(ctx):
 
 @bot.command()
 async def invite(ctx):
-    await ctx.send('Invite me with this link:/nhttps://discord.com/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot')
+    await ctx.send('Invite me with this link:\nhttps://discord.com/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot')
 
 @bot.command(name="react", pass_context=True)
 @has_permissions(administrator=True)
