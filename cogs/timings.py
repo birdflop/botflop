@@ -113,7 +113,20 @@ class Timings(commands.Cog):
                     java_version = jvm_version.split(".")[0]
                     if int(java_version) < 14:
                         embed_var.add_field(name="❌ Java " + java_version,
-                                            value="If you are going to use ZGC, you should also use Java 14+.")
+                                            value="ZGC should only be used on Java 15.")
+                    if "-Xmx" in flags:
+                        max_mem = 0
+                        flaglist = flags.split(" ")
+                        for flag in flaglist:
+                            if flag.startswith("-Xmx"):
+                                max_mem = flag.split("-Xmx")[1]
+                                max_mem = max_mem.replace("G", "000")
+                                max_mem = max_mem.replace("M", "")
+                                max_mem = max_mem.replace("g", "000")
+                                max_mem = max_mem.replace("m", "")
+                                if int(max_mem) < 10000:
+                                    embed_var.add_field(name="❌ Low Memory",
+                                                        value="ZGC is only good with a lot of memory.")
                 elif "-Daikars.new.flags=true" in flags:
                     if "-XX:+PerfDisableSharedMem" not in flags:
                         embed_var.add_field(name="❌ Outdated Flags",

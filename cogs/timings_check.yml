@@ -104,17 +104,17 @@ plugins:
       prefix: "❌"
       value: |-
         GroupManager is an outdated permission plugin. 
-        Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
+        Consider replacing it with [LuckPerms](https://luckperms.net/download).
     PermissionsEx:
       prefix: "❌"
       value: |-
         PermissionsEx is an outdated permission plugin. 
-        Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
+        Consider replacing it with [LuckPerms](https://luckperms.net/download).
     bPermissions:
       prefix: "❌"
       value: |-
         bPermissions is an outdated permission plugin. 
-        Consider replacing it with [LuckPerms](https://ci.lucko.me/job/LuckPerms/1243/artifact/bukkit/build/libs/LuckPerms-Bukkit-5.2.77.jar).
+        Consider replacing it with [LuckPerms](https://luckperms.net/download).
     PhantomSMP:
     - expressions:
       - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "false"
