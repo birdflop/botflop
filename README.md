@@ -5,15 +5,15 @@
 ## Analyze timings reports
 Paste a timings report to review an in-depth description of potential optimizations. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
-![Timings 1](https://i.imgur.com/nt6EUVN.png)
-![Timings 2](https://i.imgur.com/BTfed8r.png)
+![Timings 1](https://i.imgur.com/aJfpIzM.png)
+![Timings 2](https://i.imgur.com/7JeCa1V.png)
 
 ## Hastebin upload
 Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
-![message.txt](https://i.imgur.com/JAuL3zy.png)
-![latest.log](https://i.imgur.com/AoZGQRi.png)
-![config.yml](https://i.imgur.com/qovRot8.png)
+![message.txt](https://i.imgur.com/Q6WIAxp.png)
+![latest.log](https://i.imgur.com/Iqao6Yp.png)
+![config.yml](https://i.imgur.com/bl9YqK9.png)
 
 ## React
 Botflop reacts to messages (requires Administrator permission)
