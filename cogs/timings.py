@@ -306,7 +306,7 @@ class Timings(commands.Cog):
 
         if len(embed_var.fields) == 0:
             embed_var.add_field(name="✅ All good",
-                                value="Analyzed with no issues")
+                                value="Analyzed with no recommendations")
             await message.reply(embed=embed_var)
             return
 
