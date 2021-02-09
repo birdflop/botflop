@@ -13,7 +13,9 @@ Paste a timings report to review an in-depth description of potential optimizati
 Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![message.txt](https://i.imgur.com/Q6WIAxp.png)
+
 ![latest.log](https://i.imgur.com/Iqao6Yp.png)
+
 ![config.yml](https://i.imgur.com/bl9YqK9.png)
 
 ## React
