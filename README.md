@@ -6,6 +6,7 @@
 Paste a timings report to review an in-depth description of potential optimizations. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![Timings 1](https://i.imgur.com/aJfpIzM.png)
+
 ![Timings 2](https://i.imgur.com/7JeCa1V.png)
 
 ## Hastebin upload
