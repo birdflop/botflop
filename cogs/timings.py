@@ -278,6 +278,20 @@ class Timings(commands.Cog):
                 logging.info("Missing: " + str(key))
 
             try:
+                worlds = request_raw["worlds"]
+                high_mec = False
+                for world in worlds:
+                    max_entity_cramming = int(request_raw["worlds"][world]["gamerules"]["maxEntityCramming"])
+                    if max_entity_cramming >= 24:
+                        high_mec = True
+                if high_mec:
+                    embed_var.add_field(name="❌ maxEntityCramming",
+                                        value=f"Decrease this by running the /gamerule command in each world. Recommended: 8. ")
+            except KeyError as key:
+                logging.info("Missing: " + str(key))
+
+
+            try:
                 normal_ticks = request["timingsMaster"]["data"][0]["totalTicks"]
                 worst_tps = 20
                 for index in range(len(request["timingsMaster"]["data"])):

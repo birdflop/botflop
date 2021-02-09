@@ -13,11 +13,9 @@ servers:
     Yatopia is prone to bugs.
     Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
 - name: "Paper"
-  prefix: "||❌"
-  suffix: "||"
+  prefix: "❌"
   value: |-
-    ||Purpur has more optimizations but is generally less supported. 
-    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).||
+    Purpur has more optimizations. Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
 plugins:
   paper:
     ClearLag:
@@ -52,12 +50,11 @@ plugins:
     LimitPillagers:
       prefix: "❌"
       value: |-
-        You probably don't need LimitPillagers as Paper already adds its features. 
+        LimitPillagers is not useful in 1.15 and above.
     VillagerOptimiser:
       prefix: "❌"
       value: |-
-        You probably don't need VillagerOptimiser as Paper already adds its features. 
-        See entity-activation-range in spigot.yml.
+        VillagerOptimiser is not useful in 1.15 and above.
     StackMob:
       prefix: "❌"
       value: |-
