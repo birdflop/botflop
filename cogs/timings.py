@@ -51,7 +51,7 @@ class Timings(commands.Cog):
             timings_url = timings_url.split("#")[0]
         if "?id=" not in timings_url:
             return
-        logging.info(timings_url)
+        logging.info(f'Timings analyzed from {message.author} ({message.author.id}): {timings_url}')
 
         timings_host, timings_id = timings_url.split("?id=")
         timings_json = timings_host + "data.php?id=" + timings_id
