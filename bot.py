@@ -34,8 +34,8 @@ async def on_ready():
 async def on_message(message):
     # Binflop
     if len(message.attachments) > 0:
-        if not message.attachments[0].url.endswith(
-                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image', '.svg', '.jar', ',zip', '.tar', '.gz', '.msi', '.exe', '.html')):
+        if not message.attachments[0].url.lower().endswith(
+                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image', '.svg', '.jar', ',zip', '.tar', '.gz', '.msi', '.exe', '.html', '.webm')):
             text = await discord.Attachment.read(message.attachments[0], use_cached=False)
             text = text.decode('Latin-1')
             text = "\n".join(text.splitlines())
