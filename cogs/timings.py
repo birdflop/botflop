@@ -176,7 +176,7 @@ class Timings(commands.Cog):
                                     min_mem = min_mem.replace("m", "")
                             if min_mem != max_mem:
                                 embed_var.add_field(name="❌ Aikar's Flags",
-                                                    value="Your Xmx and Xms values should be equivalent when using Aikar's flags.")
+                                                    value="Your Xmx and Xms values should be equal when using Aikar's flags.")
                 elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
                     embed_var.add_field(name="❌ Outdated Flags",
                                         value="Update [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
