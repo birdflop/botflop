@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, MissingPermissions
 from dotenv import load_dotenv
 import aiohttp
+import mimetypes
 
 # import subprocess
 
@@ -34,12 +35,17 @@ async def on_ready():
 async def on_message(message):
     # Binflop
     if len(message.attachments) > 0:
-        if not message.attachments[0].url.lower().endswith(
-                ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image', '.svg', '.jar', ',zip', '.tar', '.gz', '.msi', '.exe', '.html', '.webm')):
-            text = await discord.Attachment.read(message.attachments[0], use_cached=False)
-            text = text.decode('Latin-1')
-            text = "\n".join(text.splitlines())
-            if '�' not in text:  # If it's not an image/gif
+        if not message.attachments[0].url.lower().endswith(('.html')):
+            file_type = mimetypes.guess_type(message.attachments[0].url)
+            if not file_type[0] == None:
+                try:
+                    file_type = file_type[0].split('/')[0]
+                except:
+                    logging.info(file_type + " failed while being parsed")
+            if message.attachments[0].url.lower().endswith(('.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf')) or file_type == 'text':
+                text = await discord.Attachment.read(message.attachments[0], use_cached=False)
+                text = text.decode('Latin-1')
+                text = "\n".join(text.splitlines())
                 truncated = False
                 if len(text) > 100000:
                     text = text[:99999]
