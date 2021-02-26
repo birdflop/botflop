@@ -1,6 +1,5 @@
 import os
 import discord
-import requests
 import json
 import logging
 import sys
@@ -50,8 +49,9 @@ async def on_message(message):
                 if len(text) > 100000:
                     text = text[:99999]
                     truncated = True
-                req = requests.post('https://bin.birdflop.com/documents', data=text)
-                key = json.loads(req.content)['key']
+                async with aiohttp.ClientSession() as session:
+                    async with session.post('https://bin.birdflop.com/documents', data=text) as req:
+                        key = json.loads(await req.read())['key']
                 response = ""
                 response = response + "https://bin.birdflop.com/" + key
                 response = response + "\nRequested by " + message.author.mention
