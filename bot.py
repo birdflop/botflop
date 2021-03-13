@@ -21,6 +21,9 @@ load_dotenv()
 token = os.getenv('token')
 crabwings_role_id = int(os.getenv('crabwings_role_id'))
 elktail_role_id = int(os.getenv('elktail_role_id'))
+frogface_role_id = int(os.getenv('frogface_role_id'))
+goosegills_role_id = int(os.getenv('goosegills_role_id'))
+hippohips_role_id = int(os.getenv('hippohips_role_id'))
 client_role_id = int(os.getenv('client_role_id'))
 subuser_role_id = int(os.getenv('subuser_role_id'))
 verified_role_id = int(os.getenv('verified_role_id'))
@@ -61,35 +64,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if not running_on_panel:
-        # Binflop
-        if len(message.attachments) > 0:
-            if not message.attachments[0].url.endswith(
-                    ('.png', '.jpg', '.jpeg', '.mp4', '.mov', '.avi', '.gif', '.image')):
-                download = message.attachments[0].url
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(download, allow_redirects=True) as r:
-
-                        # r = requests.get(download, allow_redirects=True)
-                        text = await r.text()
-                        text = "\n".join(text.splitlines())
-                        if '�' not in text:  # If it's not an image/gif
-                            truncated = False
-                            if len(text) > 100000:
-                                text = text[:99999]
-                                truncated = True
-                            req = requests.post('https://bin.birdflop.com/documents', data=text)
-                            key = json.loads(req.content)['key']
-                            response = ""
-                            response = response + "https://bin.birdflop.com/" + key
-                            response = response + "\nRequested by " + message.author.mention
-                            if truncated:
-                                response = response + "\n(file was truncated because it was too long.)"
-                            embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
-                            embed_var.description = response
-                            await message.channel.send(embed=embed_var)
-        timings = bot.get_cog('Timings')
-        await timings.analyze_timings(message)
     await bot.process_commands(message)
 
 
@@ -144,21 +118,6 @@ async def ping(ctx):
     if not running_on_panel:
         await ctx.send(f'Public bot ping is {round(bot.latency * 1000)}ms')
 
-@bot.command()
-async def stats(ctx):
-    global number_servers
-    print("yes")
-    await ctx.send("Welcome to Birdflop Hosting! Use `/timings report` through an in-game user with sufficient permissions, or type `timings report` in your server's console. Then, send the link to <#753817937436999720> for an in-depth analysis.")
-    #embed = discord.Embed(title="Botflop Usage", color=discord.Color.blue(), url='https://github.com/Pemigrade/botflop')
-    #embed.add_field(name="Timings Reports", value="", inline=True)
-#    embed = discord.Embed(title="Botflop Usage Statistics", color=discord.Color.blue(), url='https://github.com/Pemigrade/botflop')
-#    embed.add_field(name="Tasks Executed", value="15123", inline=True)
-#    embed.add_field(name="Reports Analyzed", value="7912", inline=True)
-#    embed.add_field(name="Binflop Uploads", value="6617", inline=True)
-#    embed.add_field(name="Total Servers", value="157", inline=True)
-#    embed.add_field(name="Total Members", value="19512", inline=True)
-    await ctx.send(embed=embed)
-
 
 @bot.command(name="react", pass_context=True)
 @has_permissions(administrator=True)
@@ -169,6 +128,55 @@ async def react(ctx, url, reaction):
         await message.add_reaction(reaction)
         logging.info('reacted to ' + url + ' with ' + reaction)
 
+@bot.command(name="servers", pass_context=True)
+async def servers(ctx, user_discord_id_var: discord.Member=None):
+    linked = False
+    support_role = discord.utils.get(ctx.guild.roles, id = 816211260475179008)
+    if not support_role in ctx.author.roles:
+        if not user_discord_id_var:
+            user_discord_id = ctx.author.id
+        else:
+            await ctx.send("Sorry, you can only check your own servers. Please use the `]servers` command.")
+            return
+    else:
+        if not user_discord_id_var:
+            user_discord_id = ctx.author.id
+        else:
+        	user_discord_id = user_discord_id_var.id
+    with open("users.json", "r") as file:
+        data = json.load(file)
+        for user in data["users"]:
+            if user['discord_id'] == int(user_discord_id):
+                linked = True
+                client_api_key = user['client_api_key']
+                url = "https://panel.birdflop.com/api/client"
+
+                headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + client_api_key,
+                }
+
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, headers=headers) as response:
+                        # If API token is verified to be correct:
+                        if response.status == 200:
+                            # Formats response of account in JSON format
+                            json_response = await response.json()
+                            embed_var = discord.Embed(title="Servers", color=0x1D83D4)
+                            for server in json_response['data']:
+                                if server['attributes']['server_owner'] == True:
+                                    server_owner = "Owner"
+                                elif server['attributes']['server_owner'] == False:
+                                    server_owner = "Subuser"
+                                serverid = server['attributes']['uuid']
+                                serverid = serverid.split("-")[0]
+                                embed_var.add_field(name=server['attributes']['name'], 
+                                                    value=f"ID: [{serverid}](https://panel.birdflop.com/server/{serverid})\nRole: {server_owner}\nNode: {server['attributes']['node']}", inline=True)
+                            await ctx.send(embed=embed_var)
+        if not linked:
+            await ctx.send("You must verify your account to use this command. You can verify your account by reacting in <#790217956738334760>")
+                
 
 @tasks.loop(minutes=10)
 async def updater():
@@ -207,7 +215,7 @@ async def updater():
                     }
 
                     data = '{ "allocation": ' + str(server['attributes']['allocation']) + ', "memory": ' + str(
-                        server['attributes']['limits']['memory']) + ', "swap": 0, "disk": ' + str(
+                        server['attributes']['limits']['memory']) + ', "swap": 4000, "disk": ' + str(
                         server['attributes']['limits']['disk']) + ', "io": ' + str(
                         server['attributes']['limits']['io']) + ', "cpu": ' + str(
                         server['attributes']['limits'][
