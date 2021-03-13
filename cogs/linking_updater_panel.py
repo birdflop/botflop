@@ -17,6 +17,9 @@ class Linking_updater(commands.Cog):
         self.crabwings_role_id = int(os.getenv('crabwings_role_id'))
         self.duckfeet_role_id = int(os.getenv('duckfeet_role_id'))
         self.elktail_role_id = int(os.getenv('elktail_role_id'))
+        self.frogface_role_id = int(os.getenv('frogface_role_id'))
+        self.goosegills_role_id = int(os.getenv('goosegills_role_id'))
+        self.hippohips_role_id = int(os.getenv('hippohips_role_id'))
         self.client_role_id = int(os.getenv('client_role_id'))
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
@@ -41,6 +44,7 @@ class Linking_updater(commands.Cog):
                 }
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, headers=headers) as response:
+                        logging.info("Response status was " + str(response.status))
                         if response.status == 200:
                             # Formats response for servers in JSON format
                             servers_json_response = await response.json()
@@ -50,6 +54,9 @@ class Linking_updater(commands.Cog):
                             user_crabwings = False
                             user_duckfeet = False
                             user_elktail = False
+                            user_frogface = False
+                            user_goosegills = False
+                            user_hippohips = False
                             for server in servers_json_response['data']:
                                 server_owner = server['attributes']['server_owner']
                                 if server_owner == True:
@@ -63,6 +70,12 @@ class Linking_updater(commands.Cog):
                                     user_duckfeet = True
                                 elif server_node == "Elktail - EU":
                                     user_elktail = True
+                                elif server_node == "Frogface - NYC":
+                                    user_frogface = True
+                                elif server_node == "Goosegills - NYC":
+                                    user_goosegills = True
+                                elif server_node == "Hippohips - EU":
+                                    user_hippohips = True
                             role = discord.utils.get(guild.roles, id=self.client_role_id)
                             if user_client == True:
                                 await member.add_roles(role)
@@ -88,15 +101,30 @@ class Linking_updater(commands.Cog):
                                 await member.add_roles(role)
                             else:
                                 await member.remove_roles(role)
-                        else:
-                            data['users'].pop(i)
-                            json_dumps = json.dumps(data, indent=2)
-                            file = open('users.json', 'w')
-                            file.write(json_dumps)
-                            file.close()
-                            await member.edit(roles=[])
-                            logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(
-                                client['client_id']) + " and INVALID client_api_key " + client['client_api_key'])
+                            role = discord.utils.get(guild.roles, id=self.frogface_role_id)
+                            if user_frogface == True:
+                                await member.add_roles(role)
+                            else:
+                                await member.remove_roles(role)
+                            role = discord.utils.get(guild.roles, id=self.goosegills_role_id)
+                            if user_goosegills == True:
+                                await member.add_roles(role)
+                            else:
+                                await member.remove_roles(role)
+                            role = discord.utils.get(guild.roles, id=self.hippohips_role_id)
+                            if user_hippohips == True:
+                                await member.add_roles(role)
+                            else:
+                                await member.remove_roles(role)
+                        #else:
+                            #data['users'].pop(i)
+                            #json_dumps = json.dumps(data, indent=2)
+                            #file = open('users.json', 'w')
+                            #file.write(json_dumps)
+                            #file.close()
+                            #await member.edit(roles=[])
+                            #logging.info("removed discord_id " + str(client['discord_id']) + " with client_id " + str(
+                            #    client['client_id']) + " and INVALID client_api_key " + client['client_api_key'])
             else:
                 data['users'].pop(i)
                 json_dumps = json.dumps(data, indent=2)
