@@ -231,11 +231,6 @@ config:
       - spigot["world-settings"]["default"]["entity-activation-range"]["tick-inactive-villagers"] == "true"
       prefix: "❌"
       value: "Disable this in [spigot.yml](http://bit.ly/spiconf)."
-    nerf-spawner-mobs:
-    - expressions:
-      - spigot["world-settings"]["default"]["nerf-spawner-mobs"] == "false"
-      prefix: "❌"
-      value: "Enable this in [spigot.yml](http://bit.ly/spiconf)."
     entity-activation-range.wake-up-inactive.villagers-for:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["villagers-max-per-tick"]) >= 1
@@ -459,11 +454,6 @@ config:
       - purpur["world-settings"]["default"]["mobs"]["zombie"]["aggressive-towards-villager-when-lagging"] == "true"
       prefix: "❌"
       value: "Disable this in [purpur.yml](http://bit.ly/purpurc)."
-    mobs.villager.lobotomize.enabled:
-    - expressions:
-      - purpur["world-settings"]["default"]["mobs"]["villager"]["lobotomize"]["enabled"] == "false"
-      prefix: "❌"
-      value: "Enable this in [purpur.yml](http://bit.ly/purpurc)."
     gameplay-mechanics.player.teleport-if-outside-border:
     - expressions:
       - purpur["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"] == "false"
