@@ -19,6 +19,9 @@ class Linking(commands.Cog):
         self.crabwings_role_id = int(os.getenv('crabwings_role_id'))
         self.duckfeet_role_id = int(os.getenv('duckfeet_role_id'))
         self.elktail_role_id = int(os.getenv('elktail_role_id'))
+        self.frogface_role_id = int(os.getenv('frogface_role_id'))
+        self.goosegills_role_id = int(os.getenv('goosegills_role_id'))
+        self.hippohips_role_id = int(os.getenv('hippohips_role_id'))
         self.client_role_id = int(os.getenv('client_role_id'))
         self.subuser_role_id = int(os.getenv('subuser_role_id'))
         self.verified_role_id = int(os.getenv('verified_role_id'))
@@ -105,6 +108,9 @@ class Linking(commands.Cog):
                                                         user_crabwings = False
                                                         user_duckfeet = False
                                                         user_elktail = False
+                                                        user_frogface = False
+                                                        user_goosegills = False
+                                                        user_hippohips = False
                                                         for server in servers_json_response['data']:
                                                             server_owner = server['attributes']['server_owner']
                                                             if server_owner:
@@ -118,6 +124,12 @@ class Linking(commands.Cog):
                                                                 user_duckfeet = True
                                                             elif server_node == "Elktail - EU":
                                                                 user_elktail = True
+                                                            elif server_node == "Frogface - NYC":
+                                                                user_frogface = True
+                                                            elif server_node == "Goosegills - NYC":
+                                                                user_goosegills = True
+                                                            elif server_node == "Hippohips - EU":
+                                                                user_hippohips = True
                                                         if user_client:
                                                             role = discord.utils.get(self.guild.roles, id=self.client_role_id)
                                                             await member.add_roles(role)
@@ -132,6 +144,15 @@ class Linking(commands.Cog):
                                                             await member.add_roles(role)
                                                         if user_elktail:
                                                             role = discord.utils.get(self.guild.roles, id=self.elktail_role_id)
+                                                            await member.add_roles(role)
+                                                        if user_frogface:
+                                                            role = discord.utils.get(self.guild.roles, id=self.frogface_role_id)
+                                                            await member.add_roles(role)
+                                                        if user_goosegills:
+                                                            role = discord.utils.get(self.guild.roles, id=self.goosegills_role_id)
+                                                            await member.add_roles(role)
+                                                        if user_hippohips:
+                                                            role = discord.utils.get(self.guild.roles, id=self.hippohips_role_id)
                                                             await member.add_roles(role)
                                                         role = discord.utils.get(self.guild.roles, id=self.verified_role_id)
                                                         await member.add_roles(role)
