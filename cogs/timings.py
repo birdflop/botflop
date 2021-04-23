@@ -27,7 +27,7 @@ class Timings(commands.Cog):
     async def analyze_timings(self, message):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
-        embed_var = discord.Embed(title=self.TIMINGS_TITLE)
+        embed_var = discord.Embed(title=self.TIMINGS_TITLE, description="These are not magic values. Many of these settings have real consequences on your server's mechanics. See [YouHaveTrouble's guide](https://github.com/YouHaveTrouble/minecraft-optimization/blob/main/README.md) for detailed information on the functionality of each setting.")
         embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
 
         for word in words:
@@ -267,12 +267,12 @@ class Timings(commands.Cog):
                         if ntvd <= tvd and tvd >= 5:
                             if spigot["world-settings"]["default"]["view-distance"] == "default":
                                 embed_var.add_field(name="❌ no-tick-view-distance",
-                                                    value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                          f"And reduce view-distance from default ({tvd}) in [spigot.yml](http://bit.ly/spiconf). Recommended: 4.")
+                                                    value=f"Set in paper.yml. Recommended: {tvd}. "
+                                                          f"And reduce view-distance from default ({tvd}) in spigot.yml. Recommended: 4.")
                             else:
                                 embed_var.add_field(name="❌ no-tick-view-distance",
-                                                    value=f"Set in [paper.yml](http://bit.ly/paperconf). Recommended: {tvd}. "
-                                                          f"And reduce view-distance from {tvd} in [spigot.yml](http://bit.ly/spiconf). Recommended: 4.")
+                                                    value=f"Set in paper.yml. Recommended: {tvd}. "
+                                                          f"And reduce view-distance from {tvd} in spigot.yml. Recommended: 4.")
                             break
             except KeyError as key:
                 logging.info("Missing: " + str(key))
