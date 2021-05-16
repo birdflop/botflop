@@ -21,3 +21,6 @@ Birdflop converts text files into bin links. You can try it out yourself on our 
 ## React
 Birdflop reacts to messages (requires Administrator permission)
 ![reaction](https://i.imgur.com/o1swgZw.png)
+
+# Forks
+Feel free to fork. We request that you please give credit in some way (can be as simple as keeping binflop as the text upload destination), but you can do whatever you'd like with your forks.
