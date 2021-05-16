@@ -7,7 +7,7 @@ Paste a timings report to review an in-depth description of potential optimizati
 
 ![Timings 1](https://user-images.githubusercontent.com/43528123/118413487-33af2300-b665-11eb-8f11-eaa4ec5a2730.png)
 
-![Timings 2](https://i.imgur.com/7JeCa1V.png)
+![Timings 2](https://user-images.githubusercontent.com/43528123/118413524-66f1b200-b665-11eb-9dbe-9b6fcfc9fccf.png)
 
 ## Hastebin upload
 Birdflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
