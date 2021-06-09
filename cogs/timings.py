@@ -70,7 +70,7 @@ class Timings(commands.Cog):
 
         try:
             try:
-                version = request["timingsMaster"]["version"] if "version" in request["timingsMaster"] else None
+                version = request_raw["timingsMaster"]["version"] if "version" in request_raw["timingsMaster"] else None
                 if "version" in TIMINGS_CHECK and version:
                     version_result = VERSION_REGEX.search(version)
                     version_result = version_result.group() if version_result else None
