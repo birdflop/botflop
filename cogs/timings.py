@@ -32,7 +32,7 @@ class Timings(commands.Cog):
 
         for word in words:
             if word.startswith("https://timin") and "/d=" in word:
-                word.replace("/d=", "/?id=")
+                word.replace("/d=", "/?id=") # this seems to be a common issue when people post their links
             if word.startswith("https://timin") and "/?id=" in word:
                 timings_url = word
                 embed_var.url = timings_url
@@ -71,6 +71,10 @@ class Timings(commands.Cog):
         try:
             try:
                 version = request["timingsMaster"]["version"] if "version" in request["timingsMaster"] else None
+                print(version)
+                if version.count('.') == 1:
+                    version = version[:-1]
+                    version = version + ".0)"
                 if "version" in TIMINGS_CHECK and version:
                     version_result = VERSION_REGEX.search(version)
                     version_result = version_result.group() if version_result else None
