@@ -15,7 +15,7 @@ servers:
 - name: "Paper"
   prefix: "❌"
   value: |-
-    Purpur has more optimizations. Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
+    [Tuinity](https://ci.codemc.io/job/Spottedleaf/job/Tuinity/), [Purpur](https://ci.pl3x.net/job/Purpur/), and [Airplane](https://ci.tivy.ca/) have more optimizations with similar stability levels. Consider using one of them.
 plugins:
   paper:
     ClearLag:

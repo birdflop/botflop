@@ -106,7 +106,7 @@ class Timings(commands.Cog):
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                 if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                     embed_var.add_field(name="❌ Java Version",
-                                        value=f"You are using Java {jvm_version}. Update to [Java 11](https://adoptopenjdk.net/installation.html).")
+                                        value=f"You are using Java {jvm_version}. Update to [Java 16](https://adoptopenjdk.net/installation.html).")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
