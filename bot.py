@@ -8,6 +8,7 @@ from discord.ext.commands import has_permissions, MissingPermissions
 from dotenv import load_dotenv
 import aiohttp
 import mimetypes
+import requests
 
 # import subprocess
 
@@ -59,8 +60,38 @@ async def on_message(message):
                     response = response + "\n(file was truncated because it was too long.)"
                 embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
                 embed_var.description = response
-                await message.channel.send(embed=embed_var)
+                try:
+                    await message.channel.send(embed=embed_var)
+                except:
+                    print("Permission error")
                 logging.info(f'File uploaded by {message.author} ({message.author.id}): https://bin.birdflop.com/{key}')
+    # Pastebin is blocked in some countries
+    words = message.content.replace("\n", " ").split(" ")
+    for word in words:
+        if word.startswith("https://pastebin.com/") and len(word) == 29:
+            print("hello3")
+            pastebinkey = word[len(word) - 8:]
+            r = requests.get(f'https://pastebin.com/raw/{pastebinkey}')
+            text = r.text
+            truncated = False
+            if len(text) > 100000:
+                text = text[:99999]
+                truncated = True
+            async with aiohttp.ClientSession() as session:
+                async with session.post('https://bin.birdflop.com/documents', data=text) as req:
+                    key = json.loads(await req.read())['key']
+            response = ""
+            response = response + "https://bin.birdflop.com/" + key
+            response = response + "\nRequested by " + message.author.mention
+            if truncated:
+                response = response + "\n(file was truncated because it was too long.)"
+            embed_var = discord.Embed(title="Pastebin is blocked in some countries", color=0x1D83D4)
+            embed_var.description = response
+            try:
+                await message.channel.send(embed=embed_var)
+            except:
+                print("Permission error")
+
     timings = bot.get_cog('Timings')
     await timings.analyze_timings(message)
     await bot.process_commands(message)
