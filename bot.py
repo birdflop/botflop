@@ -35,36 +35,39 @@ async def on_ready():
 async def on_message(message):
     # Binflop
     if len(message.attachments) > 0:
-        if not message.attachments[0].url.lower().endswith(('.html')):
-            file_type = mimetypes.guess_type(message.attachments[0].url)
-            if not file_type[0] == None:
-                try:
-                    file_type = file_type[0].split('/')[0]
-                except:
-                    logging.info(file_type + " failed while being parsed")
-            if message.attachments[0].url.lower().endswith(('.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf')) or file_type == 'text':
-                text = await discord.Attachment.read(message.attachments[0], use_cached=False)
-                text = text.decode('Latin-1')
-                text = "\n".join(text.splitlines())
-                truncated = False
-                if len(text) > 100000:
-                    text = text[:99999]
-                    truncated = True
-                async with aiohttp.ClientSession() as session:
-                    async with session.post('https://bin.birdflop.com/documents', data=text) as req:
-                        key = json.loads(await req.read())['key']
-                response = ""
-                response = response + "https://bin.birdflop.com/" + key
-                response = response + "\nRequested by " + message.author.mention
-                if truncated:
-                    response = response + "\n(file was truncated because it was too long.)"
-                embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
-                embed_var.description = response
-                try:
-                    await message.channel.send(embed=embed_var)
-                except:
-                    print("Permission error")
-                logging.info(f'File uploaded by {message.author} ({message.author.id}): https://bin.birdflop.com/{key}')
+        if message.author.id != 834065535041798225:
+            if not message.attachments[0].url.lower().endswith(('.html')):
+                file_type = mimetypes.guess_type(message.attachments[0].url)
+                if not file_type[0] == None:
+                    try:
+                        file_type = file_type[0].split('/')[0]
+                    except:
+                        logging.info(file_type + " failed while being parsed")
+                if message.attachments[0].url.lower().endswith(('.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf')) or file_type == 'text':
+                    text = await discord.Attachment.read(message.attachments[0], use_cached=False)
+                    text = text.decode('Latin-1')
+                    text = "\n".join(text.splitlines())
+                    truncated = False
+                    if len(text) > 100000:
+                        text = text[:99999]
+                        truncated = True
+                    async with aiohttp.ClientSession() as session:
+                        async with session.post('https://bin.birdflop.com/documents', data=text) as req:
+                            key = json.loads(await req.read())['key']
+                    response = ""
+                    response = response + "https://bin.birdflop.com/" + key
+                    response = response + "\nRequested by " + message.author.mention
+                    if truncated:
+                        response = response + "\n(file was truncated because it was too long.)"
+                    embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
+                    embed_var.description = response
+                    try:
+                        await message.channel.send(embed=embed_var)
+                    except:
+                        print("Permission error")
+                    logging.info(f'File uploaded by {message.author} ({message.author.id}): https://bin.birdflop.com/{key}')
+        else:
+            logging.info(f'Blocked file upload by {message.author} ({message.author.id})')
     # Pastebin is blocked in some countries
     words = message.content.replace("\n", " ").split(" ")
     for word in words:
