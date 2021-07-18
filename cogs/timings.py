@@ -303,7 +303,10 @@ class Timings(commands.Cog):
                     if total_ticks == normal_ticks:
                         end_time = request["timingsMaster"]["data"][index]["end"]
                         start_time = request["timingsMaster"]["data"][index]["start"]
-                        tps = total_ticks / (end_time - start_time)
+                        if end_time == start_time:
+                            tps = 20
+                        else:
+                            tps = total_ticks / (end_time - start_time)
                         if tps < worst_tps:
                             worst_tps = tps
                 if worst_tps < 10:
