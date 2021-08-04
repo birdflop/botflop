@@ -10,8 +10,8 @@ servers:
 - name: "Yatopia"
   prefix: "❌"
   value: |-
-    Yatopia is prone to bugs.
-    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
+    Yatopia is prone to bugs and is no longer in development.
+    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/), [Airplane](https://ci.tivy.ca/), or [Airplane-Purpur](https://ci.tivy.ca/view/Purpur/) for the closest replacements.
 - name: "Paper"
   prefix: "❌"
   value: |-
@@ -27,10 +27,6 @@ plugins:
       value: |-
         LagAssist should only be used for analytics and preventative measures.
         All other features of the plugin should be disabled.
-    NoChunkLag:
-      prefix: "❌"
-      value: |-
-        Plugins that claim to remove lag actually cause more lag. 
     NoMobLag:
       prefix: "❌"
       value: |-
