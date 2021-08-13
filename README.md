@@ -1,5 +1,5 @@
-# Birdflop Bot
-[Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Birdflop to your server.
+# Birdflop Bot (Botflop)
+[Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server.
 
 # Current abilities
 ## Analyze timings reports
@@ -10,7 +10,7 @@ Paste a timings report to review an in-depth description of potential optimizati
 ![Timings 2](https://user-images.githubusercontent.com/43528123/118413524-66f1b200-b665-11eb-9dbe-9b6fcfc9fccf.png)
 
 ## Hastebin upload
-Birdflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
+Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![message.txt](https://i.imgur.com/Q6WIAxp.png)
 
@@ -19,7 +19,7 @@ Birdflop converts text files into bin links. You can try it out yourself on our 
 ![config.yml](https://i.imgur.com/bl9YqK9.png)
 
 ## React
-Birdflop reacts to messages (requires Administrator permission)
+Botflop reacts to messages (requires Administrator permission)
 ![reaction](https://i.imgur.com/o1swgZw.png)
 
 # Forks
