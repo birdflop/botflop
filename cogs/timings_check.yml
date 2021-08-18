@@ -12,10 +12,6 @@ servers:
   value: |-
     Yatopia is prone to bugs and is no longer in development.
     Consider using [Purpur](https://ci.pl3x.net/job/Purpur/), [Airplane](https://ci.tivy.ca/), or [Airplane-Purpur](https://ci.tivy.ca/view/Purpur/) for the closest replacements.
-- name: "Paper"
-  prefix: "❌"
-  value: |-
-    [Tuinity](https://ci.codemc.io/job/Spottedleaf/job/Tuinity/), [Purpur](https://ci.pl3x.net/job/Purpur/), and [Airplane](https://ci.tivy.ca/) have more optimizations with similar stability levels. Consider using one of them.
 plugins:
   paper:
     ClearLag:
