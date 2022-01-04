@@ -10,13 +10,15 @@ Paste a timings report to review an in-depth description of potential optimizati
 ![Timings 2](https://user-images.githubusercontent.com/43528123/118413524-66f1b200-b665-11eb-9dbe-9b6fcfc9fccf.png)
 
 ## Hastebin upload
-Botflop converts text files into bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
+Botflop converts text files and pastebin files into accessible bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![message.txt](https://i.imgur.com/Q6WIAxp.png)
 
 ![latest.log](https://i.imgur.com/Iqao6Yp.png)
 
 ![config.yml](https://i.imgur.com/bl9YqK9.png)
+
+![pastebin conversion](https://user-images.githubusercontent.com/43528123/148110058-d25cd65e-bc38-404a-a42e-278a74249474.png)
 
 ## React
 Botflop reacts to messages (requires Administrator permission)
