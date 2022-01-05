@@ -103,21 +103,10 @@ class Timings(commands.Cog):
                 logging.info("Missing: " + str(key))
 
             try:
-                jvm_version = request["timingsMaster"]["system"]["jvmversion"]
-                if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
-                    embed_var.add_field(name="❌ Java Version",
-                                        value=f"You are using Java {jvm_version}. Update to [Java 16](https://adoptopenjdk.net/installation.html).")
-            except KeyError as key:
-                logging.info("Missing: " + str(key))
-
-            try:
                 flags = request["timingsMaster"]["system"]["flags"]
                 if "-XX:+UseZGC" in flags:
                     jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                     java_version = jvm_version.split(".")[0]
-                    if int(java_version) < 14:
-                        embed_var.add_field(name="❌ Java " + java_version,
-                                            value="ZGC should only be used on Java 15.")
                     if "-Xmx" in flags:
                         max_mem = 0
                         flaglist = flags.split(" ")
