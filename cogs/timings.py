@@ -251,26 +251,6 @@ class Timings(commands.Cog):
                 logging.info("Missing: " + str(key))
 
             try:
-                using_tweaks = "ViewDistanceTweaks" in plugins
-                if not using_tweaks:
-                    worlds = request_raw["worlds"]
-                    for world in worlds:
-                        tvd = int(request_raw["worlds"][world]["ticking-distance"])
-                        ntvd = int(request_raw["worlds"][world]["notick-viewdistance"])
-                        if ntvd <= tvd and tvd >= 5:
-                            if spigot["world-settings"]["default"]["view-distance"] == "default":
-                                embed_var.add_field(name="❌ no-tick-view-distance",
-                                                    value=f"Set in paper.yml. Recommended: {tvd}. "
-                                                          f"And reduce view-distance from default ({tvd}) in spigot.yml. Recommended: 4.")
-                            else:
-                                embed_var.add_field(name="❌ no-tick-view-distance",
-                                                    value=f"Set in paper.yml. Recommended: {tvd}. "
-                                                          f"And reduce view-distance from {tvd} in spigot.yml. Recommended: 4.")
-                            break
-            except KeyError as key:
-                logging.info("Missing: " + str(key))
-
-            try:
                 worlds = request_raw["worlds"]
                 high_mec = False
                 for world in worlds:
