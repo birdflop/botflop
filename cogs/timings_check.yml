@@ -5,13 +5,13 @@
 # wake_up_inactive_animals_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["animals-every"])
 # wake_up_inactive_flying_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["flying-monsters-every"])
 # wake_up_inactive_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-every"])
-version: "1.17.1"
+version: "1.18.1"
 servers:
 - name: "Yatopia"
   prefix: "❌"
   value: |-
     Yatopia is prone to bugs and is no longer in development.
-    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/), [Airplane](https://ci.tivy.ca/), or [Airplane-Purpur](https://ci.tivy.ca/view/Purpur/) for the closest replacements.
+    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/) for the closest replacement.
 plugins:
   paper:
     ClearLag:
@@ -111,11 +111,10 @@ plugins:
       value: |-
         You probably don't need PhantomSMP as Paper already has its features.
         Enable phantoms-only-attack-insomniacs in paper.yml.
-  tuinity:
     PacketLimiter:
       prefix: "❌"
       value: |-
-        You don't need PacketLimiter as Tuinity already has its features.
+        You don't need PacketLimiter as Paper already has its features.
   purpur:
     SilkSpawners:
       prefix: "❌"
@@ -182,12 +181,6 @@ config:
       prefix: "❌"
       value: "Decrease this in bukkit.yml.\nRecommended: 5."
   spigot:
-    view-distance:
-    - expressions:
-      - int(server_properties["view-distance"]) >= 10
-      - spigot["world-settings"]["default"]["view-distance"] == "default"
-      prefix: "❌"
-      value: "Decrease this from default (10) in spigot.yml.\nRecommended: 4."
     entity-activation-range.animals:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["animals"]) >= 32
@@ -282,19 +275,6 @@ config:
       - int(spigot["world-settings"]["default"]["max-entity-collisions"]) >= 8
       prefix: "❌"
       value: "Decrease this in spigot.yml.\nRecommended: 2."
-    mob-spawn-range:
-    - expressions:
-      - spigot["world-settings"]["default"]["view-distance"] == "default"
-      - int(spigot["world-settings"]["default"]["mob-spawn-range"]) >= 8
-      - int(server_properties["view-distance"]) <= 6
-      prefix: "❌"
-      value: "Decrease this in spigot.yml.\nRecommended: {int(server_properties[\"view-distance\"]) - 1}."
-    - expressions:
-      - int(spigot["world-settings"]["default"]["mob-spawn-range"]) >= 8
-      - spigot["world-settings"]["default"]["view-distance"] != "default"
-      - int(spigot["world-settings"]["default"]["view-distance"]) <= 6
-      prefix: "❌"
-      value: "Decrease this in spigot.yml.\nRecommended: {int(spigot[\"world-settings\"][\"default\"][\"view-distance\"]) - 1}."
   paper:
     max-auto-save-chunks-per-tick:
     - expressions:
