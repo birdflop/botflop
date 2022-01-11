@@ -24,7 +24,6 @@ class Timings(commands.Cog):
         self.bot = bot
         self.TIMINGS_TITLE = "Timings Analysis"
 
-    # TODO: Check Tuinity.yml for spawn rate changes
     async def analyze_timings(self, message, interaction=None):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
@@ -213,7 +212,6 @@ class Timings(commands.Cog):
             bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
             spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
             paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
-            tuinity = request["timingsMaster"]["config"]["tuinity"] if "tuinity" in request["timingsMaster"]["config"] else None
             purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
@@ -228,14 +226,14 @@ class Timings(commands.Cog):
                                             embed_var.add_field(**create_field(stored_plugin))
                                         else:
                                             eval_field(embed_var, stored_plugin, plugin_name, plugins,
-                                                       server_properties, bukkit, spigot, paper, tuinity, purpur)
+                                                       server_properties, bukkit, spigot, paper, purpur)
                 if "config" in TIMINGS_CHECK:
                     for config_name in TIMINGS_CHECK["config"]:
                         config = TIMINGS_CHECK["config"][config_name]
                         for option_name in config:
                             option = config[option_name]
                             eval_field(embed_var, option, option_name, plugins, server_properties, bukkit,
-                                       spigot, paper, tuinity, purpur)
+                                       spigot, paper, purpur)
             else:
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
@@ -341,9 +339,9 @@ class Timings(commands.Cog):
             await message.reply(embed=embed_var, view=view)
 
 
-def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, tuinity, purpur):
+def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, purpur):
     dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot,
-                    "paper": paper, "tuinity": tuinity, "purpur": purpur}
+                    "paper": paper, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
