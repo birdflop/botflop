@@ -313,7 +313,7 @@ class Timings(commands.Cog):
             if interaction: lastPage = int(message.embeds[0].footer.text.split(' • Page ')[1].split(' of ')[0]) - 1
             else: lastPage = -1
             # Check if button is prev, if not, add 1 to lastPage and set it to currentPage, it'll be 0 if not using buttons
-            if (interaction.data['custom_id'] == 'prev'): currentPage = lastPage - 1
+            if interaction and interaction.data['custom_id'] == 'prev': currentPage = lastPage - 1
             else: currentPage = lastPage + 1
             # If new page is over the max, set it to the first page, and vice versa
             if currentPage == math.ceil(issue_count / 12): currentPage = 0
