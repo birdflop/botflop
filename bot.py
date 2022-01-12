@@ -101,15 +101,6 @@ async def on_message(message):
     await timings.analyze_timings(message)
     await bot.process_commands(message)
 
-@bot.event
-async def on_interaction(interaction):
-    if interaction.type.name == 'component':
-        timings = bot.get_cog('Timings')
-        if interaction.data['custom_id'] == 'prev':
-            await timings.analyze_timings(interaction.message, interaction)
-        if interaction.data['custom_id'] == 'next':
-            await timings.analyze_timings(interaction.message, interaction)
-
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Birdflop bot ping is {round(bot.latency * 1000)}ms')
