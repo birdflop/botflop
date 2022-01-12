@@ -9,28 +9,21 @@ from dotenv import load_dotenv
 import aiohttp
 import mimetypes
 import requests
-
 # import subprocess
-
 bot = commands.Bot(command_prefix=".", intents=discord.Intents.default(),
                    case_insensitive=True)
-
 load_dotenv()
 token = os.getenv('token')
-
 logging.basicConfig(filename='console.log',
                     level=logging.INFO,
                     format='[%(asctime)s %(levelname)s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     )
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
-
-
 @bot.event
 async def on_ready():
     # Marks bot as running
     logging.info('I am running.')
-
 @bot.event
 async def on_message(message):
     # Binflop
@@ -96,19 +89,25 @@ async def on_message(message):
                 await message.channel.send(embed=embed_var)
             except:
                 print("Permission error")
-
     timings = bot.get_cog('Timings')
     await timings.analyze_timings(message)
     await bot.process_commands(message)
 
+@bot.event
+async def on_interaction(interaction):
+    if interaction.type.name == 'component':
+        timings = bot.get_cog('Timings')
+        if interaction.data['custom_id'] == 'prev':
+            await timings.analyze_timings(interaction.message, interaction)
+        if interaction.data['custom_id'] == 'next':
+            await timings.analyze_timings(interaction.message, interaction)
+
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Birdflop bot ping is {round(bot.latency * 1000)}ms')
-
 @bot.command()
 async def invite(ctx):
     await ctx.send('Invite me with this link:\nhttps://discord.com/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot')
-
 @bot.command(name="react", pass_context=True)
 @has_permissions(administrator=True)
 async def react(ctx, url, reaction):
@@ -116,12 +115,8 @@ async def react(ctx, url, reaction):
     message = await channel.fetch_message(int(url.split("/")[6]))
     await message.add_reaction(reaction)
     logging.info('reacted to ' + url + ' with ' + reaction)
-
 for file_name in os.listdir('./cogs'):
     if file_name.endswith('.py'):
         bot.load_extension(f'cogs.{file_name[:-3]}')
-
-
 bot.run(token)
-
 # full name: message.author.name + "#" + str(message.author.discriminator) + " (" + str(message.author.id) + ")"
