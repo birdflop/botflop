@@ -4,6 +4,7 @@ import aiohttp
 import yaml
 import re
 import logging
+import math
 
 TIMINGS_CHECK = None
 YAML_ERROR = None
@@ -23,12 +24,11 @@ class Timings(commands.Cog):
         self.bot = bot
         self.TIMINGS_TITLE = "Timings Analysis"
 
-    # TODO: Check Tuinity.yml for spawn rate changes
-    async def analyze_timings(self, message):
+    async def analyze_timings(self, message, interaction=None):
         words = message.content.replace("\n", " ").split(" ")
         timings_url = ""
         embed_var = discord.Embed(title=self.TIMINGS_TITLE, description="These are not magic values. Many of these settings have real consequences on your server's mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.")
-        embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
+        embed_var.set_footer(text=f"Requested by {message.author}", icon_url=message.author.avatar)
 
         for word in words:
             if word.startswith("https://timin") and "/d=" in word:
@@ -44,6 +44,12 @@ class Timings(commands.Cog):
                 embed_var.url = word
                 await message.reply(embed=embed_var)
                 return
+
+        # If using buttons, get the url of the timings from the embed title url, also override message.author with the button presser
+        if interaction:
+            timings_url = message.embeds[0].url
+            embed_var.url = timings_url
+            message.author = interaction.user
 
         if timings_url == "":
             return
@@ -206,7 +212,6 @@ class Timings(commands.Cog):
             bukkit = request["timingsMaster"]["config"]["bukkit"] if "bukkit" in request["timingsMaster"]["config"] else None
             spigot = request["timingsMaster"]["config"]["spigot"] if "spigot" in request["timingsMaster"]["config"] else None
             paper = request["timingsMaster"]["config"]["paper"] if "paper" in request["timingsMaster"]["config"] else None
-            tuinity = request["timingsMaster"]["config"]["tuinity"] if "tuinity" in request["timingsMaster"]["config"] else None
             purpur = request["timingsMaster"]["config"]["purpur"] if "purpur" in request["timingsMaster"]["config"] else None
             if not YAML_ERROR:
                 if "plugins" in TIMINGS_CHECK:
@@ -221,14 +226,14 @@ class Timings(commands.Cog):
                                             embed_var.add_field(**create_field(stored_plugin))
                                         else:
                                             eval_field(embed_var, stored_plugin, plugin_name, plugins,
-                                                       server_properties, bukkit, spigot, paper, tuinity, purpur)
+                                                       server_properties, bukkit, spigot, paper, purpur)
                 if "config" in TIMINGS_CHECK:
                     for config_name in TIMINGS_CHECK["config"]:
                         config = TIMINGS_CHECK["config"][config_name]
                         for option_name in config:
                             option = config[option_name]
                             eval_field(embed_var, option, option_name, plugins, server_properties, bukkit,
-                                       spigot, paper, tuinity, purpur)
+                                       spigot, paper, purpur)
             else:
                 embed_var.add_field(name="Error loading YAML file",
                                     value=YAML_ERROR)
@@ -301,22 +306,42 @@ class Timings(commands.Cog):
             return
 
         issue_count = len(embed_var.fields)
-        field_at_index = 24
-        if issue_count >= 25:
-            embed_var.insert_field_at(index=24, name=f"Plus {issue_count - 24} more recommendations",
-                                      value="Create a new timings report after resolving some of the above issues to see more.")
-        while len(embed_var) > 6000:
-            embed_var.insert_field_at(index=field_at_index,
-                                      name=f"Plus {issue_count - field_at_index} more recommendations",
-                                      value="Create a new timings report after resolving some of the above issues to see more.")
-            del embed_var._fields[(field_at_index + 1):]
-            field_at_index -= 1
-        await message.reply(embed=embed_var)
+        if issue_count >= 13:
+            # Check if a button is being used, if so, use the footer to get the current page, if not, use -1, since 1 will be added to it
+            if interaction: lastPage = int(message.embeds[0].footer.text.split(' • Page ')[1].split(' of ')[0]) - 1
+            else: lastPage = -1
+            # Check if button is prev, if not, add 1 to lastPage and set it to currentPage, it'll be 0 if not using buttons
+            if interaction and interaction.data['custom_id'] == 'prev': currentPage = lastPage - 1
+            else: currentPage = lastPage + 1
+            # If new page is over the max, set it to the first page, and vice versa
+            if currentPage == math.ceil(issue_count / 12): currentPage = 0
+            if currentPage == -1: currentPage = math.ceil(issue_count / 12) - 1
+            # Set the index by multiplying by 12 issues per page
+            index = currentPage * 12
+            # Delete the index behind the first issue in the page
+            del embed_var._fields[:(index)]
+            # Delete the issues after the last issue in the page
+            del embed_var._fields[(12):]
+            # Add a field showing the amount of recommendations and to use buttons
+            embed_var.add_field(name=f"Plus {issue_count - 12} more recommendations",
+                                value="Click the buttons below to see more")
+            embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator} • Page {currentPage + 1} of {math.ceil(issue_count / 12)}", icon_url=message.author.avatar)
+
+        # If using a button, edit the message, if not, send the message with buttons
+        if interaction:
+            await interaction.message.edit(embed=embed_var)
+        else:
+            view = discord.ui.View()
+            nextbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="►", custom_id="next")
+            prevbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="◄", custom_id="prev")
+            view.add_item(item=prevbtn)
+            view.add_item(item=nextbtn)
+            await message.reply(embed=embed_var, view=view)
 
 
-def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, tuinity, purpur):
+def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, purpur):
     dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot,
-                    "paper": paper, "tuinity": tuinity, "purpur": purpur}
+                    "paper": paper, "purpur": purpur}
     try:
         for option_data in option:
             add_to_field = True
