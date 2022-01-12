@@ -330,13 +330,14 @@ class Timings(commands.Cog):
         # If using a button, edit the message, if not, send the message with buttons
         if interaction:
             await interaction.message.edit(embed=embed_var)
-        else:
+        elif issue_count >= 13:
             view = discord.ui.View()
             nextbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="►", custom_id="next")
             prevbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="◄", custom_id="prev")
             view.add_item(item=prevbtn)
             view.add_item(item=nextbtn)
             await message.reply(embed=embed_var, view=view)
+        else: await message.reply(embed=embed_var)
 
 
 def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, purpur):
