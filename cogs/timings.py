@@ -323,7 +323,7 @@ class Timings(commands.Cog):
             # Delete the issues after the last issue in the page
             del embed_var._fields[(12):]
             # Add a field showing the amount of recommendations and to use buttons
-            embed_var.add_field(name=f"Plus {issue_count - 12} more recommendations",
+            if not interaction: embed_var.add_field(name=f"Plus {issue_count - 12} more recommendations",
                                 value="Click the buttons below to see more")
             embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator} • Page {currentPage + 1} of {math.ceil(issue_count / 12)}", icon_url=message.author.avatar)
 
@@ -332,8 +332,8 @@ class Timings(commands.Cog):
             await interaction.message.edit(embed=embed_var)
         elif issue_count >= 13:
             view = discord.ui.View()
-            nextbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="►", custom_id="next")
-            prevbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="◄", custom_id="prev")
+            nextbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="►", custom_id="next")
+            prevbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="◄", custom_id="prev")
             view.add_item(item=prevbtn)
             view.add_item(item=nextbtn)
             await message.reply(embed=embed_var, view=view)
