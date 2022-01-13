@@ -40,7 +40,7 @@ class Timings(commands.Cog):
             if word.startswith("https://www.spigotmc.org/go/timings?url=") or word.startswith(
                     "https://timings.spigotmc.org/?url="):
                 embed_var.add_field(name="❌ Spigot",
-                                    value="Spigot timings have limited information. Switch to [Purpur](https://purpur.pl3x.net/downloads) for better timings analysis. All your plugins will be compatible, and if you don't like it, you can easily switch back.")
+                                    value="Spigot timings have limited information. Switch to [Purpur](https://purpurmc.org) for better timings analysis. All your plugins will be compatible, and if you don't like it, you can easily switch back.")
                 embed_var.url = word
                 await message.reply(embed=embed_var)
                 return
@@ -323,20 +323,21 @@ class Timings(commands.Cog):
             # Delete the issues after the last issue in the page
             del embed_var._fields[(12):]
             # Add a field showing the amount of recommendations and to use buttons
-            embed_var.add_field(name=f"Plus {issue_count - 12} more recommendations",
+            if not interaction: embed_var.add_field(name=f"Plus {issue_count - 12} more recommendations",
                                 value="Click the buttons below to see more")
             embed_var.set_footer(text=f"Requested by {message.author.name}#{message.author.discriminator} • Page {currentPage + 1} of {math.ceil(issue_count / 12)}", icon_url=message.author.avatar)
 
         # If using a button, edit the message, if not, send the message with buttons
         if interaction:
             await interaction.message.edit(embed=embed_var)
-        else:
+        elif issue_count >= 13:
             view = discord.ui.View()
-            nextbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="►", custom_id="next")
-            prevbtn = discord.ui.Button(style=discord.ButtonStyle.blurple, label="◄", custom_id="prev")
+            nextbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="►", custom_id="next")
+            prevbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="◄", custom_id="prev")
             view.add_item(item=prevbtn)
             view.add_item(item=nextbtn)
             await message.reply(embed=embed_var, view=view)
+        else: await message.reply(embed=embed_var)
 
 
 def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, purpur):
