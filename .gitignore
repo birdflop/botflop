@@ -115,8 +115,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-config/
 data/
 .DS_Store
 package-lock.json
-playercache.txt
