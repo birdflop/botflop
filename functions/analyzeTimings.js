@@ -20,7 +20,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		}
 	});
 
-	if (!url) return { content: 'Invalid URL' };
+	if (!url) return false;
 
 	client.logger.info(`Timings analyzed from ${message.member.user.tag} (${message.member.user.id}): ${url}`);
 
@@ -48,7 +48,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (version.endsWith('(MC: 1.17)')) version = version.replace('(MC: 1.17)', '(MC: 1.17.0)');
 
-	const TIMINGS_CHECK = await YAML.parse(fs.readFileSync('./lang/int/timings_check.yml', 'utf8'));
+	const TIMINGS_CHECK = await YAML.parse(fs.readFileSync('./timings_check.yml', 'utf8'));
 
 	if (TIMINGS_CHECK.version && version) {
 		// ghetto version check
@@ -231,8 +231,8 @@ module.exports = async function analyzeTimings(message, client, args) {
 			if (page == 0) page = Math.ceil(issue_count / 12);
 			if (page > Math.ceil(issue_count / 12)) page = 1;
 			const index = page * 12;
-			Embed.fields.splice(0, index - 12);
 			Embed.fields.splice(index, issue_count);
+			Embed.fields.splice(0, index - 12);
 			footer[footer.length - 1] = `Page ${page} of ${Math.ceil(issue_count / 12)}`;
 			Embed.setFooter({ text: footer.join(' • '), iconURL: message.message.embeds[0].footer.iconURL });
 		}
