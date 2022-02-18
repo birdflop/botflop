@@ -96,11 +96,12 @@ async def on_message(message):
 @bot.event
 async def on_interaction(interaction):
     if interaction.type.name == 'component':
-        timings = bot.get_cog('Timings')
-        if interaction.data['custom_id'] == 'prev':
-            await timings.analyze_timings(interaction.message, interaction)
-        if interaction.data['custom_id'] == 'next':
-            await timings.analyze_timings(interaction.message, interaction)
+        if str(interaction.user.id) in interaction.data['custom_id']:
+          timings = bot.get_cog('Timings')
+          if 'prev' in interaction.data['custom_id']:
+              await timings.analyze_timings(interaction.message, interaction)
+          if 'next' in interaction.data['custom_id']:
+              await timings.analyze_timings(interaction.message, interaction)
 
 @bot.command()
 async def ping(ctx):
