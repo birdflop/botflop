@@ -10,7 +10,10 @@ import aiohttp
 import mimetypes
 import requests
 # import subprocess
-bot = commands.Bot(command_prefix=".", intents=discord.Intents.default(),
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix=".", intents=intents,
                    case_insensitive=True)
 load_dotenv()
 token = os.getenv('token')
