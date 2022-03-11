@@ -332,8 +332,8 @@ class Timings(commands.Cog):
             await interaction.message.edit(embed=embed_var)
         elif issue_count >= 13:
             view = discord.ui.View()
-            nextbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="►", custom_id=f"next_{message.author.id}")
-            prevbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="◄", custom_id=f"prev_{message.author.id}")
+            nextbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="►", custom_id="next")
+            prevbtn = discord.ui.Button(style=discord.ButtonStyle.gray, label="◄", custom_id="prev")
             view.add_item(item=prevbtn)
             view.add_item(item=nextbtn)
             await message.reply(embed=embed_var, view=view)
