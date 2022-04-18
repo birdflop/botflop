@@ -1,8 +1,20 @@
-const { Client } = require('discord.js');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const fs = require('fs');
 const client = new Client({
-	partials: ['MESSAGE', 'CHANNEL', 'USER'],
-	intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS'],
+	partials: [
+		Partials.Message,
+		Partials.Channel,
+		Partials.User,
+	],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.MessageContent,
+	],
+	allowedMentions: {
+		repliedUser: false,
+	},
 });
 client.startTimestamp = Date.now();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(client);
