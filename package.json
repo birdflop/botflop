@@ -15,12 +15,11 @@
   "dependencies": {
     "discord.js": "^13.6.0",
     "dotenv": "^14.3.2",
-    "eslint": "^8.7.0",
+    "eslint": "^8.13.0",
     "fs": "^0.0.1-security",
     "hastebin": "^0.2.1",
-    "node-fetch": "^3.2.0",
-    "pretty-error": "^4.0.0",
-    "winston": "^3.4.0",
+    "node-fetch": "^3.2.3",
+    "winston": "^3.7.2",
     "yaml": "^1.10.2"
   }
 }

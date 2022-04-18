@@ -1,10 +1,8 @@
 const { createLogger, format, transports } = require('winston');
 const rn = new Date();
 const date = `${minTwoDigits(rn.getMonth() + 1)}-${minTwoDigits(rn.getDate())}-${rn.getFullYear()}`;
-const time = `${minTwoDigits(rn.getHours())}-${minTwoDigits(rn.getMinutes())}`;
 function minTwoDigits(n) { return (n < 10 ? '0' : '') + n; }
 module.exports = client => {
-	require('pretty-error').start();
 	client.logger = createLogger({
 		format: format.combine(
 			format.colorize(),
@@ -13,11 +11,11 @@ module.exports = client => {
 		),
 		transports: [
 			new transports.Console(),
-			new transports.File({ filename: `logs/info/${date}/${time}.log` }),
+			new transports.File({ filename: `logs/${date}.log` }),
 		],
 		rejectionHandlers: [
 			new transports.Console(),
-			new transports.File({ filename: `logs/error/${date}.log` }),
+			new transports.File({ filename: `logs/${date}.log` }),
 		],
 	});
 	client.logger.info('Logger started');
