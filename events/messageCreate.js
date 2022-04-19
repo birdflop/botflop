@@ -1,4 +1,6 @@
 const analyzeTimings = require('../functions/analyzeTimings');
+const { createPaste } = require('hastebin');
+const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
@@ -19,6 +21,73 @@ module.exports = async (client, message) => {
 		});
 	};
 
+	// Binflop
+	if (message.attachments.size > 0) {
+		const url = message.attachments.first().url.toLowerCase();
+		const filetypes = ['.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf'];
+		if (!url.endsWith('.html')) {
+			const filetype = message.attachments.first().contentType.split('/')[0];
+			if (filetypes.some(ext => url.endsWith(ext)) || filetype == 'text') {
+				// Start typing
+				await message.channel.sendTyping();
+
+				// fetch the file from the external URL
+				const res = await fetch(url);
+
+				// take the response stream and read it to completion
+				let text = await res.text();
+
+				let truncated = false;
+				if (text.length > 100000) {
+					text = text.substring(0, 100000);
+					truncated = true;
+				}
+
+				const link = await createPaste(text, { server: 'https://bin.birdflop.com' });
+				let response = `${link}\nRequested by ${message.author}`;
+				if (truncated) response = response + '\n(file was truncated because it was too long.)';
+
+				const Embed = new EmbedBuilder()
+					.setTitle('Please use a paste service')
+					.setColor(0x1D83D4)
+					.setDescription(response);
+				await message.channel.send({ embeds: [Embed] });
+				client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${link}`);
+			}
+		}
+	}
+
+	// Pastebin is blocked in some countries
+	const words = message.content.replace(/\n/g, ' ').split(' ');
+	for (const word of words) {
+		if (word.startsWith('https://pastebin.com/') && word.length == 29) {
+			// Start typing
+			await message.channel.sendTyping();
+
+			const key = word.split('/')[3];
+			const res = await fetch(`https://pastebin.com/raw/${key}`);
+			let text = await res.text();
+
+			let truncated = false;
+			if (text.length > 100000) {
+				text = text.substring(0, 100000);
+				truncated = true;
+			}
+
+			const link = await createPaste(text, { server: 'https://bin.birdflop.com' });
+			let response = `${link}\nRequested by ${message.author}`;
+			if (truncated) response = response + '\n(file was truncated because it was too long.)';
+
+			const Embed = new EmbedBuilder()
+				.setTitle('Please use a paste service')
+				.setColor(0x1D83D4)
+				.setDescription(response);
+			await message.channel.send({ embeds: [Embed] });
+			client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${link}`);
+		}
+	}
+
+	// Get the prefix
 	let prefix = process.env.PREFIX;
 
 	// Use mention as prefix instead of prefix too
@@ -26,7 +95,7 @@ module.exports = async (client, message) => {
 
 	// If the message doesn't start with the prefix (mention not included), check for timings report
 	if (!message.content.startsWith(process.env.PREFIX)) {
-		const timingsresult = await analyzeTimings(message, client, message.content.split(' '));
+		const timingsresult = await analyzeTimings(message, client, words);
 		if (timingsresult) {
 			const timingsmsg = await message.reply(timingsresult[0]);
 
