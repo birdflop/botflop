@@ -22,6 +22,9 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (!url) return false;
 
+	// Start typing
+	await message.channel.sendTyping();
+
 	client.logger.info(`Timings analyzed from ${message.member.user.tag} (${message.member.user.id}): ${url}`);
 
 	const timings_host = url.split('?id=')[0];
