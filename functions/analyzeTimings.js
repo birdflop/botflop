@@ -220,7 +220,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	}
 	TimingsEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
 
-	const issues = TimingsEmbed.toJSON().fields;
+	const issues = [...TimingsEmbed.toJSON().fields];
 	if (issues.length == 0) {
 		TimingsEmbed.addFields({ name: '✅ All good', value: 'Analyzed with no recommendations.' });
 		return [{ embeds: [TimingsEmbed] }];
