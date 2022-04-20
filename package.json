@@ -13,7 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1650240532-9ef7ffd",
+    "discord.js": "^14.0.0-dev.1650413390-585169f",
     "dotenv": "^14.3.2",
     "eslint": "^8.13.0",
     "fs": "^0.0.1-security",
