@@ -79,7 +79,7 @@ module.exports = async (client, message) => {
 			if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
 			const Embed = new EmbedBuilder()
-				.setTitle('Please use a paste service')
+				.setTitle('Pastebin is blocked in some countries')
 				.setColor(0x1D83D4)
 				.setDescription(response);
 			await message.channel.send({ embeds: [Embed] });
