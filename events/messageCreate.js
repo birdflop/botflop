@@ -43,16 +43,16 @@ module.exports = async (client, message) => {
 					truncated = true;
 				}
 
-				const link = await createPaste(text, { server: 'https://bin.birdflop.com' });
-				let response = `${link}\nRequested by ${message.author}`;
+				let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 				if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
 				const Embed = new EmbedBuilder()
 					.setTitle('Please use a paste service')
 					.setColor(0x1D83D4)
-					.setDescription(response);
+					.setDescription(response)
+					.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
 				await message.channel.send({ embeds: [Embed] });
-				client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${link}`);
+				client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${response}`);
 			}
 		}
 	}
@@ -74,16 +74,16 @@ module.exports = async (client, message) => {
 				truncated = true;
 			}
 
-			const link = await createPaste(text, { server: 'https://bin.birdflop.com' });
-			let response = `${link}\nRequested by ${message.author}`;
+			let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 			if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
 			const Embed = new EmbedBuilder()
 				.setTitle('Pastebin is blocked in some countries')
 				.setColor(0x1D83D4)
-				.setDescription(response);
+				.setDescription(response)
+				.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
 			await message.channel.send({ embeds: [Embed] });
-			client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${link}`);
+			client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${response}`);
 		}
 	}
 
