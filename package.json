@@ -1,10 +1,10 @@
 {
   "name": "botflop",
   "version": "2.0",
-  "description": "a bot from birdflop idk",
+  "description": "Discord Bot for server hosts, devs, and admins. Analyzes timings reports & uploads text files to a bin. Developed by https://birdflop.com.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saboooor/botflop-node.git"
+    "url": "git+https://github.com/Pemigrade/botflop.git"
   },
   "main": "index.js",
   "scripts": {
