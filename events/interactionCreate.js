@@ -32,11 +32,12 @@ module.exports = async (client, interaction) => {
 			.setColor(Math.floor(Math.random() * 16777215))
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
-			.addFields({ name: '**Type:**', value: 'Slash' })
-			.addFields({ name: '**Interaction:**', value: command.name })
-			.addFields({ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` })
-			.addFields({ name: '**Guild:**', value: interaction.guild.name })
-			.addFields({ name: '**Channel:**', value: interaction.channel.name });
+			.addFields([
+				{ name: '**Type:**', value: 'Slash' }, { name: '**Interaction:**', value: command.name },
+				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` },
+				{ name: '**Guild:**', value: interaction.guild.name },
+				{ name: '**Channel:**', value: interaction.channel.name },
+			]);
 		interaction.user.send({ embeds: [interactionFailed] }).catch(err => client.logger.warn(err));
 		client.logger.error(err.stack);
 	}

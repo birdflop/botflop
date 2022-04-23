@@ -13,12 +13,12 @@ module.exports = {
 				.setTitle('Pong!')
 				.setDescription(`**Message Latency** ${Date.now() - message.createdTimestamp}ms\n**API Latency** ${client.ws.ping}ms`);
 			const row = new ActionRowBuilder()
-				.addComponents(
+				.addComponents([
 					new ButtonBuilder()
 						.setCustomId('ping_again')
 						.setLabel('Ping Again')
 						.setStyle(ButtonStyle.Secondary),
-				);
+				]);
 
 			// reply with embed
 			const pingmsg = await message.reply({ embeds: [PingEmbed], components: [row] });

@@ -20,7 +20,7 @@ module.exports = function eval_field(Embed, option, option_name, plugins, server
 		});
 		if (add_to_field) {
 			option_data.name = option_name;
-			Embed.addFields(createField(option_data));
+			Embed.addFields([createField(option_data)]);
 		}
 	});
 };

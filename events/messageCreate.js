@@ -110,7 +110,7 @@ module.exports = async (client, message) => {
 
 					// Get the embed and clear the fields
 					const TimingsEmbed = new EmbedBuilder(timingsmsg.embeds[0].toJSON());
-					TimingsEmbed.setFields(...issues);
+					TimingsEmbed.setFields(issues);
 
 					// Get page from footer
 					const footer = TimingsEmbed.toJSON().footer.text.split(' • ');
@@ -176,11 +176,12 @@ module.exports = async (client, message) => {
 			.setColor(Math.floor(Math.random() * 16777215))
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: message.author.tag, iconURL: message.author.avatarURL() })
-			.addFields({ name: '**Type:**', value: 'Message' })
-			.addFields({ name: '**Guild:**', value: message.guild.name })
-			.addFields({ name: '**Channel:**', value: message.channel.name })
-			.addFields({ name: '**INTERACTION:**', value: prefix + command.name })
-			.addFields({ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` });
+			.addFields([
+				{ name: '**Type:**', value: 'Message' },
+				{ name: '**Guild:**', value: message.guild.name },
+				{ name: '**Channel:**', value: message.channel.name },
+				{ name: '**INTERACTION:**', value: prefix + command.name },
+				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` }]);
 		client.guilds.cache.get('811354612547190794').channels.cache.get('830013224753561630').send({ content: '<@&839158574138523689>', embeds: [interactionFailed] });
 		message.author.send({ embeds: [interactionFailed] }).catch(err => client.logger.warn(err));
 		client.logger.error(err.stack);
