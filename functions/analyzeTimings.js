@@ -1,4 +1,5 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
+const { ButtonStyle } = require('discord.js');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const YAML = require('yaml');
 const fs = require('fs');
@@ -238,11 +239,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 				.addComponents([
 					new ButtonBuilder()
 						.setCustomId('timings_prev')
-						.setLabel('◄')
+						.setEmoji({ name: '⬅️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
 						.setCustomId('timings_next')
-						.setLabel('►')
+						.setEmoji({ name: '➡️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
 						.setURL('https://github.com/pemigrade/botflop')

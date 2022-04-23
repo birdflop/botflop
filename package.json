@@ -15,7 +15,7 @@
   "dependencies": {
     "discord.js": "^14.0.0-dev.1650672498-3617093",
     "dotenv": "^14.3.2",
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
     "fs": "^0.0.1-security",
     "hastebin": "^0.2.1",
     "node-fetch": "^3.2.3",
