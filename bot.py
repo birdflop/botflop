@@ -110,6 +110,9 @@ async def on_interaction(interaction):
 async def ping(ctx):
     await ctx.send(f'Birdflop bot ping is {round(bot.latency * 1000)}ms')
 @bot.command()
+async def privacy(ctx):
+    await ctx.send('You can view the bot\'s privacy policy at https://bin.birdflop.com/ohopawewok.txt.')
+@bot.command()
 async def invite(ctx):
     await ctx.send('Invite me with this link:\nhttps://discord.com/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot')
 @bot.command(name="react", pass_context=True)
