@@ -6,8 +6,8 @@ module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
 	// If the bot can't read message history or send messages, don't execute a command
-	if (!message.guild.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages)
-	|| !message.guild.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory)) return;
+	if (!message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages)
+	|| !message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory)) return;
 
 	// make a custom function to replace message.reply
 	// this is to send the message to the channel without a reply if reply fails
@@ -108,34 +108,31 @@ module.exports = async (client, message) => {
 					// Defer button
 					i.deferUpdate();
 
-					// Get the embed and clear the fields
-					const TimingsEmbed = new EmbedBuilder(timingsmsg.embeds[0].toJSON());
-					TimingsEmbed.setFields(issues);
+					// Get the embed
+					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
+					const footer = TimingsEmbed.toJSON().footer;
 
-					// Get page from footer
-					const footer = TimingsEmbed.toJSON().footer.text.split(' • ');
-					let page = parseInt(footer[footer.length - 1].split('Page ')[1].split(' ')[0]);
+					// Calculate total amount of pages and get current page from embed footer
+					const text = footer.text.split(' • ');
+					const lastPage = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[0]);
+					const maxPages = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[2]);
 
-					// Add/Remove page depending on the customId
-					if (i.customId == 'timings_next') page = page + 1;
-					if (i.customId == 'timings_prev') page = page - 1;
+					// Get next page (if last page, go to pg 1)
+					const page = i.customId == 'timings_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
+					const end = page * 12;
+					const start = end - 12;
+					const fields = issues.slice(start, end);
 
-					// Turn to last page if page is 0 and turn to first page if page is more than the max page
-					if (page == 0) page = Math.ceil(issues.length / 12);
-					if (page > Math.ceil(issues.length / 12)) page = 1;
-
-					// idk what happened here but it works
-					const index = page * 12;
-					TimingsEmbed.toJSON().fields.splice(0, index - 12);
-					TimingsEmbed.toJSON().fields.splice(index, issues.length);
-					footer[footer.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
-					TimingsEmbed.setFooter({ text: footer.join(' • ') });
+					// Update the embed
+					text[text.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
+					TimingsEmbed
+						.setFields(fields)
+						.setFooter({ iconURL: footer.iconURL, text: text.join(' • ') });
 
 					// Send the embed
 					timingsmsg.edit({ embeds: [TimingsEmbed] });
 				});
 			}
-
 		}
 	}
 

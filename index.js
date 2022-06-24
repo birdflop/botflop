@@ -12,9 +12,6 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.MessageContent,
 	],
-	allowedMentions: {
-		repliedUser: false,
-	},
 });
 client.startTimestamp = Date.now();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(client);
