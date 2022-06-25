@@ -13,12 +13,6 @@ module.exports = async (client, interaction) => {
 	// Set args to value of options
 	args.forEach(arg => args[args.indexOf(arg)] = arg.value);
 
-	// If subcommand exists, set the subcommand to args[0]
-	if (interaction.options._subcommand) args.unshift(interaction.options._subcommand);
-
-	// Check if slash command is being sent in a DM, if so, send error message because commands in DMs are stupid
-	if (interaction.channel.isDM()) return interaction.reply({ content: 'You can\'t execute commands in DMs!' });
-
 	// Defer and execute the command
 	try {
 		const cmdlog = args.join ? `${command.name} ${args.join(' ')}` : command.name;
