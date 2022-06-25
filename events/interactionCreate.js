@@ -1,7 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 module.exports = async (client, interaction) => {
 	// Check if interaction is command
-	if (!interaction.isChatInputCommand()) return;
+	if (!interaction.isCommand()) return;
 
 	// Get the command from the available cmds in the bot, if there isn't one, just return because discord will throw an error itself
 	const command = client.commands.get(interaction.commandName);
@@ -13,12 +13,6 @@ module.exports = async (client, interaction) => {
 	// Set args to value of options
 	args.forEach(arg => args[args.indexOf(arg)] = arg.value);
 
-	// If subcommand exists, set the subcommand to args[0]
-	if (interaction.options._subcommand) args.unshift(interaction.options._subcommand);
-
-	// Check if slash command is being sent in a DM, if so, send error message because commands in DMs are stupid
-	if (interaction.channel.isDM()) return interaction.reply({ content: 'You can\'t execute commands in DMs!' });
-
 	// Defer and execute the command
 	try {
 		const cmdlog = args.join ? `${command.name} ${args.join(' ')}` : command.name;
@@ -28,7 +22,7 @@ module.exports = async (client, interaction) => {
 		command.execute(interaction, args, client);
 	}
 	catch (err) {
-		const interactionFailed = new EmbedBuilder()
+		const interactionFailed = new MessageEmbed()
 			.setColor(Math.floor(Math.random() * 16777215))
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
