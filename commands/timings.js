@@ -1,12 +1,12 @@
 const analyzeTimings = require('../functions/analyzeTimings.js');
-const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 module.exports = {
 	name: 'timings',
 	description: 'Analyze Paper timings to optimize the Paper server.',
 	args: true,
 	usage: '<Timings Link>',
 	options: [{
-		'type': ApplicationCommandOptionType.String,
+		'type': 'STRING',
 		'name': 'url',
 		'description': 'The Timings URL',
 		'required': true,
@@ -27,7 +27,7 @@ module.exports = {
 					i.deferUpdate();
 
 					// Get the embed
-					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
+					const TimingsEmbed = new MessageEmbed(i.message.embeds[0].toJSON());
 					const footer = TimingsEmbed.toJSON().footer;
 
 					// Calculate total amount of pages and get current page from embed footer

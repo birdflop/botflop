@@ -1,7 +1,6 @@
-const { ApplicationCommandType, ActivityType } = require('discord.js');
 module.exports = async (client) => {
 	client.logger.info('Bot started!');
-	client.user.setPresence({ activities: [{ name: 'birdflop.com', type: ActivityType.Watching }] });
+	client.user.setPresence({ activities: [{ name: 'birdflop.com', type: 'WATCHING' }] });
 	if (!client.application?.owner) await client.application?.fetch();
 	const commands = await client.application?.commands.fetch();
 	await client.commands.forEach(async command => {
@@ -12,7 +11,7 @@ module.exports = async (client) => {
 		client.logger.info(`Detected /${command.name} has some changes! Overwriting command...`);
 		await client.application?.commands.create({
 			name: command.name,
-			type: command.type ? ApplicationCommandType[command.type] : ApplicationCommandType.ChatInput,
+			type: 'CHAT_INPUT',
 			description: command.description,
 			options: command.options,
 		});

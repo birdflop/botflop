@@ -1,4 +1,4 @@
-const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
+const { MessageButton, MessageActionRow, MessageEmbed } = require('discord.js');
 module.exports = {
 	name: 'ping',
 	description: 'Pong!',
@@ -8,16 +8,16 @@ module.exports = {
 	async execute(message, args, client) {
 		try {
 			// Create embed with ping information and add ping again button
-			const PingEmbed = new EmbedBuilder()
+			const PingEmbed = new MessageEmbed()
 				.setColor(Math.floor(Math.random() * 16777215))
 				.setTitle('Pong!')
 				.setDescription(`**Message Latency** ${Date.now() - message.createdTimestamp}ms\n**API Latency** ${client.ws.ping}ms`);
-			const row = new ActionRowBuilder()
+			const row = new MessageActionRow()
 				.addComponents([
-					new ButtonBuilder()
+					new MessageButton()
 						.setCustomId('ping_again')
 						.setLabel('Ping Again')
-						.setStyle(ButtonStyle.Secondary),
+						.setStyle('SECONDARY'),
 				]);
 
 			// reply with embed
