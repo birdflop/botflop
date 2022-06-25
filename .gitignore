@@ -118,3 +118,5 @@ dist
 data/
 .DS_Store
 package-lock.json
+
+.idea/
