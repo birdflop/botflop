@@ -1,13 +1,13 @@
 const analyzeTimings = require('../functions/analyzeTimings');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
 	// If the bot can't read message history or send messages, don't execute a command
-	if (!message.guild.me.permissionsIn(message.channel).has('SEND_MESSAGES')
-	|| !message.guild.me.permissionsIn(message.channel).has('READ_MESSAGE_HISTORY')) return;
+	if (!message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages)
+	|| !message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory)) return;
 
 	// make a custom function to replace message.reply
 	// this is to send the message to the channel without a reply if reply fails
@@ -46,12 +46,12 @@ module.exports = async (client, message) => {
 				let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 				if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-				const PasteEmbed = new MessageEmbed()
+				const Embed = new EmbedBuilder()
 					.setTitle('Please use a paste service')
 					.setColor(0x1D83D4)
 					.setDescription(response)
 					.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
-				await message.channel.send({ embeds: [PasteEmbed] });
+				await message.channel.send({ embeds: [Embed] });
 				client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${response}`);
 			}
 		}
@@ -77,12 +77,12 @@ module.exports = async (client, message) => {
 			let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 			if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-			const PasteEmbed = new MessageEmbed()
+			const Embed = new EmbedBuilder()
 				.setTitle('Pastebin is blocked in some countries')
 				.setColor(0x1D83D4)
 				.setDescription(response)
 				.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
-			await message.channel.send({ embeds: [PasteEmbed] });
+			await message.channel.send({ embeds: [Embed] });
 			client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${response}`);
 		}
 	}
@@ -109,7 +109,7 @@ module.exports = async (client, message) => {
 					i.deferUpdate();
 
 					// Get the embed
-					const TimingsEmbed = new MessageEmbed(i.message.embeds[0].toJSON());
+					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 					const footer = TimingsEmbed.toJSON().footer;
 
 					// Calculate total amount of pages and get current page from embed footer
@@ -156,7 +156,7 @@ module.exports = async (client, message) => {
 
 	// Check if args are required and see if args are there, if not, send error
 	if (command.args && args.length < 1) {
-		const Usage = new MessageEmbed()
+		const Usage = new EmbedBuilder()
 			.setColor(0x5662f6)
 			.setTitle('Usage')
 			.setDescription(`\`${prefix + command.name + ' ' + command.usage}\``);
@@ -169,7 +169,7 @@ module.exports = async (client, message) => {
 		command.execute(message, args, client);
 	}
 	catch (err) {
-		const interactionFailed = new MessageEmbed()
+		const interactionFailed = new EmbedBuilder()
 			.setColor(Math.floor(Math.random() * 16777215))
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: message.author.tag, iconURL: message.author.avatarURL() })
