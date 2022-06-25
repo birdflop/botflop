@@ -1,0 +1,5 @@
+- name: "Yatopia"
+  prefix: "❌"
+  value: |-
+    Yatopia is prone to bugs and is no longer in development.
+    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/) for the closest replacement.
