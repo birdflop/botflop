@@ -93,6 +93,12 @@ dist
 # vuepress build output
 .vuepress/dist
 
+.idea/
+node_modules/
+.DS_store
+package-lock.json
+data/
+
 # Serverless directories
 .serverless/
 
@@ -115,6 +121,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-data/
-.DS_Store
-package-lock.json
