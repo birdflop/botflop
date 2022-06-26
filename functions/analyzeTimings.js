@@ -44,7 +44,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: server_icon, url: url });
 
 	if (!request_raw || !request) {
-		fields.push({ name: '❌ Invalid report', value: 'Create a new timings report.', inline: true });
+		TimingsEmbed.addFields([{ name: '❌ Invalid report', value: 'Create a new timings report.', inline: true }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
