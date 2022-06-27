@@ -6,8 +6,8 @@ module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
 	// If the bot can't read message history or send messages, don't execute a command
-	if (!message.guild.members.me.permissionsIn(message.channel).has('SEND_MESSAGES')
-	|| !message.guild.members.me.permissionsIn(message.channel).has('READ_MESSAGE_HISTORY')) return;
+	// if (!message.guild.members.me.permissionsIn(message.channel).has('SEND_MESSAGES')
+	// || !message.guild.members.me.permissionsIn(message.channel).has('READ_MESSAGE_HISTORY')) return;
 
 	// make a custom function to replace message.reply
 	// this is to send the message to the channel without a reply if reply fails
