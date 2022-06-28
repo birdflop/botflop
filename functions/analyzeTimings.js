@@ -7,12 +7,7 @@ const evalField = require('./evalField.js');
 module.exports = async function analyzeTimings(message, client, args) {
 	const TimingsEmbed = new MessageEmbed()
 		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
-	if (message.guild == null) {
-		TimingsEmbed.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
-	}
-	else {
-		TimingsEmbed.setFooter({ text: `Requested by ${message.member.user.tag}`, iconURL: message.member.user.avatarURL() });
-	}
+		.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag}`, iconURL: (message.author ?? message.member.user).avatarURL() });
 
 	let url;
 	const fields = [];
