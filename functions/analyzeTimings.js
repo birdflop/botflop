@@ -56,7 +56,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const server_properties = request.timingsMaster.config ? request.timingsMaster.config['server.properties'] : null;
 	const bukkit = request.timingsMaster.config ? request.timingsMaster.config.bukkit : null;
 	const spigot = request.timingsMaster.config ? request.timingsMaster.config.spigot : null;
-	const paper = request.timingsMaster.config ? request.timingsMaster.config.paper : null;
+	const paper = request.timingsMaster.config ? (request.timingsMaster.config.paper ?? request.timingsMaster.config.paperspigot) : null;
 	const pufferfish = request.timingsMaster.config ? request.timingsMaster.config.pufferfish : null;
 	const purpur = request.timingsMaster.config ? request.timingsMaster.config.purpur : null;
 
