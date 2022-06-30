@@ -4,6 +4,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
+
 module.exports = async function analyzeTimings(message, client, args) {
 	const TimingsEmbed = new MessageEmbed()
 		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
@@ -76,6 +77,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 		},
 	};
 
+	const timing_cost = parseInt(request.timingsMaster.system.timingcost);
+	if (timing_cost > 300) {
+		fields.push({ name: '❌ Timingcost', value: `Your timingcost is ${timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).`, inline: true });
+	}
+
 	// fetch the latest mc version
 	const req = await fetch('https://api.purpurmc.org/v2/purpur');
 	const json = await req.json();
@@ -92,9 +98,6 @@ module.exports = async function analyzeTimings(message, client, args) {
 			if (version.includes(server.name)) fields.push(createField(server));
 		});
 	}
-
-	const timing_cost = parseInt(request.timingsMaster.system.timingcost);
-	if (timing_cost > 300) fields.push({ name: '❌ Timingcost', value: `Your timingcost is ${timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).`, inline: true });
 
 	const flags = request.timingsMaster.system.flags;
 	const jvm_version = request.timingsMaster.system.jvmversion;
@@ -241,6 +244,14 @@ module.exports = async function analyzeTimings(message, client, args) {
 		return hex.length == 1 ? '0' + hex : hex;
 	}
 	TimingsEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
+
+	if (timing_cost > 500) {
+		const suggestions = fields.length - 1;
+		TimingsEmbed.fields = ({ name: '❌ Timingcost (URGENT)', value: `Your timingcost is ${timing_cost}. Your cpu is critically overloaded and/or slow. Hiding ${suggestions} comparitively negligible suggestions until you resolve this fundamental problem. Find a [better host](https://www.birdflop.com).`, inline: true });
+		TimingsEmbed.setColor(parseInt('0xff0000'));
+		TimingsEmbed.setDescription('');
+		return [{ embeds: [TimingsEmbed] }];
+	}
 
 	if (fields.length == 0) {
 		TimingsEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
