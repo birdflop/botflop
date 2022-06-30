@@ -29,7 +29,7 @@ module.exports = async (client, interaction) => {
 			.addFields([
 				{ name: '**Type:**', value: 'Slash' }, { name: '**Interaction:**', value: command.name },
 				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` },
-				{ name: '**Guild:**', value: interaction.guild.name },
+				{ name: '**Guild:**', value: (interaction.guild.name ?? 'DMs') },
 				{ name: '**Channel:**', value: interaction.channel.name },
 			]);
 		interaction.user.send({ embeds: [interactionFailed] }).catch(err => client.logger.warn(err));
