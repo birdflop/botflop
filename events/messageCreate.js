@@ -22,9 +22,10 @@ module.exports = async (client, message) => {
 
 	// Binflop
 	if (message.attachments.size > 0) {
-		const url = message.attachments.first().url.toLowerCase();
+		const url = message.attachments.first().url;
 		const filetypes = ['.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf'];
 		if (!url.endsWith('.html')) {
+			if (!message.attachments.first().contentType) return;
 			const filetype = message.attachments.first().contentType.split('/')[0];
 			if (filetypes.some(ext => url.endsWith(ext)) || filetype == 'text') {
 				// Start typing
