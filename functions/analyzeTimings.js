@@ -42,10 +42,10 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (request_raw == null) {
 		if (url.toLowerCase().includes('timin.gs')) {
-			TimingsEmbed.fields = ({ name: '❌ Timin.gs', value: `The bot cannot yet process timin.gs links. Please use an alternative timings report link.`, inline: true });
+			TimingsEmbed.fields = ({ name: '❌ Unofficial .jar', value: 'You are using a modified and unsupported .jar file that prepares improper timings reports. Please upload a supported .jar file obtained directly from an official source such as [papermc.io](papermc.io) or [purpurmc.org](purpurmc.org). This issue often arises due to a host providing an unofficial .jar file by default.', inline: true });
 		}
 		else {
-			TimingsEmbed.fields = ({ name: '❌ Processing Error', value: `The bot cannot process this timings report. Please use an alternative timings report.`, inline: true });
+			TimingsEmbed.fields = ({ name: '❌ Processing Error', value: 'The bot cannot process this timings report. Please use an alternative timings report.', inline: true });
 		}
 		TimingsEmbed.setColor(parseInt('0xff0000'));
 		TimingsEmbed.setDescription('');
