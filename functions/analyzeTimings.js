@@ -40,8 +40,20 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const response_json = await fetch(timings_json);
 	const request = await response_json.json();
 
+	if (request_raw == null) {
+		if (url.toLowerCase().includes('timin.gs')) {
+			TimingsEmbed.fields = ({ name: '❌ Timin.gs', value: `The bot cannot yet process timin.gs links. Please use an alternative timings report link.`, inline: true });
+		}
+		else {
+			TimingsEmbed.fields = ({ name: '❌ Processing Error', value: `The bot cannot process this timings report. Please use an alternative timings report.`, inline: true });
+		}
+		TimingsEmbed.setColor(parseInt('0xff0000'));
+		TimingsEmbed.setDescription('');
+		return [{ embeds: [TimingsEmbed] }];
+	}
+
 	const server_icon = timings_host + 'image.php?id=' + request_raw.icon;
-	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: server_icon, url: url });
+	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: (server_icon ?? 'https://i.imgur.com/deE1oID.png'), url: url });
 
 	if (!request_raw || !request) {
 		TimingsEmbed.addFields([{ name: '❌ Invalid report', value: 'Create a new timings report.', inline: true }]);
