@@ -46,7 +46,6 @@ module.exports = async function analyzeTimings(message, client, args) {
 			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
 			inline: true
 		});
-	}
 		TimingsEmbed.setColor(parseInt('0xff0000'));
 		TimingsEmbed.setDescription('');
 		return [{ embeds: [TimingsEmbed] }];
@@ -74,7 +73,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const purpur = request.timingsMaster.config ? request.timingsMaster.config.purpur : null;
 
 	const TIMINGS_CHECK = {
-		servers: await YAML.parse(fs.readFileSync('./timings_config/servers.yml', 'utf8')),
+		servers: await YAML.parse(fs.readFileSync('./timings_config/plugins/paper.yml', 'utf8')),
 		plugins: {
 			paper: await YAML.parse(fs.readFileSync('./timings_config/plugins/paper.yml', 'utf8')),
 			purpur: await YAML.parse(fs.readFileSync('./timings_config/plugins/purpur.yml', 'utf8')),
