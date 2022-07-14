@@ -44,7 +44,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		TimingsEmbed.fields = ({
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
-			inline: true
+			inline: true,
 		});
 		TimingsEmbed.setColor(parseInt('0xff0000'));
 		TimingsEmbed.setDescription('');
