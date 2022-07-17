@@ -1,6 +1,6 @@
 const fs = require('fs');
 module.exports = client => {
-	fs.readdir('./events/', (err, files) => {
+	fs.readdir('./src/events/', (err, files) => {
 		if (err) return client.logger.error(err);
 		// go through all the files in the events folder and register them
 		let amount = 0;

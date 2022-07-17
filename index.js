@@ -14,4 +14,4 @@ const client = new Client({
 	],
 });
 client.startTimestamp = Date.now();
-for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(client);
+for (const handler of fs.readdirSync('./src/handlers').filter(file => file.endsWith('.js'))) require(`./src/handlers/${handler}`)(client);

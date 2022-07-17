@@ -4,7 +4,7 @@ module.exports = client => {
 	let amount = 0;
 	client.cooldowns = new Collection();
 	client.commands = new Collection();
-	const commandFiles = readdirSync('./commands');
+	const commandFiles = readdirSync('./src/commands');
 	for (const file of commandFiles) {
 		const command = require(`../commands/${file}`);
 		client.commands.set(command.name, command);
