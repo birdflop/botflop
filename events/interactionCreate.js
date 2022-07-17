@@ -16,7 +16,7 @@ module.exports = async (client, interaction) => {
 	// Defer and execute the command
 	try {
 		const cmdlog = args.join ? `${command.name} ${args.join(' ')}` : command.name;
-		client.logger.info(`${interaction.user.tag} issued slash command: /${cmdlog}, in ${interaction.guild.name}`.replace(' ,', ','));
+		client.logger.info(`${interaction.user.tag} issued slash command: /${cmdlog}, in ${interaction.guild ? interaction.guild.name : 'DMs'}`.replace(' ,', ','));
 		await interaction.deferReply({ ephemeral: command.ephemeral });
 		interaction.reply = interaction.editReply;
 		command.execute(interaction, args, client);
@@ -29,16 +29,11 @@ module.exports = async (client, interaction) => {
 			.addFields([
 				{ name: '**Type:**', value: 'Slash' }, { name: '**Interaction:**', value: command.name },
 			]);
-		if (!interaction.guild == null) {
+		if (interaction.guild) {
 			interactionFailed.addFields([
 				{ name: '**Guild:**', value: interaction.guild.name },
 				{ name: '**Channel:**', value: interaction.channel.name },
 				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` },
-			]);
-		}
-		else {
-			interactionFailed.addFields([
-				{ name: '**Error:**', value: 'You must send this slash command inside of a guild!' },
 			]);
 		}
 		interaction.user.send({ embeds: [interactionFailed] }).catch(err => client.logger.warn(err));

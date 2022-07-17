@@ -1,12 +1,12 @@
 const analyzeTimings = require('../functions/analyzeTimings');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
 	// If the bot can't read message history or send messages, don't execute a command
-	if (message.guild && (!message.guild.members.me.permissionsIn(message.channel).has('SEND_MESSAGES') || !message.guild.members.me.permissionsIn(message.channel).has('READ_MESSAGE_HISTORY'))) return;
+	if (message.guild && (!message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages) || !message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory))) return;
 
 	// make a custom function to replace message.reply
 	// this is to send the message to the channel without a reply if reply fails

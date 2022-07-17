@@ -20,7 +20,7 @@ module.exports = {
 			// Get the issues from the timings result
 			const issues = timingsresult[1];
 			if (issues) {
-				const filter = i => i.user.id == message.member.id && i.customId.startsWith('timings_');
+				const filter = i => i.user.id == (message.author ?? message.user).id && i.customId.startsWith('timings_');
 				const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
 				collector.on('collect', async i => {
 					// Defer button
