@@ -1,3 +1,5 @@
+const { ApplicationCommandType } = require("discord.js");
+
 module.exports = async (client) => {
 	client.logger.info('Bot started!');
 	client.user.setPresence({ activities: [{ name: 'birdflop.com', type: 'WATCHING' }] });
@@ -11,7 +13,7 @@ module.exports = async (client) => {
 		client.logger.info(`Detected /${command.name} has some changes! Overwriting command...`);
 		await client.application?.commands.create({
 			name: command.name,
-			type: 'CHAT_INPUT',
+			type: ApplicationCommandType.ChatInput,
 			description: command.description,
 			options: command.options,
 		});

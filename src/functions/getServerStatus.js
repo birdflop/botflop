@@ -1,16 +1,16 @@
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const net = require('net');
 // used https://github.com/FragLand/minestat/blob/master/JavaScript/minestat.js
 const api_java = "https://api.mcsrvstat.us/2/";
 const api_bedrock = "https://api.mcsrvstat.us/bedrock/2/";
 const api_icon = "https://api.mcsrvstat.us/icon/";
 module.exports = async function getServerStatus(message, client, address) {
-    const ErrorEmbed = new MessageEmbed()
-        .setColor('RED')
+    const ErrorEmbed = new EmbedBuilder()
+        .setColor('Red')
         .setTitle('Error!');
-    const StatusEmbed = new MessageEmbed()
-        .setColor('GREEN')
+    const StatusEmbed = new EmbedBuilder()
+        .setColor('Green')
         .setTitle('Server Status');
     const dataJava = await fetch(api_java + address).then(res => res.json()).catch(err => ({ online: false }));
     const dataBedrock = await fetch(api_bedrock + address).then(res => res.json()).catch(err=> ({online: false}));

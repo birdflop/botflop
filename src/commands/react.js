@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
 module.exports = {
 	name: 'react',
 	description: 'Adds a reaction to a message',
@@ -7,13 +7,13 @@ module.exports = {
 	usage: '<Message Link / Id (only in channel)> <Emoji>',
 	options: [
 		{
-			'type': 'STRING',
+			'type': ApplicationCommandOptionType.String,
 			'name': 'url',
 			'description': 'The link to the message to add the reaction to',
 			'required': true,
 		},
 		{
-			'type': 'STRING',
+			'type': ApplicationCommandOptionType.String,
 			'name': 'emoji',
 			'description': 'The emoji to react with',
 			'required': true,
@@ -28,8 +28,8 @@ module.exports = {
 				return message.reply({ content: 'You can\'t do that! You need the Administrator permission!' });
 			}
 
-			const ReactEmbed = new MessageEmbed()
-				.setColor(Math.floor(Math.random() * 16777215))
+			const ReactEmbed = new EmbedBuilder()
+				.setColor("Random")
 				.setTitle('Reacted to message!');
 			const messagelink = args[0].split('/');
 			if (!messagelink[4]) messagelink[4] = message.guild.id;

@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const YAML = require('yaml');
 const fs = require('fs');
@@ -6,7 +6,7 @@ const createField = require('./createField.js');
 const evalField = require('./evalField.js');
 
 module.exports = async function analyzeTimings(message, client, args) {
-	const TimingsEmbed = new MessageEmbed()
+	const TimingsEmbed = new EmbedBuilder()
 		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
 		.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag}`, iconURL: (message.author ?? message.member.user).avatarURL() });
 
@@ -273,20 +273,20 @@ module.exports = async function analyzeTimings(message, client, args) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
 		TimingsEmbed.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: (message.author ?? message.member.user).avatarURL() });
 		components.push(
-			new MessageActionRow()
+			new ActionRowBuilder()
 				.addComponents([
-					new MessageButton()
+					new ButtonBuilder()
 						.setCustomId('timings_prev')
 						.setEmoji({ name: '⬅️' })
-						.setStyle('SECONDARY'),
-					new MessageButton()
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
 						.setCustomId('timings_next')
 						.setEmoji({ name: '➡️' })
-						.setStyle('SECONDARY'),
-					new MessageButton()
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
 						.setURL('https://github.com/pemigrade/botflop')
 						.setLabel('Botflop')
-						.setStyle('LINK'),
+						.setStyle(ButtonStyle.Link),
 				]),
 		);
 	}

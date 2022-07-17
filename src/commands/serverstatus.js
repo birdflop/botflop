@@ -1,5 +1,5 @@
 /* eslint-disable no-trailing-spaces */
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
 const getServerStatus = require('../functions/getServerStatus');
 module.exports = {
 	name: 'serverstatus',
@@ -10,7 +10,7 @@ module.exports = {
 	usage: '<Message Link / Id (only in channel)> <Emoji>',
 	options: [
 		{
-			'type': 'STRING',
+			'type': ApplicationCommandOptionType.String,
 			'name': 'address',
 			'description': 'The IP address of the server',
 			'required': true,
@@ -19,12 +19,11 @@ module.exports = {
 	async execute(message, args, client) {
 		try {
 			// Create embed with ping information and add ping again button
-			const ErrorEmbed = new MessageEmbed()
-				.setColor('RED')
+			const ErrorEmbed = new EmbedBuilder()
+				.setColor('Red')
 				.setTitle('Error!');
 			
 			const address = args[0];
-			console.log(address)
 			await getServerStatus(message, client, address);
 		}
 		catch (err) { client.logger.error(err.stack); }

@@ -1,7 +1,7 @@
 const analyzeTimings = require('../functions/analyzeTimings');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, Embed } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
@@ -46,9 +46,9 @@ module.exports = async (client, message) => {
 				let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 				if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-				const PasteEmbed = new MessageEmbed()
+				const PasteEmbed = new EmbedBuilder()
 					.setTitle('Please use a paste service')
-					.setColor(0x1D83D4)
+					.setColor("Aqua")
 					.setDescription(response)
 					.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
 				await message.channel.send({ embeds: [PasteEmbed] });
@@ -77,9 +77,9 @@ module.exports = async (client, message) => {
 			let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 			if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-			const PasteEmbed = new MessageEmbed()
+			const PasteEmbed = new EmbedBuilder()
 				.setTitle('Pastebin is blocked in some countries')
-				.setColor(0x1D83D4)
+				.setColor("Aqua")
 				.setDescription(response)
 				.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
 			await message.channel.send({ embeds: [PasteEmbed] });
@@ -109,7 +109,7 @@ module.exports = async (client, message) => {
 					i.deferUpdate();
 
 					// Get the embed
-					const TimingsEmbed = new MessageEmbed(i.message.embeds[0].toJSON());
+					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 					const footer = TimingsEmbed.toJSON().footer;
 
 					// Calculate total amount of pages and get current page from embed footer
@@ -156,8 +156,8 @@ module.exports = async (client, message) => {
 
 	// Check if args are required and see if args are there, if not, send error
 	if (command.args && args.length < 1) {
-		const Usage = new MessageEmbed()
-			.setColor(0x5662f6)
+		const Usage = new EmbedBuilder()
+			.setColor("Aqua")
 			.setTitle('Usage')
 			.setDescription(`\`${prefix + command.name + ' ' + command.usage}\``);
 		return message.reply({ embeds: [Usage] });
@@ -170,7 +170,7 @@ module.exports = async (client, message) => {
 	}
 	catch (err) {
 		const interactionFailed = new MessageEmbed()
-			.setColor(Math.floor(Math.random() * 16777215))
+			.setColor("Random")
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: message.author.tag, iconURL: message.author.avatarURL() })
 			.addFields([
