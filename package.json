@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/Pemigrade/botflop.git"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +21,6 @@
     "eslint": "^8.20.0",
     "fs": "^0.0.1-security",
     "hastebin": "^0.2.1",
-    "node-fetch": "^3.2.8",
     "winston": "^3.8.1",
     "yaml": "^2.1.1"
   }
