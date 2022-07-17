@@ -45,7 +45,7 @@ module.exports = {
 					text[text.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
 					TimingsEmbed
 						.setFields(fields)
-						.setFooter({ iconURL: footer.iconURL, text: text.join(' • ') });
+						.setFooter({ iconURL: footer.icon_url, text: text.join(' • ') });
 
 					// Send the embed
 					timingsmsg.edit({ embeds: [TimingsEmbed] });
