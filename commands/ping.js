@@ -9,7 +9,7 @@ module.exports = {
 		try {
 			// Create embed with ping information and add ping again button
 			const PingEmbed = new EmbedBuilder()
-				.setColor(Math.floor(Math.random() * 16777215))
+				.setColor('Random')
 				.setTitle('Pong!')
 				.setDescription(`**Message Latency** ${Date.now() - message.createdTimestamp}ms\n**API Latency** ${client.ws.ping}ms`);
 			const row = new ActionRowBuilder()

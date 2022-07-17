@@ -29,7 +29,7 @@ module.exports = {
 			}
 
 			const ReactEmbed = new EmbedBuilder()
-				.setColor(Math.floor(Math.random() * 16777215))
+				.setColor('Random')
 				.setTitle('Reacted to message!');
 			const messagelink = args[0].split('/');
 			if (!messagelink[4]) messagelink[4] = message.guild.id;

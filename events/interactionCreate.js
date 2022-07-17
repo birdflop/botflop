@@ -23,7 +23,7 @@ module.exports = async (client, interaction) => {
 	}
 	catch (err) {
 		const interactionFailed = new EmbedBuilder()
-			.setColor(Math.floor(Math.random() * 16777215))
+			.setColor('Random')
 			.setTitle('INTERACTION FAILED')
 			.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
 			.addFields([
