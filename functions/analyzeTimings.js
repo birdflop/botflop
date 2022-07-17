@@ -5,10 +5,11 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
+
 module.exports = async function analyzeTimings(message, client, args) {
 	const TimingsEmbed = new EmbedBuilder()
 		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
-		.setFooter({ text: `Requested by ${message.member.user.tag}`, iconURL: message.member.user.avatarURL() });
+		.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag}`, iconURL: (message.author ?? message.member.user).avatarURL() });
 
 	let url;
 	const fields = [];
@@ -27,7 +28,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	// Start typing
 	await message.channel.sendTyping();
 
-	client.logger.info(`Timings analyzed from ${message.member.user.tag} (${message.member.user.id}): ${url}`);
+	client.logger.info(`Timings analyzed from ${(message.author ?? message.member.user).tag} (${(message.author ?? message.member.user).id}): ${url}`);
 
 	const timings_host = url.split('?id=')[0];
 	const timings_id = url.split('?id=')[1];
@@ -57,7 +58,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const server_properties = request.timingsMaster.config ? request.timingsMaster.config['server.properties'] : null;
 	const bukkit = request.timingsMaster.config ? request.timingsMaster.config.bukkit : null;
 	const spigot = request.timingsMaster.config ? request.timingsMaster.config.spigot : null;
-	const paper = request.timingsMaster.config ? request.timingsMaster.config.paper : null;
+	const paper = request.timingsMaster.config ? (request.timingsMaster.config.paper ?? request.timingsMaster.config.paperspigot) : null;
 	const pufferfish = request.timingsMaster.config ? request.timingsMaster.config.pufferfish : null;
 	const purpur = request.timingsMaster.config ? request.timingsMaster.config.purpur : null;
 
@@ -77,6 +78,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 		},
 	};
 
+	const timing_cost = parseInt(request.timingsMaster.system.timingcost);
+	if (timing_cost > 300) {
+		fields.push({ name: '❌ Timingcost', value: `Your timingcost is ${timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).`, inline: true });
+	}
+
 	// fetch the latest mc version
 	const req = await fetch('https://api.purpurmc.org/v2/purpur');
 	const json = await req.json();
@@ -93,9 +99,6 @@ module.exports = async function analyzeTimings(message, client, args) {
 			if (version.includes(server.name)) fields.push(createField(server));
 		});
 	}
-
-	const timing_cost = parseInt(request.timingsMaster.system.timingcost);
-	if (timing_cost > 300) fields.push({ name: '❌ Timingcost', value: `Your timingcost is ${timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).`, inline: true });
 
 	const flags = request.timingsMaster.system.flags;
 	const jvm_version = request.timingsMaster.system.jvmversion;
@@ -243,6 +246,13 @@ module.exports = async function analyzeTimings(message, client, args) {
 	}
 	TimingsEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
 
+	if (timing_cost > 500) {
+		const suggestions = fields.length - 1;
+		TimingsEmbed.setColor(0xff0000).setDescription('')
+			.setFields([{ name: '❌ Timingcost (URGENT)', value: `Your timingcost is ${timing_cost}. Your cpu is critically overloaded and/or slow. Hiding ${suggestions} comparitively negligible suggestions until you resolve this fundamental problem. Find a [better host](https://www.birdflop.com).`, inline: true }]);
+		return [{ embeds: [TimingsEmbed] }];
+	}
+
 	if (fields.length == 0) {
 		TimingsEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
 		return [{ embeds: [TimingsEmbed] }];
@@ -251,7 +261,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const issues = [...fields];
 	if (issues.length >= 13) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		TimingsEmbed.setFooter({ text: `Requested by ${message.member.user.tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: message.member.user.avatarURL() });
+		TimingsEmbed.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: (message.author ?? message.member.user).avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([

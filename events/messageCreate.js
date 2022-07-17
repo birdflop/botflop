@@ -1,13 +1,12 @@
 const analyzeTimings = require('../functions/analyzeTimings');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
 	// If the bot can't read message history or send messages, don't execute a command
-	if (!message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages)
-	|| !message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory)) return;
+	if (message.guild && (!message.guild.members.me.permissionsIn(message.channel).has('SEND_MESSAGES') || !message.guild.members.me.permissionsIn(message.channel).has('READ_MESSAGE_HISTORY'))) return;
 
 	// make a custom function to replace message.reply
 	// this is to send the message to the channel without a reply if reply fails
@@ -23,9 +22,10 @@ module.exports = async (client, message) => {
 
 	// Binflop
 	if (message.attachments.size > 0) {
-		const url = message.attachments.first().url.toLowerCase();
+		const url = message.attachments.first().url;
 		const filetypes = ['.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf'];
 		if (!url.endsWith('.html')) {
+			if (!message.attachments.first().contentType) return;
 			const filetype = message.attachments.first().contentType.split('/')[0];
 			if (filetypes.some(ext => url.endsWith(ext)) || filetype == 'text') {
 				// Start typing
@@ -46,12 +46,12 @@ module.exports = async (client, message) => {
 				let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 				if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-				const Embed = new EmbedBuilder()
+				const PasteEmbed = new EmbedBuilder()
 					.setTitle('Please use a paste service')
 					.setColor(0x1D83D4)
 					.setDescription(response)
 					.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
-				await message.channel.send({ embeds: [Embed] });
+				await message.channel.send({ embeds: [PasteEmbed] });
 				client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${response}`);
 			}
 		}
@@ -77,12 +77,12 @@ module.exports = async (client, message) => {
 			let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
 			if (truncated) response = response + '\n(file was truncated because it was too long.)';
 
-			const Embed = new EmbedBuilder()
+			const PasteEmbed = new EmbedBuilder()
 				.setTitle('Pastebin is blocked in some countries')
 				.setColor(0x1D83D4)
 				.setDescription(response)
 				.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
-			await message.channel.send({ embeds: [Embed] });
+			await message.channel.send({ embeds: [PasteEmbed] });
 			client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${response}`);
 		}
 	}
@@ -102,7 +102,7 @@ module.exports = async (client, message) => {
 			// Get the issues from the timings result
 			const issues = timingsresult[1];
 			if (issues) {
-				const filter = i => i.user.id == message.member.id && i.customId.startsWith('timings_');
+				const filter = i => i.user.id == message.author.id && i.customId.startsWith('timings_');
 				const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
 				collector.on('collect', async i => {
 					// Defer button

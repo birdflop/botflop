@@ -28,10 +28,19 @@ module.exports = async (client, interaction) => {
 			.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
 			.addFields([
 				{ name: '**Type:**', value: 'Slash' }, { name: '**Interaction:**', value: command.name },
-				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` },
+			]);
+		if (!interaction.guild == null) {
+			interactionFailed.addFields([
 				{ name: '**Guild:**', value: interaction.guild.name },
 				{ name: '**Channel:**', value: interaction.channel.name },
+				{ name: '**Error:**', value: `\`\`\`\n${err}\n\`\`\`` },
 			]);
+		}
+		else {
+			interactionFailed.addFields([
+				{ name: '**Error:**', value: 'You must send this slash command inside of a guild!' },
+			]);
+		}
 		interaction.user.send({ embeds: [interactionFailed] }).catch(err => client.logger.warn(err));
 		client.logger.error(err.stack);
 	}
