@@ -1,12 +1,12 @@
 const analyzeTimings = require('../functions/analyzeTimings.js');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
 module.exports = {
 	name: 'timings',
 	description: 'Analyze Paper timings to optimize the Paper server.',
 	args: true,
 	usage: '<Timings Link>',
 	options: [{
-		'type': 'STRING',
+		'type': ApplicationCommandOptionType.String,
 		'name': 'url',
 		'description': 'The Timings URL',
 		'required': true,
@@ -20,14 +20,14 @@ module.exports = {
 			// Get the issues from the timings result
 			const issues = timingsresult[1];
 			if (issues) {
-				const filter = i => i.user.id == message.member.id && i.customId.startsWith('timings_');
+				const filter = i => i.user.id == (message.author ?? message.user).id && i.customId.startsWith('timings_');
 				const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
 				collector.on('collect', async i => {
 					// Defer button
 					i.deferUpdate();
 
 					// Get the embed
-					const TimingsEmbed = new MessageEmbed(i.message.embeds[0].toJSON());
+					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 					const footer = TimingsEmbed.toJSON().footer;
 
 					// Calculate total amount of pages and get current page from embed footer
@@ -45,7 +45,7 @@ module.exports = {
 					text[text.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
 					TimingsEmbed
 						.setFields(fields)
-						.setFooter({ iconURL: footer.iconURL, text: text.join(' • ') });
+						.setFooter({ iconURL: footer.icon_url, text: text.join(' • ') });
 
 					// Send the embed
 					timingsmsg.edit({ embeds: [TimingsEmbed] });

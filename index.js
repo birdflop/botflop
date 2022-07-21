@@ -1,16 +1,17 @@
-const { Client } = require('discord.js');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const fs = require('fs');
 const client = new Client({
 	partials: [
-		'MESSAGE',
-		'CHANNEL',
-		'USER',
+		Partials.Message,
+		Partials.Channel,
+		Partials.User,
 	],
 	intents: [
-		'GUILDS',
-		'GUILD_MESSAGES',
-		'GUILD_MEMBERS',
-		'DIRECT_MESSAGES',
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.DirectMessages,
 	],
 });
 client.startTimestamp = Date.now();

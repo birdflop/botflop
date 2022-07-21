@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const YAML = require('yaml');
 const fs = require('fs');
@@ -6,9 +6,10 @@ const createField = require('./createField.js');
 const evalField = require('./evalField.js');
 
 module.exports = async function analyzeTimings(message, client, args) {
-	const TimingsEmbed = new MessageEmbed()
+	const author = message.author ?? message.user;
+	const TimingsEmbed = new EmbedBuilder()
 		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
-		.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag}`, iconURL: (message.author ?? message.member.user).avatarURL() });
+		.setFooter({ text: `Requested by ${author.tag}`, iconURL: author.avatarURL() });
 
 	let url;
 	const fields = [];
@@ -27,7 +28,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	// Start typing
 	await message.channel.sendTyping();
 
-	client.logger.info(`Timings analyzed from ${(message.author ?? message.member.user).tag} (${(message.author ?? message.member.user).id}): ${url}`);
+	client.logger.info(`Timings analyzed from ${author.tag} (${author.id}): ${url}`);
 
 	const timings_host = url.split('?id=')[0];
 	const timings_id = url.split('?id=')[1];
@@ -271,22 +272,22 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const issues = [...fields];
 	if (issues.length >= 13) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		TimingsEmbed.setFooter({ text: `Requested by ${(message.author ?? message.member.user).tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: (message.author ?? message.member.user).avatarURL() });
+		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
-			new MessageActionRow()
+			new ActionRowBuilder()
 				.addComponents([
-					new MessageButton()
+					new ButtonBuilder()
 						.setCustomId('timings_prev')
 						.setEmoji({ name: '⬅️' })
-						.setStyle('SECONDARY'),
-					new MessageButton()
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
 						.setCustomId('timings_next')
 						.setEmoji({ name: '➡️' })
-						.setStyle('SECONDARY'),
-					new MessageButton()
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
 						.setURL('https://github.com/pemigrade/botflop')
 						.setLabel('Botflop')
-						.setStyle('LINK'),
+						.setStyle(ButtonStyle.Link),
 				]),
 		);
 	}
