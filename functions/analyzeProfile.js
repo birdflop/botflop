@@ -25,13 +25,13 @@ module.exports = async function analyzeProfile(message, client, args) {
 	let url;
 	const fields = [];
 
-	args.forEach(arg => {
+	for (const arg of args) {
 		if (message.commandName && (arg.startsWith('https://timin') || arg.startsWith('https://www.spigotmc.org/go/timings?url=') || arg.startsWith('https://spigotmc.org/go/timings?url='))) {
 			ProfileEmbed.addFields([{ name: '⚠️ Timings Report', value: 'This is a Timings report. Use /timings instead for this type of report.' }]);
 			return [{ embeds: [ProfileEmbed] }];
 		}
 		if (arg.startsWith('https://spark.lucko.me/')) url = arg;
-	});
+	}
 
 	if (!url) return null;
 
