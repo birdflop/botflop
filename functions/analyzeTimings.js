@@ -296,7 +296,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	}
 	TimingsEmbed.addFields(fields);
 	if (worst_tps >= 19) {
-		TimingsEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with the worst TPS of ${worst_tps}.` }]);
+		TimingsEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with its lowest TPS being ${worst_tps}.` }]);
 		components = [
 			new ActionRowBuilder()
 				.addComponents([
