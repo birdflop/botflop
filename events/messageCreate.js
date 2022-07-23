@@ -2,7 +2,7 @@ const analyzeTimings = require('../functions/analyzeTimings');
 const analyzeProfile = require('../functions/analyzeProfile');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = async (client, message) => {
 	if (message.author.bot) return;
 
@@ -113,6 +113,36 @@ module.exports = async (client, message) => {
 						// Get the embed
 						const AnalysisEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 						const footer = AnalysisEmbed.toJSON().footer;
+
+						// Force analysis button
+						if (i.customId == 'analysis_force') {
+							const fields = [...issues];
+							const components = [];
+							if (issues.length >= 13) {
+								fields.splice(12, issues.length, { name: '✅ You are not lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
+								components.push(
+									new ActionRowBuilder()
+										.addComponents([
+											new ButtonBuilder()
+												.setCustomId('analysis_prev')
+												.setEmoji({ name: '⬅️' })
+												.setStyle(ButtonStyle.Secondary),
+											new ButtonBuilder()
+												.setCustomId('analysis_next')
+												.setEmoji({ name: '➡️' })
+												.setStyle(ButtonStyle.Secondary),
+											new ButtonBuilder()
+												.setURL('https://github.com/pemigrade/botflop')
+												.setLabel('Botflop')
+												.setStyle(ButtonStyle.Link),
+										]),
+								);
+							}
+							AnalysisEmbed.setFields(fields);
+
+							// Send the embed
+							return analysismsg.edit({ embeds: [AnalysisEmbed], components });
+						}
 
 						// Calculate total amount of pages and get current page from embed footer
 						const text = footer.text.split(' • ');

@@ -244,7 +244,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 		ProfileEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
 		return [{ embeds: [ProfileEmbed] }];
 	}
-	const components = [];
+	let components = [];
 	const issues = [...fields];
 	if (issues.length >= 13) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
@@ -268,5 +268,21 @@ module.exports = async function analyzeProfile(message, client, args) {
 		);
 	}
 	ProfileEmbed.addFields(fields);
+	if (avgtps >= 19) {
+		ProfileEmbed.setFields([{ name: '✅ You are not lagging', value: `Your server is running fine with an average TPS of ${avgtps}.` }]);
+		components = [
+			new ActionRowBuilder()
+				.addComponents([
+					new ButtonBuilder()
+						.setCustomId('analysis_force')
+						.setLabel('Dismiss and force analysis')
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
+						.setURL('https://github.com/pemigrade/botflop')
+						.setLabel('Botflop')
+						.setStyle(ButtonStyle.Link),
+				]),
+		];
+	}
 	return [{ embeds: [ProfileEmbed], components }, issues];
 };

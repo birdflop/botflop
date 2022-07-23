@@ -271,7 +271,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		TimingsEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
-	const components = [];
+	let components = [];
 	const issues = [...fields];
 	if (issues.length >= 13) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
@@ -295,5 +295,21 @@ module.exports = async function analyzeTimings(message, client, args) {
 		);
 	}
 	TimingsEmbed.addFields(fields);
+	if (worst_tps >= 19) {
+		TimingsEmbed.setFields([{ name: '✅ You are not lagging', value: `Your server is running fine with the worst TPS of ${worst_tps}.` }]);
+		components = [
+			new ActionRowBuilder()
+				.addComponents([
+					new ButtonBuilder()
+						.setCustomId('analysis_force')
+						.setLabel('Dismiss and force analysis')
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
+						.setURL('https://github.com/pemigrade/botflop')
+						.setLabel('Botflop')
+						.setStyle(ButtonStyle.Link),
+				]),
+		];
+	}
 	return [{ embeds: [TimingsEmbed], components }, issues];
 };

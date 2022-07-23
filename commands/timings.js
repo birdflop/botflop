@@ -1,5 +1,5 @@
 const analyzeTimings = require('../functions/analyzeTimings.js');
-const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = {
 	name: 'timings',
 	description: 'Analyze Paper timings to optimize the Paper server.',
@@ -29,6 +29,36 @@ module.exports = {
 					// Get the embed
 					const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 					const footer = TimingsEmbed.toJSON().footer;
+
+					// Force analysis button
+					if (i.customId == 'analysis_force') {
+						const fields = [...issues];
+						const components = [];
+						if (issues.length >= 13) {
+							fields.splice(12, issues.length, { name: '✅ You are not lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
+							components.push(
+								new ActionRowBuilder()
+									.addComponents([
+										new ButtonBuilder()
+											.setCustomId('analysis_prev')
+											.setEmoji({ name: '⬅️' })
+											.setStyle(ButtonStyle.Secondary),
+										new ButtonBuilder()
+											.setCustomId('analysis_next')
+											.setEmoji({ name: '➡️' })
+											.setStyle(ButtonStyle.Secondary),
+										new ButtonBuilder()
+											.setURL('https://github.com/pemigrade/botflop')
+											.setLabel('Botflop')
+											.setStyle(ButtonStyle.Link),
+									]),
+							);
+						}
+						TimingsEmbed.setFields(fields);
+
+						// Send the embed
+						return timingsmsg.edit({ embeds: [TimingsEmbed], components });
+					}
 
 					// Calculate total amount of pages and get current page from embed footer
 					const text = footer.text.split(' • ');

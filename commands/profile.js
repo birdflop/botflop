@@ -1,5 +1,5 @@
 const analyzeProfile = require('../functions/analyzeProfile.js');
-const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = {
 	name: 'profile',
 	description: 'Analyze spark profiles to help optimize your server.',
@@ -29,6 +29,36 @@ module.exports = {
 					// Get the embed
 					const ProfileEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 					const footer = ProfileEmbed.toJSON().footer;
+
+					// Force analysis button
+					if (i.customId == 'analysis_force') {
+						const fields = [...issues];
+						const components = [];
+						if (issues.length >= 13) {
+							fields.splice(12, issues.length, { name: '✅ You are not lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
+							components.push(
+								new ActionRowBuilder()
+									.addComponents([
+										new ButtonBuilder()
+											.setCustomId('analysis_prev')
+											.setEmoji({ name: '⬅️' })
+											.setStyle(ButtonStyle.Secondary),
+										new ButtonBuilder()
+											.setCustomId('analysis_next')
+											.setEmoji({ name: '➡️' })
+											.setStyle(ButtonStyle.Secondary),
+										new ButtonBuilder()
+											.setURL('https://github.com/pemigrade/botflop')
+											.setLabel('Botflop')
+											.setStyle(ButtonStyle.Link),
+									]),
+							);
+						}
+						ProfileEmbed.setFields(fields);
+
+						// Send the embed
+						return profilemsg.edit({ embeds: [ProfileEmbed], components });
+					}
 
 					// Calculate total amount of pages and get current page from embed footer
 					const text = footer.text.split(' • ');
