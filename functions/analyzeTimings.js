@@ -29,7 +29,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	if (!url) return false;
 
 	// Start typing
-	await message.channel.sendTyping();
+	if (!message.commandName) await message.channel.sendTyping();
 
 	client.logger.info(`Timings analyzed from ${author.tag} (${author.id}): ${url}`);
 
@@ -77,18 +77,18 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const purpur = request.timingsMaster.config ? request.timingsMaster.config.purpur : null;
 
 	const TIMINGS_CHECK = {
-		servers: await YAML.parse(fs.readFileSync('./timings_config/servers.yml', 'utf8')),
+		servers: await YAML.parse(fs.readFileSync('./analysis_config/servers.yml', 'utf8')),
 		plugins: {
-			paper: await YAML.parse(fs.readFileSync('./timings_config/plugins/paper.yml', 'utf8')),
-			purpur: await YAML.parse(fs.readFileSync('./timings_config/plugins/purpur.yml', 'utf8')),
+			paper: await YAML.parse(fs.readFileSync('./analysis_config/timings/plugins/paper.yml', 'utf8')),
+			purpur: await YAML.parse(fs.readFileSync('./analysis_config/timings/plugins/purpur.yml', 'utf8')),
 		},
 		config: {
-			'server.properties': await YAML.parse(fs.readFileSync('./timings_config/config/server.properties.yml', 'utf8')),
-			bukkit: await YAML.parse(fs.readFileSync('./timings_config/config/bukkit.yml', 'utf8')),
-			spigot: await YAML.parse(fs.readFileSync('./timings_config/config/spigot.yml', 'utf8')),
-			paper: await YAML.parse(fs.readFileSync(`./timings_config/config/paper-v${paper._version ? 28 : 27}.yml`, 'utf8')),
-			pufferfish: await YAML.parse(fs.readFileSync('./timings_config/config/pufferfish.yml', 'utf8')),
-			purpur: await YAML.parse(fs.readFileSync('./timings_config/config/purpur.yml', 'utf8')),
+			'server.properties': await YAML.parse(fs.readFileSync('./analysis_config/server.properties.yml', 'utf8')),
+			bukkit: await YAML.parse(fs.readFileSync('./analysis_config/bukkit.yml', 'utf8')),
+			spigot: await YAML.parse(fs.readFileSync('./analysis_config/spigot.yml', 'utf8')),
+			paper: await YAML.parse(fs.readFileSync(`./analysis_config/timings/paper-v${paper._version ? 28 : 27}.yml`, 'utf8')),
+			pufferfish: await YAML.parse(fs.readFileSync('./analysis_config/timings/pufferfish.yml', 'utf8')),
+			purpur: await YAML.parse(fs.readFileSync('./analysis_config/purpur.yml', 'utf8')),
 		},
 	};
 

@@ -4,7 +4,7 @@ const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
 const Pbf = require('pbf');
-const { HeapData, SamplerData } = require('../protos');
+const { HeapData, SamplerData } = require('../analysis_config/profile/protos');
 
 // Function to parse the data payload from a request given the schema type
 function parse(buf, schema) {
@@ -26,12 +26,13 @@ module.exports = async function analyzeProfile(message, client, args) {
 			ProfileEmbed.addFields([{ name: '⚠️ Timings Report', value: 'This is a Timings report. Use /timings instead for this type of report.' }]);
 			return [{ embeds: [ProfileEmbed] }];
 		}
+		if (arg.startsWith('https://spark.lucko.me/')) url = arg;
 	});
 
 	if (!url) return false;
 
 	// Start typing
-	await message.channel.sendTyping();
+	if (!message.commandName) await message.channel.sendTyping();
 
 	client.logger.info(`Spark Profile analyzed from ${author.tag} (${author.id}): ${url}`);
 
@@ -58,5 +59,32 @@ module.exports = async function analyzeProfile(message, client, args) {
 		return [{ embeds: [ProfileEmbed] }];
 	}
 
-	console.log(sampler);
+	let version = sampler.metadata.platform.version;
+	client.logger.info(version);
+
+	if (version.endsWith('(MC: 1.17)')) version = version.replace('(MC: 1.17)', '(MC: 1.17.0)');
+
+	let server_properties, bukkit, spigot, paper, purpur;
+
+	const configs = sampler.metadata.serverConfigurations;
+	if (configs) {
+		if (configs['server.properties']) server_properties = JSON.parse(configs['server.properties']);
+		if (configs['bukkit.yml']) bukkit = JSON.parse(configs['bukkit.yml']);
+		if (configs['spigot.yml']) spigot = JSON.parse(configs['spigot.yml']);
+		if (configs['paper/']) paper = JSON.parse(configs['paper/']);
+		if (configs['purpur.yml']) purpur = JSON.parse(configs['purpur.yml']);
+	}
+
+	const PROFILE_CHECK = {
+		servers: await YAML.parse(fs.readFileSync('./analysis_config/servers.yml', 'utf8')),
+		config: {
+			'server.properties': await YAML.parse(fs.readFileSync('./analysis_config/server.properties.yml', 'utf8')),
+			bukkit: await YAML.parse(fs.readFileSync('./analysis_config/bukkit.yml', 'utf8')),
+			spigot: await YAML.parse(fs.readFileSync('./analysis_config/spigot.yml', 'utf8')),
+			paper: await YAML.parse(fs.readFileSync('./analysis_config/profile/config/paper.yml', 'utf8')),
+			purpur: await YAML.parse(fs.readFileSync('./analysis_config/purpur.yml', 'utf8')),
+		},
+	};
+
+	console.log(configs);
 };
