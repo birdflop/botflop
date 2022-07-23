@@ -1,4 +1,5 @@
 const analyzeTimings = require('../functions/analyzeTimings');
+const analyzeProfile = require('../functions/analyzeProfile');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const { EmbedBuilder, PermissionsBitField } = require('discord.js');
@@ -94,24 +95,24 @@ module.exports = async (client, message) => {
 		// Use mention as prefix instead of prefix too
 		if (message.content.replace('!', '').startsWith(`<@${client.user.id}>`)) prefix = message.content.split('>')[0] + '>';
 
-		// If the message doesn't start with the prefix (mention not included), check for timings report
+		// If the message doesn't start with the prefix (mention not included), check for timings/profile report
 		if (!message.content.startsWith(process.env.PREFIX)) {
-			const timingsresult = await analyzeTimings(message, client, words);
-			if (timingsresult) {
-				const timingsmsg = await message.reply(timingsresult[0]);
+			const analysisresult = await analyzeTimings(message, client, words) ?? await analyzeProfile(message, client, words);
+			if (analysisresult) {
+				const analysismsg = await message.reply(analysisresult[0]);
 
-				// Get the issues from the timings result
-				const issues = timingsresult[1];
+				// Get the issues from the analysis result
+				const issues = analysisresult[1];
 				if (issues) {
-					const filter = i => i.user.id == message.author.id && i.customId.startsWith('timings_');
-					const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
+					const filter = i => i.user.id == message.author.id && i.customId.startsWith('analysis_');
+					const collector = analysismsg.createMessageComponentCollector({ filter, time: 300000 });
 					collector.on('collect', async i => {
 						// Defer button
 						i.deferUpdate();
 
 						// Get the embed
-						const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
-						const footer = TimingsEmbed.toJSON().footer;
+						const AnalysisEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
+						const footer = AnalysisEmbed.toJSON().footer;
 
 						// Calculate total amount of pages and get current page from embed footer
 						const text = footer.text.split(' • ');
@@ -119,19 +120,19 @@ module.exports = async (client, message) => {
 						const maxPages = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[2]);
 
 						// Get next page (if last page, go to pg 1)
-						const page = i.customId == 'timings_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
+						const page = i.customId == 'analysis_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
 						const end = page * 12;
 						const start = end - 12;
 						const fields = issues.slice(start, end);
 
 						// Update the embed
 						text[text.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
-						TimingsEmbed
+						AnalysisEmbed
 							.setFields(fields)
 							.setFooter({ iconURL: footer.iconURL, text: text.join(' • ') });
 
 						// Send the embed
-						timingsmsg.edit({ embeds: [TimingsEmbed] });
+						analysismsg.edit({ embeds: [AnalysisEmbed] });
 					});
 				}
 			}

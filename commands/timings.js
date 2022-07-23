@@ -20,7 +20,7 @@ module.exports = {
 			// Get the issues from the timings result
 			const issues = timingsresult[1];
 			if (issues) {
-				const filter = i => i.user.id == (message.author ?? message.user).id && i.customId.startsWith('timings_');
+				const filter = i => i.user.id == (message.author ?? message.user).id && i.customId.startsWith('analysis_');
 				const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
 				collector.on('collect', async i => {
 					// Defer button
@@ -36,7 +36,7 @@ module.exports = {
 					const maxPages = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[2]);
 
 					// Get next page (if last page, go to pg 1)
-					const page = i.customId == 'timings_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
+					const page = i.customId == 'analysis_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
 					const end = page * 12;
 					const start = end - 12;
 					const fields = issues.slice(start, end);

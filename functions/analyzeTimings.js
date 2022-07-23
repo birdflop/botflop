@@ -3,6 +3,10 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
+function componentToHex(c) {
+	const hex = c.toString(16);
+	return hex.length == 1 ? '0' + hex : hex;
+}
 
 module.exports = async function analyzeTimings(message, client, args) {
 	const author = message.author ?? message.user;
@@ -26,7 +30,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		}
 	});
 
-	if (!url) return false;
+	if (!url) return null;
 
 	// Start typing
 	if (!message.commandName) await message.channel.sendTyping();
@@ -254,10 +258,6 @@ module.exports = async function analyzeTimings(message, client, args) {
 		green = 255;
 	}
 
-	function componentToHex(c) {
-		const hex = c.toString(16);
-		return hex.length == 1 ? '0' + hex : hex;
-	}
 	TimingsEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
 
 	if (timing_cost > 500) {
@@ -280,11 +280,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 			new ActionRowBuilder()
 				.addComponents([
 					new ButtonBuilder()
-						.setCustomId('timings_prev')
+						.setCustomId('analysis_prev')
 						.setEmoji({ name: '⬅️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setCustomId('timings_next')
+						.setCustomId('analysis_next')
 						.setEmoji({ name: '➡️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
@@ -295,5 +295,5 @@ module.exports = async function analyzeTimings(message, client, args) {
 		);
 	}
 	TimingsEmbed.addFields(fields);
-	return [{ embeds: [TimingsEmbed], components: components }, issues];
+	return [{ embeds: [TimingsEmbed], components }, issues];
 };
