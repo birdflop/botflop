@@ -14,7 +14,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const fields = [];
 
 	args.forEach(arg => {
-		if (arg.startsWith('https://spark.lucko.me') && message.commandName) {
+		if (message.commandName && arg.startsWith('https://spark.lucko.me')) {
 			TimingsEmbed.addFields([{ name: '⚠️ Spark Profile', value: 'This is a Spark Profile. Use /profile instead for this type of report.' }]);
 			return [{ embeds: [TimingsEmbed] }];
 		}
