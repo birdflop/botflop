@@ -48,7 +48,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const response_json = await fetch(timings_json);
 	const request = await response_json.json();
 
-	if (request_raw == null) {
+	if (!request_raw) {
 		TimingsEmbed.fields = ({
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
