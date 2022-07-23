@@ -2,7 +2,7 @@ const analyzeProfile = require('../functions/analyzeProfile.js');
 const { EmbedBuilder, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = {
 	name: 'profile',
-	description: 'Analyze spark profiles to help optimize your server.',
+	description: 'Analyze Spark profiles to help optimize your server.',
 	args: true,
 	usage: '<Spark Profile Link>',
 	options: [{

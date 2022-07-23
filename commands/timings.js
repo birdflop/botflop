@@ -2,7 +2,7 @@ const analyzeTimings = require('../functions/analyzeTimings.js');
 const { EmbedBuilder, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = {
 	name: 'timings',
-	description: 'Analyze Paper timings to optimize the Paper server.',
+	description: 'Analyze Paper timings to help optimize your server.',
 	args: true,
 	usage: '<Timings Link>',
 	options: [{
