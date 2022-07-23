@@ -269,7 +269,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 	}
 	ProfileEmbed.addFields(fields);
 	if (avgtps >= 19) {
-		ProfileEmbed.setFields([{ name: '✅ You are not lagging', value: `Your server is running fine with an average TPS of ${avgtps}.` }]);
+		ProfileEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with an average TPS of ${avgtps}.` }]);
 		components = [
 			new ActionRowBuilder()
 				.addComponents([

@@ -35,7 +35,7 @@ module.exports = {
 						const fields = [...issues];
 						const components = [];
 						if (issues.length >= 13) {
-							fields.splice(12, issues.length, { name: '✅ You are not lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
+							fields.splice(12, issues.length, { name: '✅ Your server isn\'t lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
 							components.push(
 								new ActionRowBuilder()
 									.addComponents([
