@@ -3,6 +3,10 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
+function componentToHex(c) {
+	const hex = c.toString(16);
+	return hex.length == 1 ? '0' + hex : hex;
+}
 
 module.exports = async function analyzeTimings(message, client, args) {
 	const author = message.author ?? message.user;
@@ -13,19 +17,23 @@ module.exports = async function analyzeTimings(message, client, args) {
 	let url;
 	const fields = [];
 
-	args.forEach(arg => {
+	for (const arg of args) {
+		if (message.commandName && arg.startsWith('https://spark.lucko.me')) {
+			TimingsEmbed.addFields([{ name: '⚠️ Spark Profile', value: 'This is a Spark Profile. Use /profile instead for this type of report.' }]);
+			return [{ embeds: [TimingsEmbed] }];
+		}
 		if (arg.startsWith('https://timin') && arg.includes('?id=')) url = arg.replace('/d=', '/?id=').replace('timin.gs', 'timings.aikar.co').split('#')[0].split('\n')[0];
 		if (arg.startsWith('https://www.spigotmc.org/go/timings?url=') || arg.startsWith('https://spigotmc.org/go/timings?url=')) {
 			TimingsEmbed.addFields([{ name: '❌ Spigot', value: 'Spigot timings have limited information. Switch to [Purpur](https://purpurmc.org) for better timings analysis. All your plugins will be compatible, and if you don\'t like it, you can easily switch back.' }])
 				.setURL(url);
 			return [{ embeds: [TimingsEmbed] }];
 		}
-	});
+	}
 
-	if (!url) return false;
+	if (!url) return null;
 
 	// Start typing
-	await message.channel.sendTyping();
+	if (!message.commandName) await message.channel.sendTyping();
 
 	client.logger.info(`Timings analyzed from ${author.tag} (${author.id}): ${url}`);
 
@@ -40,12 +48,12 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const response_json = await fetch(timings_json);
 	const request = await response_json.json();
 
-	if (request_raw == null) {
-		TimingsEmbed.fields = ({
+	if (!request_raw) {
+		TimingsEmbed.setFields([{
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
 			inline: true,
-		});
+		}]);
 		TimingsEmbed.setColor(parseInt('0xff0000'));
 		TimingsEmbed.setDescription('');
 		return [{ embeds: [TimingsEmbed] }];
@@ -64,27 +72,32 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (version.endsWith('(MC: 1.17)')) version = version.replace('(MC: 1.17)', '(MC: 1.17.0)');
 
+	let server_properties, bukkit, spigot, paper, pufferfish, purpur;
+
 	const plugins = Object.keys(request.timingsMaster.plugins).map(i => { return request.timingsMaster.plugins[i]; });
-	const server_properties = request.timingsMaster.config ? request.timingsMaster.config['server.properties'] : null;
-	const bukkit = request.timingsMaster.config ? request.timingsMaster.config.bukkit : null;
-	const spigot = request.timingsMaster.config ? request.timingsMaster.config.spigot : null;
-	const paper = request.timingsMaster.config ? (request.timingsMaster.config.paper ?? request.timingsMaster.config.paperspigot) : null;
-	const pufferfish = request.timingsMaster.config ? request.timingsMaster.config.pufferfish : null;
-	const purpur = request.timingsMaster.config ? request.timingsMaster.config.purpur : null;
+	const configs = request.timingsMaster.config;
+	if (configs) {
+		if (configs['server.properties']) server_properties = configs['server.properties'];
+		if (configs['bukkit']) bukkit = configs['bukkit'];
+		if (configs['spigot']) spigot = configs['spigot'];
+		if (configs['paper'] || configs['paperspigot']) paper = configs['paper'] ?? configs['paperspigot'];
+		if (configs['pufferfish']) pufferfish = configs['pufferfish'];
+		if (configs['purpur']) purpur = configs['purpur'];
+	}
 
 	const TIMINGS_CHECK = {
-		servers: await YAML.parse(fs.readFileSync('./timings_config/servers.yml', 'utf8')),
+		servers: await YAML.parse(fs.readFileSync('./analysis_config/servers.yml', 'utf8')),
 		plugins: {
-			paper: await YAML.parse(fs.readFileSync('./timings_config/plugins/paper.yml', 'utf8')),
-			purpur: await YAML.parse(fs.readFileSync('./timings_config/plugins/purpur.yml', 'utf8')),
+			paper: await YAML.parse(fs.readFileSync('./analysis_config/plugins/paper.yml', 'utf8')),
+			purpur: await YAML.parse(fs.readFileSync('./analysis_config/plugins/purpur.yml', 'utf8')),
 		},
 		config: {
-			'server.properties': await YAML.parse(fs.readFileSync('./timings_config/config/server.properties.yml', 'utf8')),
-			bukkit: await YAML.parse(fs.readFileSync('./timings_config/config/bukkit.yml', 'utf8')),
-			spigot: await YAML.parse(fs.readFileSync('./timings_config/config/spigot.yml', 'utf8')),
-			paper: await YAML.parse(fs.readFileSync(`./timings_config/config/paper-v${paper._version ? 28 : 27}.yml`, 'utf8')),
-			pufferfish: await YAML.parse(fs.readFileSync('./timings_config/config/pufferfish.yml', 'utf8')),
-			purpur: await YAML.parse(fs.readFileSync('./timings_config/config/purpur.yml', 'utf8')),
+			'server.properties': await YAML.parse(fs.readFileSync('./analysis_config/server.properties.yml', 'utf8')),
+			bukkit: await YAML.parse(fs.readFileSync('./analysis_config/bukkit.yml', 'utf8')),
+			spigot: await YAML.parse(fs.readFileSync('./analysis_config/spigot.yml', 'utf8')),
+			paper: await YAML.parse(fs.readFileSync(`./analysis_config/timings/paper-v${paper._version ? 28 : 27}.yml`, 'utf8')),
+			pufferfish: await YAML.parse(fs.readFileSync('./analysis_config/timings/pufferfish.yml', 'utf8')),
+			purpur: await YAML.parse(fs.readFileSync('./analysis_config/purpur.yml', 'utf8')),
 		},
 	};
 
@@ -250,10 +263,6 @@ module.exports = async function analyzeTimings(message, client, args) {
 		green = 255;
 	}
 
-	function componentToHex(c) {
-		const hex = c.toString(16);
-		return hex.length == 1 ? '0' + hex : hex;
-	}
 	TimingsEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
 
 	if (timing_cost > 500) {
@@ -267,7 +276,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		TimingsEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
-	const components = [];
+	let components = [];
 	const issues = [...fields];
 	if (issues.length >= 13) {
 		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
@@ -276,11 +285,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 			new ActionRowBuilder()
 				.addComponents([
 					new ButtonBuilder()
-						.setCustomId('timings_prev')
+						.setCustomId('analysis_prev')
 						.setEmoji({ name: '⬅️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setCustomId('timings_next')
+						.setCustomId('analysis_next')
 						.setEmoji({ name: '➡️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
@@ -291,5 +300,21 @@ module.exports = async function analyzeTimings(message, client, args) {
 		);
 	}
 	TimingsEmbed.addFields(fields);
-	return [{ embeds: [TimingsEmbed], components: components }, issues];
+	if (worst_tps >= 19) {
+		TimingsEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with its lowest TPS being ${worst_tps}.` }]);
+		components = [
+			new ActionRowBuilder()
+				.addComponents([
+					new ButtonBuilder()
+						.setCustomId('analysis_force')
+						.setLabel('Dismiss and force analysis')
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
+						.setURL('https://github.com/pemigrade/botflop')
+						.setLabel('Botflop')
+						.setStyle(ButtonStyle.Link),
+				]),
+		];
+	}
+	return [{ embeds: [TimingsEmbed], components }, issues];
 };

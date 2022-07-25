@@ -1,0 +1,303 @@
+syntax = "proto3";
+
+package spark;
+
+// -----------------------------------------------------------------------------------------------------
+// spark
+// -----------------------------------------------------------------------------------------------------
+
+message PlatformMetadata {
+  Type type = 1;
+  string name = 2;
+  string version = 3;
+  string minecraftVersion = 4; // optional
+  int32 sparkVersion = 7;
+
+  // replaced
+  reserved 5, 6;
+
+  enum Type {
+    SERVER = 0;
+    CLIENT = 1;
+    PROXY = 2;
+  }
+}
+
+message SystemStatistics {
+  Cpu cpu = 1;
+  Memory memory = 2;
+  map<string, Gc> gc = 3;
+  Disk disk = 4;
+  Os os = 5;
+  Java java = 6;
+  int64 uptime = 7;
+  map<string, NetInterface> net = 8;
+
+  message Cpu {
+    int32 threads = 1;
+    Usage processUsage = 2;
+    Usage systemUsage = 3;
+    string modelName = 4; // optional
+
+    message Usage {
+      double last1m = 1;
+      double last15m = 2;
+    }
+  }
+
+  message Memory {
+    MemoryPool physical = 1;
+    MemoryPool swap = 2;
+
+    message MemoryPool {
+      int64 used = 1;
+      int64 total = 2;
+    }
+  }
+
+  message Gc {
+    int64 total = 1;
+    double avgTime = 2;
+    double avgFrequency = 3;
+  }
+
+  message Disk {
+    int64 used = 1;
+    int64 total = 2;
+  }
+
+  message Os {
+    string arch = 1;
+    string name = 2;
+    string version = 3;
+  }
+
+  message Java {
+    string vendor = 1;
+    string version = 2;
+    string vendorVersion = 3;
+    string vmArgs = 4;
+  }
+
+  message NetInterface {
+    RollingAverageValues rxBytesPerSecond = 1;
+    RollingAverageValues txBytesPerSecond = 2;
+    RollingAverageValues rxPacketsPerSecond = 3;
+    RollingAverageValues txPacketsPerSecond = 4;
+  }
+}
+
+message PlatformStatistics {
+  Memory memory = 1;
+  map<string, Gc> gc = 2;
+  int64 uptime = 3;
+  Tps tps = 4; // optional
+  Mspt mspt = 5; // optional
+  Ping ping = 6; // optional
+  int64 playerCount = 7; // optional
+  WorldStatistics world = 8; // optional
+
+  message Memory {
+    MemoryPool heap = 1;
+
+    message MemoryPool {
+      int64 used = 1;
+      int64 total = 2;
+    }
+  }
+
+  message Gc {
+    int64 total = 1;
+    double avgTime = 2;
+    double avgFrequency = 3;
+  }
+
+  message Tps {
+    double last1m = 1;
+    double last5m = 2;
+    double last15m = 3;
+  }
+
+  message Mspt {
+    RollingAverageValues last1m = 1;
+    RollingAverageValues last5m = 2;
+  }
+
+  message Ping {
+    RollingAverageValues last15m = 1;
+  }
+}
+
+message RollingAverageValues {
+  double mean = 1;
+  double max = 2;
+  double min = 3;
+  double median = 4;
+  double percentile95 = 5;
+}
+
+message WorldStatistics {
+  int32 totalEntities = 1;
+  map<string, int32> entityCounts = 2;
+  repeated World worlds = 3;
+
+  message World {
+    string name = 1;
+    int32 totalEntities = 2;
+    repeated Region regions = 3;
+  }
+
+  message Region {
+    int32 totalEntities = 1;
+    repeated Chunk chunks = 2;
+  }
+
+  message Chunk {
+    int32 x = 1;
+    int32 z = 2;
+    int32 totalEntities = 3;
+    map<string, int32> entityCounts = 4;
+  }
+}
+
+message CommandSenderMetadata {
+  Type type = 1;
+  string name = 2;
+  string uniqueId = 3;
+
+  enum Type {
+    OTHER = 0;
+    PLAYER = 1;
+  }
+}
+
+// -----------------------------------------------------------------------------------------------------
+// spark_heap
+// -----------------------------------------------------------------------------------------------------
+
+message HeapData {
+  HeapMetadata metadata = 1;
+  repeated HeapEntry entries = 2;
+}
+
+message HeapMetadata {
+  CommandSenderMetadata user = 1;
+  PlatformMetadata platform = 2;
+  PlatformStatistics platformStatistics = 3;
+  SystemStatistics systemStatistics = 4;
+}
+
+message HeapEntry {
+  int32 order = 1;
+  int32 instances = 2;
+  int64 size = 3;
+  string type = 4;
+}
+
+// -----------------------------------------------------------------------------------------------------
+// spark_sampler
+// -----------------------------------------------------------------------------------------------------
+
+message SamplerData {
+  SamplerMetadata metadata = 1;
+  repeated ThreadNode threads = 2;
+  map<string, string> classSources = 3; // optional
+}
+
+message SamplerMetadata {
+  CommandSenderMetadata user = 1;
+  int64 startTime = 2;
+  int32 interval = 3;
+  ThreadDumper threadDumper = 4;
+  DataAggregator dataAggregator = 5;
+  string comment = 6;
+  PlatformMetadata platform = 7;
+  PlatformStatistics platformStatistics = 8;
+  SystemStatistics systemStatistics = 9;
+  map<string, string> serverConfigurations = 10;
+  int64 endTime = 11;
+  int32 numberOfTicks = 12;
+
+  message ThreadDumper {
+    Type type = 1;
+    repeated int64 ids = 2; // optional
+    repeated string patterns = 3; // optional
+
+    enum Type {
+      ALL = 0;
+      SPECIFIC = 1;
+      REGEX = 2;
+    }
+  }
+
+  message DataAggregator {
+    Type type = 1;
+    ThreadGrouper threadGrouper = 2;
+    int64 tickLengthThreshold = 3; // optional
+    int32 numberOfIncludedTicks = 4; // optional
+
+    enum Type {
+      SIMPLE = 0;
+      TICKED = 1;
+    }
+
+    enum ThreadGrouper {
+      BY_NAME = 0;
+      BY_POOL = 1;
+      AS_ONE = 2;
+    }
+  }
+}
+
+message ThreadNode {
+  string name = 1;
+  double time = 2;
+  repeated StackTraceNode children = 3;
+}
+
+message StackTraceNode {
+  double time = 1;
+  repeated StackTraceNode children = 2;
+  string className = 3;
+  string methodName = 4;
+  int32 parentLineNumber = 5; // optional
+  int32 lineNumber = 6; // optional
+  string methodDesc = 7; // optional
+}
+
+
+// -----------------------------------------------------------------------------------------------------
+// Mappings
+// -----------------------------------------------------------------------------------------------------
+
+message BukkitMappings {
+  map<string, ClassMapping> classes = 1;
+}
+
+message McpMappings {
+  map<string, ClassMapping> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message MojangMappings {
+  map<string, ClassMapping> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message YarnMappings {
+  map<string, string> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message ClassMapping {
+  string mapped = 1;
+  string obfuscated = 2;
+  repeated MethodMapping methods = 3;
+}
+
+message MethodMapping {
+  string mapped = 1;
+  string obfuscated = 2;
+  string description = 3;
+  string searge = 4; // optional - MCP only
+}

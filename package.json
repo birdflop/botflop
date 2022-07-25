@@ -16,11 +16,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.1",
+    "discord.js": "^14.0.3",
     "dotenv": "^16.0.1",
     "eslint": "^8.20.0",
     "fs": "^0.0.1-security",
     "hastebin": "^0.2.1",
+    "pbf": "^3.2.1",
     "winston": "^3.8.1",
     "yaml": "^2.1.1"
   }
