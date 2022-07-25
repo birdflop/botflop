@@ -49,11 +49,11 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const request = await response_json.json();
 
 	if (!request_raw) {
-		TimingsEmbed.fields = ({
+		TimingsEmbed.setFields([{
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
 			inline: true,
-		});
+		}]);
 		TimingsEmbed.setColor(parseInt('0xff0000'));
 		TimingsEmbed.setDescription('');
 		return [{ embeds: [TimingsEmbed] }];
