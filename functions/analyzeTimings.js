@@ -267,7 +267,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (timing_cost > 500) {
 		const suggestions = fields.length - 1;
-		TimingsEmbed.setColor(0xff0000).setDescription('')
+		TimingsEmbed.setColor(0xff0000).setDescription(null)
 			.setFields([{ name: '❌ Timingcost (URGENT)', value: `Your timingcost is ${timing_cost}. This value would be at most 200 on a reasonable server. Your cpu is critically overloaded and/or slow. Hiding ${suggestions} comparitively negligible suggestions until you resolve this fundamental problem. Find a [better host](https://www.birdflop.com).`, inline: true }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
