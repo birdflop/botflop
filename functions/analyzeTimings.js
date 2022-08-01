@@ -55,7 +55,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 			inline: true,
 		}]);
 		TimingsEmbed.setColor(parseInt('0xff0000'));
-		TimingsEmbed.setDescription('');
+		TimingsEmbed.setDescription(null);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
