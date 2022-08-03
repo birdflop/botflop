@@ -40,6 +40,6 @@ module.exports = {
 			// When the collector stops, remove the undo button from it
 			collector.on('end', () => pingmsg.edit({ components: [] }));
 		}
-		catch (err) { client.logger.error(err.stack); }
+		catch (err) { client.error(err, message); }
 	},
 };

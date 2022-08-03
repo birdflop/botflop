@@ -82,6 +82,6 @@ module.exports = {
 				});
 			}
 		}
-		catch (err) { client.logger.error(err.stack); }
+		catch (err) { client.error(err, message); }
 	},
 };

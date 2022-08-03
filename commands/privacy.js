@@ -7,6 +7,6 @@ module.exports = {
 		try {
 			message.reply('You can view the bot\'s privacy policy at https://bin.birdflop.com/ohopawewok.txt.');
 		}
-		catch (err) { client.logger.error(err.stack); }
+		catch (err) { client.error(err, message); }
 	},
 };
