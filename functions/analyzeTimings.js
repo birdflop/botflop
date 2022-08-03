@@ -277,10 +277,10 @@ module.exports = async function analyzeTimings(message, client, args) {
 		return [{ embeds: [TimingsEmbed] }];
 	}
 	let components = [];
-	const issues = [...fields];
-	if (issues.length >= 13) {
-		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: author.avatarURL() });
+	const suggestions = [...fields];
+	if (suggestions.length >= 13) {
+		fields.splice(12, suggestions.length, { name: `Plus ${suggestions.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
+		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([
@@ -316,5 +316,5 @@ module.exports = async function analyzeTimings(message, client, args) {
 				]),
 		];
 	}
-	return [{ embeds: [TimingsEmbed], components }, issues];
+	return [{ embeds: [TimingsEmbed], components }, suggestions];
 };
