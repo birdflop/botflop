@@ -24,7 +24,7 @@ module.exports = {
 			const collector = timingsmsg.createMessageComponentCollector({ filter, time: 300000 });
 			collector.on('collect', async i => {
 				// Defer button
-				i.deferUpdate();
+				await i.deferUpdate();
 
 				// Get the embed
 				const TimingsEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
