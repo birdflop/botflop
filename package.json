@@ -16,9 +16,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.1.2",
+    "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
-    "eslint": "^8.20.0",
+    "eslint": "^8.22.0",
     "fs": "^0.0.1-security",
     "hastebin": "^0.2.1",
     "pbf": "^3.2.1",

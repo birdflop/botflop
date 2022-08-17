@@ -3,17 +3,9 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
-const Pbf = require('pbf');
-const { SamplerData } = require('../analysis_config/profile/protos');
 function componentToHex(c) {
 	const hex = c.toString(16);
 	return hex.length == 1 ? '0' + hex : hex;
-}
-
-// Function to parse the data payload from a request given the schema type
-function parse(buf, schema) {
-	const pbf = new Pbf(new Uint8Array(buf));
-	return schema.read(pbf);
 }
 
 module.exports = async function analyzeProfile(message, client, args) {
@@ -40,28 +32,21 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	client.logger.info(`Spark Profile analyzed from ${author.tag} (${author.id}): ${url}`);
 
-	let error;
-	const code = url.replace('https://spark.lucko.me/', '');
-	const bytebin = `https://bytebin.lucko.me/${code}`;
-	let sampler;
-	try {
-		const req = await fetch(bytebin);
-		const buf = await req.arrayBuffer();
-		sampler = parse(buf, SamplerData);
-	}
-	catch (err) {
-		error = err;
+	const response_raw = await fetch(url + '?raw=1');
+	const sampler = await response_raw.json();
+
+	if (!sampler) {
+		ProfileEmbed.setFields([{
+			name: '❌ Processing Error',
+			value: 'The bot cannot process this Spark profile. Please use an alternative Spark profile.',
+			inline: true,
+		}]);
+		ProfileEmbed.setColor(0xff0000);
+		ProfileEmbed.setDescription(null);
+		return [{ embeds: [ProfileEmbed] }];
 	}
 
 	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
-
-	if (error) {
-		ProfileEmbed.addFields([
-			{ name: '❌ Invalid Profile', value: 'Create a new Spark Profile.' },
-			{ name: '❌ Error', value: `\`\`\`\n${error}\n\`\`\`` },
-		]);
-		return [{ embeds: [ProfileEmbed] }];
-	}
 
 	let version = sampler.metadata.platform.version;
 	client.logger.info(version);
