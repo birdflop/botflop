@@ -28,18 +28,21 @@ module.exports = {
 			const collector = pingmsg.createMessageComponentCollector({ filter, time: args[0] == 'reset' ? 30000 : 120000 });
 			collector.on('collect', async interaction => {
 				// Check if the button is one of the settings buttons
-				interaction.deferUpdate();
+				await interaction.deferUpdate();
 
 				// Set the embed description with new ping stuff
 				PingEmbed.setDescription(`**Message Latency** ${Date.now() - interaction.createdTimestamp}ms\n**API Latency** ${client.ws.ping}ms`);
 
 				// Set title and update message
-				pingmsg.edit({ embeds: [PingEmbed] });
+				await interaction.editReply({ embeds: [PingEmbed] });
 			});
 
-			// When the collector stops, remove the undo button from it
-			collector.on('end', () => pingmsg.edit({ components: [] }));
+			// When the collector stops, remove all buttons from it
+			collector.on('end', () => {
+				if (message.commandName) message.editReply({ components: [] }).catch(err => client.logger.warn(err));
+				else pingmsg.edit({ components: [] }).catch(err => client.logger.warn(err));
+			});
 		}
-		catch (err) { client.logger.error(err.stack); }
+		catch (err) { client.error(err, message); }
 	},
 };

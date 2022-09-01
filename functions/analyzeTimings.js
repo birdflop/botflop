@@ -22,7 +22,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 			TimingsEmbed.addFields([{ name: '⚠️ Spark Profile', value: 'This is a Spark Profile. Use /profile instead for this type of report.' }]);
 			return [{ embeds: [TimingsEmbed] }];
 		}
-		if (arg.startsWith('https://timin') && arg.includes('?id=')) url = arg.replace('/d=', '/?id=').replace('timin.gs', 'timings.aikar.co').split('#')[0].split('\n')[0];
+		if (arg.startsWith('https://timin') && arg.includes('?id=')) url = arg.replace('/d=', '/?id=').split('#')[0].split('\n')[0];
 		if (arg.startsWith('https://www.spigotmc.org/go/timings?url=') || arg.startsWith('https://spigotmc.org/go/timings?url=')) {
 			TimingsEmbed.addFields([{ name: '❌ Spigot', value: 'Spigot timings have limited information. Switch to [Purpur](https://purpurmc.org) for better timings analysis. All your plugins will be compatible, and if you don\'t like it, you can easily switch back.' }])
 				.setURL(url);
@@ -55,7 +55,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 			inline: true,
 		}]);
 		TimingsEmbed.setColor(parseInt('0xff0000'));
-		TimingsEmbed.setDescription('');
+		TimingsEmbed.setDescription(null);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
@@ -267,7 +267,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (timing_cost > 500) {
 		const suggestions = fields.length - 1;
-		TimingsEmbed.setColor(0xff0000).setDescription('')
+		TimingsEmbed.setColor(0xff0000).setDescription(null)
 			.setFields([{ name: '❌ Timingcost (URGENT)', value: `Your timingcost is ${timing_cost}. This value would be at most 200 on a reasonable server. Your cpu is critically overloaded and/or slow. Hiding ${suggestions} comparitively negligible suggestions until you resolve this fundamental problem. Find a [better host](https://www.birdflop.com).`, inline: true }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
@@ -277,10 +277,10 @@ module.exports = async function analyzeTimings(message, client, args) {
 		return [{ embeds: [TimingsEmbed] }];
 	}
 	let components = [];
-	const issues = [...fields];
-	if (issues.length >= 13) {
-		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: author.avatarURL() });
+	const suggestions = [...fields];
+	if (suggestions.length >= 13) {
+		fields.splice(12, suggestions.length, { name: `Plus ${suggestions.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
+		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([
@@ -316,5 +316,5 @@ module.exports = async function analyzeTimings(message, client, args) {
 				]),
 		];
 	}
-	return [{ embeds: [TimingsEmbed], components }, issues];
+	return [{ embeds: [TimingsEmbed], components }, suggestions];
 };

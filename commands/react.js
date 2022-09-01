@@ -44,6 +44,6 @@ module.exports = {
 			await fetchedMsg.react(args[1]).catch(err => { return message.reply({ content: `Reaction failed!\n\`${err}\`\nUse an emote from a server that ${client.user.username} is in or an emoji.` }); });
 			message.reply({ embeds: [ReactEmbed] });
 		}
-		catch (err) { client.logger.error(err, message); }
+		catch (err) { client.error(err, message); }
 	},
 };

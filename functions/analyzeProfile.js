@@ -3,17 +3,9 @@ const YAML = require('yaml');
 const fs = require('fs');
 const createField = require('./createField.js');
 const evalField = require('./evalField.js');
-const Pbf = require('pbf');
-const { SamplerData } = require('../analysis_config/profile/protos');
 function componentToHex(c) {
 	const hex = c.toString(16);
 	return hex.length == 1 ? '0' + hex : hex;
-}
-
-// Function to parse the data payload from a request given the schema type
-function parse(buf, schema) {
-	const pbf = new Pbf(new Uint8Array(buf));
-	return schema.read(pbf);
 }
 
 module.exports = async function analyzeProfile(message, client, args) {
@@ -40,28 +32,21 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	client.logger.info(`Spark Profile analyzed from ${author.tag} (${author.id}): ${url}`);
 
-	let error;
-	const code = url.replace('https://spark.lucko.me/', '');
-	const bytebin = `https://bytebin.lucko.me/${code}`;
-	let sampler;
-	try {
-		const req = await fetch(bytebin);
-		const buf = await req.arrayBuffer();
-		sampler = parse(buf, SamplerData);
-	}
-	catch (err) {
-		error = err;
+	const response_raw = await fetch(url + '?raw=1');
+	const sampler = await response_raw.json();
+
+	if (!sampler) {
+		ProfileEmbed.setFields([{
+			name: '❌ Processing Error',
+			value: 'The bot cannot process this Spark profile. Please use an alternative Spark profile.',
+			inline: true,
+		}]);
+		ProfileEmbed.setColor(0xff0000);
+		ProfileEmbed.setDescription(null);
+		return [{ embeds: [ProfileEmbed] }];
 	}
 
 	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
-
-	if (error) {
-		ProfileEmbed.addFields([
-			{ name: '❌ Invalid Profile', value: 'Create a new Spark Profile.' },
-			{ name: '❌ Error', value: `\`\`\`\n${error}\n\`\`\`` },
-		]);
-		return [{ embeds: [ProfileEmbed] }];
-	}
 
 	let version = sampler.metadata.platform.version;
 	client.logger.info(version);
@@ -224,7 +209,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 	// if (high_mec) fields.push({ name: '❌ maxEntityCramming', value: 'Decrease this by running the /gamerule command in each world. Recommended: 8.', inline: true });
 
 	const tpstypes = sampler.metadata.platformStatistics.tps;
-	const avgtps = (tpstypes.last1m + tpstypes.last5m + tpstypes.last15m) / 3;
+	const avgtps = Math.round((tpstypes.last1m + tpstypes.last5m + tpstypes.last15m) / 3);
 	let red = 0;
 	let green = 0;
 	if (avgtps < 10) {
@@ -236,17 +221,17 @@ module.exports = async function analyzeProfile(message, client, args) {
 		green = 255;
 	}
 
-	ProfileEmbed.setColor(parseInt('0x' + componentToHex(Math.round(red)) + componentToHex(Math.round(green)) + '00'));
+	ProfileEmbed.setColor(parseInt('0x' + componentToHex(red) + componentToHex(green) + '00'));
 
 	if (fields.length == 0) {
 		ProfileEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
 		return [{ embeds: [ProfileEmbed] }];
 	}
 	let components = [];
-	const issues = [...fields];
-	if (issues.length >= 13) {
-		fields.splice(12, issues.length, { name: `Plus ${issues.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		ProfileEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(issues.length / 12)}`, iconURL: author.avatarURL() });
+	const suggestions = [...fields];
+	if (suggestions.length >= 13) {
+		fields.splice(12, suggestions.length, { name: `Plus ${suggestions.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
+		ProfileEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([
@@ -282,5 +267,5 @@ module.exports = async function analyzeProfile(message, client, args) {
 				]),
 		];
 	}
-	return [{ embeds: [ProfileEmbed], components }, issues];
+	return [{ embeds: [ProfileEmbed], components }, suggestions];
 };
