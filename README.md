@@ -5,11 +5,11 @@
 ## Analyze timings reports and Spark profiles
 Analyze a timings report or Spark profile to review an in-depth description of potential optimizations. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
-![Timings 1](https://user-images.githubusercontent.com/43528123/118413487-33af2300-b665-11eb-8f11-eaa4ec5a2730.png)
+<img width="533" alt="image" src="https://user-images.githubusercontent.com/43528123/215833902-2ba4edcf-014b-41ea-8db5-e55e4218160a.png">
 
-![Timings 2](https://user-images.githubusercontent.com/43528123/118413524-66f1b200-b665-11eb-9dbe-9b6fcfc9fccf.png)
+<img width="523" alt="image" src="https://user-images.githubusercontent.com/43528123/215834126-f26546f8-a3c2-4a11-982e-bd20d9aca9ef.png">
 
-## Hastebin upload
+## Hastebin upload (currently unavailable)
 Botflop converts text files and pastebin links into universally accessible bin links. You can try it out yourself on our [Discord](https://discord.gg/zsz3PzT)
 
 ![message.txt](https://i.imgur.com/Q6WIAxp.png)
@@ -22,7 +22,7 @@ Botflop converts text files and pastebin links into universally accessible bin l
 
 ## React
 Botflop reacts to messages (requires Administrator permission)
-![reaction](https://i.imgur.com/o1swgZw.png)
+<img width="269" alt="image" src="https://user-images.githubusercontent.com/43528123/215834368-631d9a04-24fc-4026-a6ae-04bfc87be142.png">
 
 # Forks
 Feel free to fork. We request that you please give credit in some way (can be as simple as keeping binflop as the text upload destination), but you can do whatever you'd like with your forks. **We do not offer any support with forks.**
