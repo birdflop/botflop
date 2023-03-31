@@ -16,7 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.2.0",
+    "discord.js": "^14.8.0",
     "dotenv": "^16.0.1",
     "eslint": "^8.22.0",
     "fs": "^0.0.1-security",

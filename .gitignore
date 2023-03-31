@@ -121,3 +121,4 @@ data/
 .yarn/install-state.gz
 .pnp.*
 
+pnpm-lock.yaml
