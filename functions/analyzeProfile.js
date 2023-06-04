@@ -48,6 +48,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
 
+	const platform = sampler.metadata.platform.name;
+
 	let version = sampler.metadata.platform.version;
 	client.logger.info(version);
 
@@ -86,7 +88,18 @@ module.exports = async function analyzeProfile(message, client, args) {
 	const latest = json.versions[json.versions.length - 1];
 
 	// ghetto version check
-	if (version.split('(MC: ')[1].split(')')[0] != latest) {
+	const mcversion = version.split('(MC: ')[1];
+	if(mcversion == undefined) {
+		ProfileEmbed.setFields([{
+			name: '❌ Processing Error',
+			value: 'The bot cannot process this Spark profile. It appears that the platform is not supported for analysis. Platform: ' + platform,
+			inline: true,
+		}]);
+		ProfileEmbed.setColor(0xff0000);
+		ProfileEmbed.setDescription(null);
+		return [{ embeds: [ProfileEmbed] }];
+	}
+	if (mcversion.split(')')[0] != latest) {
 		version = version.replace('git-', '').replace('MC: ', '');
 		fields.push({ name: '❌ Outdated', value: `You are using \`${version}\`. Update to \`${latest}\`.`, inline: true });
 	}
