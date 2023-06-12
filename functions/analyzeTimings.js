@@ -181,10 +181,10 @@ module.exports = async function analyzeTimings(message, client, args) {
 		}
 	}
 	else if (flags.includes('-Dusing.aikars.flags=mcflags.emc.gs')) {
-		fields.push({ name: '❌ Outdated Flags', value: 'Update [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Outdated Flags', value: 'Update [Aikar\'s flags](https://docs.papermc.io/paper/aikars-flags).', inline: true });
 	}
 	else {
-		fields.push({ name: '❌ Aikar\'s Flags', value: 'Use [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Aikar\'s Flags', value: 'Use [Aikar\'s flags](https://docs.papermc.io/paper/aikars-flags).', inline: true });
 	}
 
 	const cpu = parseInt(request.timingsMaster.system.cpu);
