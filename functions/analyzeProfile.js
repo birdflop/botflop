@@ -33,7 +33,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 	client.logger.info(`Spark Profile analyzed from ${author.tag} (${author.id}): ${url}`);
 
 	const response_raw = await fetch(url + '?raw=1');
-	const sampler = await response_raw.json();
+	const sampler = await response_raw.json().catch(() => undefined);
 
 	if (!sampler) {
 		ProfileEmbed.setFields([{
@@ -46,6 +46,16 @@ module.exports = async function analyzeProfile(message, client, args) {
 		return [{ embeds: [ProfileEmbed] }];
 	}
 
+	if(!sampler.metadata.hasOwnProperty('serverConfigurations')) {
+		ProfileEmbed.setFields([{
+			name: '❌ Processing Error',
+			value: 'The bot cannot process this Spark profile. This is a heap summary report.',
+			inline: true,
+		}]);
+		ProfileEmbed.setColor(0xff0000);
+		ProfileEmbed.setDescription(null);
+		return [{ embeds: [ProfileEmbed] }];
+	}	
 	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
 
 	const platform = sampler.metadata.platform.name;
