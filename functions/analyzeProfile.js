@@ -22,6 +22,11 @@ module.exports = async function analyzeProfile(message, client, args) {
 			ProfileEmbed.addFields([{ name: '⚠️ Timings Report', value: 'This is a Timings report. Use /timings instead for this type of report.' }]);
 			return [{ embeds: [ProfileEmbed] }];
 		}
+
+		// prevents the issue of the bot trying to analyze a link that is not a spark profile (e.g. a link to download spark or its documentation)
+		const whitelist = ['https://spark.lucko.me/downloads', 'https://spark.lucko.me/download', 'https://spark.lucko.me/docs']
+		if ( whitelist.some(v => arg.toLowerCase().startsWith(v))) return;
+
 		if (arg.startsWith('https://spark.lucko.me/')) url = arg;
 	}
 
