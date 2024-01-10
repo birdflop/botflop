@@ -1,4 +1,5 @@
 # Birdflop Bot (Botflop)
+[Click here](https://discord.gg/zsz3PzT) to test out Botflop on the Birdflop Discord.
 [Click here](https://discord.com/api/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot) to invite Botflop to your server.
 
 # Current abilities
