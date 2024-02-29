@@ -51,20 +51,28 @@ module.exports = async function analyzeProfile(message, client, args) {
 		return [{ embeds: [ProfileEmbed] }];
 	}
 	
-	const urlSearchParams = new URLSearchParams(new URL(url).search);
-	const id = urlSearchParams.get('id');
-
-  const resp = fetch(process.env.API_URL + '/spark', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id }),
-  }).catch(error => {
-    client.logger.error('Fetch error:', error);
-    Promise.reject(error);
-  });
-	console.log(resp)
+	const id = url.replace("https://spark.lucko.me/", "")
+	fetch(process.env.API_URL + '/spark', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ id }),
+	})
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error(`Request failed with status ${response.status}`);
+			}
+		})
+		.then(data => {
+			console.log('Response data:', data);
+		})
+		.catch(error => {
+			console.error('Fetch error:', error);
+		});
+	
 	if(!sampler.metadata.hasOwnProperty('serverConfigurations')) {
 		ProfileEmbed.setFields([{
 			name: '❌ Processing Error',

@@ -63,16 +63,26 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const id = urlSearchParams.get('id');
 
   const resp = fetch(process.env.API_URL + '/timings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id }),
-  }).catch(error => {
-    client.logger.error('Fetch error:', error);
-    Promise.reject(error);
-  });
-	console.log(resp);
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ id }),
+	})
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error(`Request failed with status ${response.status}`);
+			}
+		})
+		.then(data => {
+			console.log('Response data:', data);
+		})
+		.catch(error => {
+			console.error('Fetch error:', error);
+		});
+
 	const server_icon = timings_host + 'image.php?id=' + request_raw.icon;
 	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: (server_icon ?? 'https://i.imgur.com/deE1oID.png'), url: url });
 
