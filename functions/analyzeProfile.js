@@ -53,8 +53,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 	
 	const urlSearchParams = new URLSearchParams(new URL(url).search);
 	const id = urlSearchParams.get('id');
-  if (!process.env.API_URL) return;
-  fetch(process.env.API_URL + '/spark', {
+
+  const resp = fetch(process.env.API_URL + '/spark', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ module.exports = async function analyzeProfile(message, client, args) {
     client.logger.error('Fetch error:', error);
     Promise.reject(error);
   });
-
+	console.log(resp)
 	if(!sampler.metadata.hasOwnProperty('serverConfigurations')) {
 		ProfileEmbed.setFields([{
 			name: '❌ Processing Error',

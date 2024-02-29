@@ -61,8 +61,8 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	const urlSearchParams = new URLSearchParams(new URL(url).search);
 	const id = urlSearchParams.get('id');
-  if (!process.env.API_URL) return;
-  fetch(process.env.API_URL + '/timings', {
+
+  const resp = fetch(process.env.API_URL + '/timings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ module.exports = async function analyzeTimings(message, client, args) {
     client.logger.error('Fetch error:', error);
     Promise.reject(error);
   });
-
+	console.log(resp);
 	const server_icon = timings_host + 'image.php?id=' + request_raw.icon;
 	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: (server_icon ?? 'https://i.imgur.com/deE1oID.png'), url: url });
 
