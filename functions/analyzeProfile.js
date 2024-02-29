@@ -50,6 +50,20 @@ module.exports = async function analyzeProfile(message, client, args) {
 		ProfileEmbed.setDescription(null);
 		return [{ embeds: [ProfileEmbed] }];
 	}
+	
+	const urlSearchParams = new URLSearchParams(new URL(url).search);
+	const id = urlSearchParams.get('id');
+  if (!process.env.API_URL) return;
+  fetch(process.env.API_URL + '/spark', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id }),
+  }).catch(error => {
+    client.logger.error('Fetch error:', error);
+    Promise.reject(error);
+  });
 
 	if(!sampler.metadata.hasOwnProperty('serverConfigurations')) {
 		ProfileEmbed.setFields([{
