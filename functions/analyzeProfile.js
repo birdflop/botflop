@@ -24,8 +24,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 		}
 
 		// prevents the issue of the bot trying to analyze a link that is not a spark profile (e.g. a link to download spark or its documentation)
-		const whitelist = ['https://spark.lucko.me/downloads', 'https://spark.lucko.me/download', 'https://spark.lucko.me/docs']
-		if ( whitelist.some(v => arg.toLowerCase().startsWith(v))) return;
+		const whitelist = ['https://spark.lucko.me/downloads', 'https://spark.lucko.me/download', 'https://spark.lucko.me/docs'];
+		if (whitelist.some(v => arg.toLowerCase().startsWith(v))) return;
 
 		if (arg.startsWith('https://spark.lucko.me/')) url = arg;
 	}
@@ -50,8 +50,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 		ProfileEmbed.setDescription(null);
 		return [{ embeds: [ProfileEmbed] }];
 	}
-	
-	const id = url.replace("https://spark.lucko.me/", "")
+
+	const id = url.replace('https://spark.lucko.me/', '');
 	fetch(process.env.API_URL + '/spark', {
 		method: 'POST',
 		headers: {
@@ -62,7 +62,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 		.then(response => {
 			if (response.ok) {
 				return response.json();
-			} else {
+			}
+			else {
 				throw new Error(`Request failed with status ${response.status}`);
 			}
 		})
@@ -72,8 +73,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 		.catch(error => {
 			console.error('Fetch error:', error);
 		});
-	
-	if(!sampler.metadata.hasOwnProperty('serverConfigurations')) {
+
+	if (!sampler.metadata.hasOwnProperty('serverConfigurations')) {
 		ProfileEmbed.setFields([{
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this Spark profile. This is a heap summary report.',
@@ -82,7 +83,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 		ProfileEmbed.setColor(0xff0000);
 		ProfileEmbed.setDescription(null);
 		return [{ embeds: [ProfileEmbed] }];
-	}	
+	}
 	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
 
 	const platform = sampler.metadata.platform.name;
@@ -126,7 +127,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	// ghetto version check
 	const mcversion = version.split('(MC: ')[1];
-	if(mcversion == undefined) {
+	if (mcversion == undefined) {
 		ProfileEmbed.setFields([{
 			name: '❌ Processing Error',
 			value: 'The bot cannot process this Spark profile. It appears that the platform is not supported for analysis. Platform: ' + platform,
@@ -159,7 +160,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 				max_mem = max_mem.replace('M', '');
 				max_mem = max_mem.replace('g', '000');
 				max_mem = max_mem.replace('m', '');
-				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value:'ZGC is only good with a lot of memory.', inline: true });
+				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value: 'ZGC is only good with a lot of memory.', inline: true });
 			}
 		});
 	}
@@ -259,7 +260,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 	// if (high_mec) fields.push({ name: '❌ maxEntityCramming', value: 'Decrease this by running the /gamerule command in each world. Recommended: 8.', inline: true });
 
 	const tpstypes = sampler.metadata.platformStatistics.tps;
-	const avgtps = Math.round((tpstypes.last1m + tpstypes.last5m + tpstypes.last15m) / 3);
+	const avgtps = Math.min(Math.round((tpstypes.last1m + tpstypes.last5m + tpstypes.last15m) / 3), 20);
 	let red = 0;
 	let green = 0;
 	if (avgtps < 10) {

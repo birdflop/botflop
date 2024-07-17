@@ -62,7 +62,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	const urlSearchParams = new URLSearchParams(new URL(url).search);
 	const id = urlSearchParams.get('id');
 
-  const resp = fetch(process.env.API_URL + '/timings', {
+	fetch(process.env.API_URL + '/timings', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -72,7 +72,8 @@ module.exports = async function analyzeTimings(message, client, args) {
 		.then(response => {
 			if (response.ok) {
 				return response.json();
-			} else {
+			}
+			else {
 				throw new Error(`Request failed with status ${response.status}`);
 			}
 		})
@@ -158,7 +159,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 				max_mem = max_mem.replace('M', '');
 				max_mem = max_mem.replace('g', '000');
 				max_mem = max_mem.replace('m', '');
-				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value:'ZGC is only good with a lot of memory.', inline: true });
+				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value: 'ZGC is only good with a lot of memory.', inline: true });
 			}
 		});
 	}
