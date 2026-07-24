@@ -1,28 +1,41 @@
 {
   "name": "botflop",
-  "version": "2.1",
+  "version": "3.0.0",
   "description": "Discord Bot for server hosts, devs, and admins. Analyzes timings reports & uploads text files to a bin. Developed by https://birdflop.com.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "fmt": "oxfmt",
+    "fmt.check": "oxfmt --check",
+    "lint": "oxlint"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Pemigrade/botflop.git"
+    "url": "git+https://github.com/birdflop/botflop.git"
   },
-  "engines": {
-    "node": ">=18.0.0"
+  "keywords": [
+    "discord.js",
+    "discord",
+    "bot"
+  ],
+  "author": "Birdflop",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/birdflop/botflop/issues"
   },
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "discord.js": "^14.15.3",
-    "dotenv": "^16.0.1",
-    "eslint": "^8.22.0",
-    "fs": "^0.0.1-security",
+  "homepage": "https://github.com/birdflop/botflop#readme",
+  "devDependencies": {
+    "@birdflop/analyze": "^0.3.0",
+    "@mochi-analytics/core": "^1.0.3",
+    "@mochi-analytics/discordjs": "^1.2.0",
+    "@types/node": "^25.9.1",
+    "discord.js": "^14.26.4",
+    "dotenv": "^17.4.2",
     "hastebin": "^0.2.1",
-    "pbf": "^3.2.1",
-    "winston": "^3.8.1",
-    "yaml": "^2.1.1"
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^6.0.3",
+    "winston": "^3.19.0"
   }
 }
