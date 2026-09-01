@@ -62,7 +62,8 @@ export async function analyzeMessageLogs(message: Message, words: string[]) {
     : '## Timings Analysis Recommendations\n';
 
   if (topRecommendations.length === 0) {
-    description += "✅ Your server isn't lagging! No performance recommendations found.";
+    description +=
+      "✅ Your server isn't lagging! No performance recommendations found.";
   } else {
     for (const item of topRecommendations) {
       description += `\n**${item.name}**\n${item.value}\n`;

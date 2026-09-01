@@ -1,9 +1,4 @@
-import {
-  Client,
-  Message,
-  EmbedBuilder,
-  PermissionsBitField,
-} from 'discord.js';
+import { Client, Message, EmbedBuilder, PermissionsBitField } from 'discord.js';
 import { createPaste } from 'hastebin';
 import { analyzeMessageLogs } from '~/util/misc/analyzeLogs';
 
@@ -31,7 +26,9 @@ export default async (_client: Client<true>, message: Message) => {
 
   // If in guild and bot can't send messages or read history, ignore
   if (message.guild && message.guild.members.me) {
-    const permissions = message.channel.permissionsFor(message.guild.members.me);
+    const permissions = message.channel.permissionsFor(
+      message.guild.members.me
+    );
     if (
       !permissions ||
       !permissions.has(PermissionsBitField.Flags.SendMessages) ||

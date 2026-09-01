@@ -2,9 +2,14 @@
   "name": "botflop",
   "version": "3.0.0",
   "description": "Discord Bot for server hosts, devs, and admins. Analyzes timings reports & uploads text files to a bin. Developed by https://birdflop.com.",
+  "type": "module",
   "main": "src/index.ts",
+  "packageManager": "pnpm@11.13.1",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
-    "start": "bun src/index.ts",
+    "start": "tsx src/index.ts",
     "fmt": "oxfmt",
     "fmt.check": "oxfmt --check",
     "lint": "oxlint"
@@ -24,18 +29,20 @@
     "url": "https://github.com/birdflop/botflop/issues"
   },
   "homepage": "https://github.com/birdflop/botflop#readme",
-  "devDependencies": {
+  "dependencies": {
     "@birdflop/analyze": "^0.4.0",
     "@mochi-analytics/core": "^1.0.3",
     "@mochi-analytics/discordjs": "^1.2.0",
-    "@types/node": "^25.9.1",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",
     "hastebin": "^0.2.1",
+    "tsx": "^4.23.13",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
     "oxfmt": "^0.60.0",
     "oxlint": "^1.75.0",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^6.0.3",
-    "winston": "^3.19.0"
+    "typescript": "^6.0.3"
   }
 }
