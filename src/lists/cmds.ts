@@ -1,39 +1,37 @@
-import { readdirSync } from 'fs';
+import '~/util/logger';
 import { Collection } from 'discord.js';
-import { LoadedCommand } from '~/lists/Objects';
-import { srcDir } from '..';
+import type { LoadedCommand, Command } from '~/lists/Objects';
+import { analyze } from '../commands/analyze';
+import { ping } from '../commands/ping';
+import { privacy } from '../commands/privacy';
+import { react } from '../commands/react';
 
 // Set the slash commands collection
 const slashcommands = new Collection<string, LoadedCommand>();
 const cooldowns = new Collection<string, Collection<string, number>>();
 
-// Register all slash commands
-const slashcommandFiles = readdirSync(`${srcDir}/commands`).filter((file) =>
-  file.endsWith('ts')
-);
-await Promise.all(
-  slashcommandFiles.map(async (file) => {
-    const module = await import(`../commands/${file}`);
+const commands: Record<string, Command<any>> = {
+  analyze,
+  ping,
+  privacy,
+  react,
+};
 
-    let slashcommand = module.default || module;
-    const name = Object.keys(slashcommand)[0] as keyof typeof slashcommand;
-    slashcommand = { name: slashcommand.name ?? name, ...slashcommand[name] };
-
-    if (typeof slashcommand.name == 'string') {
-      slashcommands.set(slashcommand.name, slashcommand);
-    } else {
-      await Promise.all(
-        slashcommand.name.map((cmdname: string) => {
-          slashcommands.set(cmdname, {
-            ...slashcommand,
-            name: cmdname,
-            description: slashcommand.description.replace('{NAME}', cmdname),
-          });
-        })
-      );
+for (const [key, command] of Object.entries(commands)) {
+  const name = command.name ?? key;
+  if (typeof name === 'string') {
+    slashcommands.set(name, { ...command, name });
+  } else {
+    for (const cmdname of name) {
+      slashcommands.set(cmdname, {
+        ...command,
+        name: cmdname,
+        description: command.description.replace('{NAME}', cmdname),
+      });
     }
-  })
-);
+  }
+}
+
 logger.info(`${slashcommands.size} slash commands loaded`);
 
 export default slashcommands;

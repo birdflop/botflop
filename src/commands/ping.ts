@@ -7,7 +7,7 @@ import {
   TextDisplayBuilder,
   SectionBuilder,
 } from 'discord.js';
-import { Command } from '~/lists/Objects';
+import type { Command } from '~/lists/Objects';
 
 export const ping: Command = {
   description: 'Pong!',

@@ -3,13 +3,15 @@
   "version": "3.0.0",
   "description": "Discord Bot for server hosts, devs, and admins. Analyzes timings reports & uploads text files to a bin. Developed by https://birdflop.com.",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "index.js",
   "packageManager": "pnpm@11.13.1",
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
-    "start": "tsx src/index.ts",
+    "build": "tsup",
+    "start": "node index.js",
+    "dev": "tsx src/index.ts",
     "fmt": "oxfmt",
     "fmt.check": "oxfmt --check",
     "lint": "oxlint"
@@ -36,13 +38,14 @@
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",
     "hastebin": "^0.2.1",
-    "tsx": "^4.23.13",
     "winston": "^3.19.0"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
     "oxfmt": "^0.60.0",
     "oxlint": "^1.75.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3"
   }
 }

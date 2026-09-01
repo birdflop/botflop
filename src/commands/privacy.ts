@@ -6,10 +6,10 @@ import {
   TextDisplayBuilder,
   SectionBuilder,
 } from 'discord.js';
-import { Command } from '~/lists/Objects';
+import type { Command } from '~/lists/Objects';
 
-export const ping: Command = {
-  description: 'Pong!',
+export const privacy: Command = {
+  description: "View the bot's privacy policy.",
   cooldown: 10,
   async execute(interaction, client) {
     try {

@@ -11,7 +11,7 @@ import {
   MessageFlags,
 } from 'discord.js';
 import { readFileSync } from 'fs';
-import { logDate } from '../..';
+import { logDate } from '~/util/logger';
 
 export async function errorFunc(
   err: any,

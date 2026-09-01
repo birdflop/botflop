@@ -1,5 +1,5 @@
 import { InteractionContextType, PermissionsBitField } from 'discord.js';
-import { Command } from '~/lists/Objects';
+import type { Command } from '~/lists/Objects';
 
 export const react: Command<'cached'> = {
   description: 'Add a reaction to a message',

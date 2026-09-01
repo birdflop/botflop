@@ -9,7 +9,7 @@ import {
   ContainerBuilder,
   TextDisplayBuilder,
 } from 'discord.js';
-import type { Command } from '~/lists/Objects.js';
+import type { Command } from '~/lists/Objects';
 import {
   analyzeProfile,
   analyzeTimings,
