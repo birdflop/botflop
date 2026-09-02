@@ -840,7 +840,7 @@ var event_default = async (client2) => {
 // src/handlers/login.ts
 import "discord.js";
 var login_default = (client2) => {
-  client2.login(process.env.TOKEN);
+  client2.login(process.env.BOT_TOKEN);
   logger.info("Bot logged in");
 };
 
